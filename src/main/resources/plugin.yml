@@ -1,0 +1,9 @@
+name: TomeitoLib
+main: tk.rht0910.tomeito_core.TomeitoLibrary
+version: 1.0
+
+commands:
+   tlib:
+      description: Root command of TomeitoLib.
+      usage: /<command> [args]
+      permission: tomeitolib.info
