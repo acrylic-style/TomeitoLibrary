@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
  *
  */
 public class Log {
+	@SuppressWarnings("unused")
 	private static String[] classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 
 	public Log(String className) {
@@ -18,61 +19,100 @@ public class Log {
 	public static void info(String msg) {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".")[];
-		Bukkit.getLogger().info("[" + classn[classn.length] + "] " + msg);
-		Bukkit.getLogger().info("[" + classn[classn.length -1] + "] " + msg);
+		try {
+			Bukkit.getLogger().info("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void warning(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning("[" + classn + "] " + msg);
+		Bukkit.getLogger().warning("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void warn(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning("[" + classn + "] " + msg);
+		Bukkit.getLogger().warning("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void severe(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe("[" + classn + "] " + msg);
+		Bukkit.getLogger().severe("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void error(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe("[" + classn + "] " + msg);
+		Bukkit.getLogger().severe("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void config(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().config("[" + classn + "] " + msg);
+		Bukkit.getLogger().config("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void fine(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().fine("[" + classn + "] " + msg);
+		Bukkit.getLogger().fine("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void finer(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finer("[" + classn + "] " + msg);
+		Bukkit.getLogger().finer("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void finest(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finest("[" + classn + "] " + msg);
+		Bukkit.getLogger().finest("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void debug(String msg) {
+		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().info("[" + classn + "] [DEBUG] " + msg);
+		Bukkit.getLogger().info("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] [DEBUG] " + msg);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
