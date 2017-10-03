@@ -18,7 +18,8 @@ public class Log {
 	public static void info(String msg) {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".")[];
-		Bukkit.getLogger().info("[" + classn + "] " + msg);
+		Bukkit.getLogger().info("[" + classn[classn.length] + "] " + msg);
+		Bukkit.getLogger().info("[" + classn[classn.length -1] + "] " + msg);
 	}
 
 	public static void warning(String msg) {
