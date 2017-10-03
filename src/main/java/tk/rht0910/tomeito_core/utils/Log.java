@@ -9,43 +9,54 @@ import org.bukkit.Bukkit;
  *
  */
 public class Log {
+	public static String[] classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 	public static void info(String msg) {
-		Bukkit.getLogger().info("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().info("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void warning(String msg) {
-		Bukkit.getLogger().warning("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().warning("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void warn(String msg) {
-		Bukkit.getLogger().warning("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().warning("[" + classn[classn.length - 1] + "] " + msg);
 	}
 
 	public static void severe(String msg) {
-		Bukkit.getLogger().severe("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().severe("[" + classn[classn.length - 1] + "] " + msg);
 	}
 
 	public static void error(String msg) {
-		Bukkit.getLogger().severe("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().severe("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void config(String msg) {
-		Bukkit.getLogger().config("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().config("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void fine(String msg) {
-		Bukkit.getLogger().fine("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().fine("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void finer(String msg) {
-		Bukkit.getLogger().finer("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().finer("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void finest(String msg) {
-		Bukkit.getLogger().finest("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().finest("[" + classn[classn.length] + "] " + msg);
 	}
 
 	public static void debug(String msg) {
-		Bukkit.getLogger().info("[" + Thread.currentThread().getStackTrace()[2].getClassName() + "] [DEBUG] " + msg);
+		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+		Bukkit.getLogger().info("[" + classn[classn.length] + "] [DEBUG] " + msg);
 	}
 }
