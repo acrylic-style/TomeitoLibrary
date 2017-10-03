@@ -5,7 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import tk.rht0910.tomeito_core.utils.Log;
 
-public class TomeitoLibrary extends JavaPlugin implements Listener {
+public class TomeitoLib extends JavaPlugin implements Listener {
 	@Override
 	public void onLoad() {
 
