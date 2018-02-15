@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>tk.rht0910.tomeito_core</groupId>
-  <artifactId>TomeitoLibrary</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>tomeito-lib</artifactId>
+  <version>0.0.1</version>
   <name>TomeitoLib</name>
      <build>
    <plugins>
@@ -17,6 +17,17 @@
    </plugins>
  </build>
   <repositories>
+            <repository>
+            <id>tomeito-lib</id>
+            <name>tomeito-lib Repository</name>
+            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -47,4 +58,19 @@
 <scope>provided</scope>
 </dependency>
  </dependencies>
+       <pluginRepositories>
+        <pluginRepository>
+            <id>tomeito-lib</id>
+            <name>tomeito-lib Repo</name>
+            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>tomeito-lib</id>
+            <name>tomeito-lib Repo</name>
+            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+        </repository>
+    </distributionManagement>
  </project>
