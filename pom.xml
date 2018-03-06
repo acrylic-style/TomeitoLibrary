@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>tk.rht0910.tomeito_core</groupId>
   <artifactId>tomeito-lib</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.1</version>
   <name>TomeitoLib</name>
      <build>
    <plugins>
@@ -17,10 +17,21 @@
    </plugins>
  </build>
   <repositories>
+      <repository>
+        <id>rht0910-central</id>
+        <name>rht0910's maven central[proxy]</name>
+        <url>https://repo.rht0910.tk/repository/maven-central/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
             <repository>
             <id>tomeito-lib</id>
             <name>tomeito-lib Repository</name>
-            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+            <url>https://repo.rht0910.tk:8081/repository/tomeito-lib/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

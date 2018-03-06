@@ -1,6 +1,7 @@
 package tk.rht0910.tomeito_core.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 /**
  *
@@ -11,16 +12,13 @@ import org.bukkit.Bukkit;
 public class Log {
 	@SuppressWarnings("unused")
 	private static String[] classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
-
-	public Log(String className) {
-		//classn = className;
-	}
+	public static ChatColor color = ChatColor.RESET;
 
 	public static void info(String msg) {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".")[];
 		try {
-			Bukkit.getLogger().info("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+			Bukkit.getLogger().info(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -30,7 +28,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().warning(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -40,7 +38,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().warning(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +48,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().severe(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -60,7 +58,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().severe(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -70,7 +68,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().config("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().config(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +78,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().fine("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().fine(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +88,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finer("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().finer(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +98,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finest("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + msg);
+		Bukkit.getLogger().finest(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -110,7 +108,7 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().info("[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] [DEBUG] " + msg);
+		Bukkit.getLogger().info(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] [DEBUG] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
