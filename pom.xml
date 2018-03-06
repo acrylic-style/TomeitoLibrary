@@ -31,7 +31,7 @@
             <repository>
             <id>tomeito-lib</id>
             <name>tomeito-lib Repository</name>
-            <url>https://repo.rht0910.tk:8081/repository/tomeito-lib/</url>
+            <url>https://repo.rht0910.tk/repository/tomeito-lib/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -73,7 +73,7 @@
         <pluginRepository>
             <id>tomeito-lib</id>
             <name>tomeito-lib Repo</name>
-            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+            <url>https://repo.rht0910.tk/repository/tomeito-lib/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -81,7 +81,7 @@
         <repository>
             <id>tomeito-lib</id>
             <name>tomeito-lib Repo</name>
-            <url>http://local4.point.rht0910.tk:8081/repository/tomeito-lib/</url>
+            <url>https://repo.rht0910.tk/repository/tomeito-lib/</url>
         </repository>
     </distributionManagement>
  </project>
