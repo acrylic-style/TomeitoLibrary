@@ -1,4 +1,4 @@
-package tk.rht0910.tomeito_core.exception;
+package xyz.acrylicstyle.tomeito_core.exception;
 
 public class DebugException extends Exception {
 	public DebugException() {

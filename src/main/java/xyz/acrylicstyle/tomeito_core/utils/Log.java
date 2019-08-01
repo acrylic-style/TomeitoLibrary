@@ -1,4 +1,4 @@
-package tk.rht0910.tomeito_core.utils;
+package xyz.acrylicstyle.tomeito_core.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
