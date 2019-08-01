@@ -1,5 +1,5 @@
 name: TomeitoLib
-main: tk.rht0910.tomeito_core.TomeitoLib
+main: xyz.acrylicstyle.tomeito_core.TomeitoLib
 version: 1.0
 
 commands:
