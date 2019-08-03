@@ -18,7 +18,9 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".")[];
 		try {
-			Bukkit.getLogger().info(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+			String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+			if (name == "" || name == null) name = "Anonymous";
+			Bukkit.getLogger().info("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -28,7 +30,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().warning("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -38,7 +42,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().warning(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().warning("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -48,7 +54,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().severe("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +66,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().severe(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().severe("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -68,7 +78,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().config(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().config("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -78,7 +90,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().fine(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().fine("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +102,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finer(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().finer("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +114,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().finest(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().finest("[" + name + "] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -108,7 +126,9 @@ public class Log {
 		try {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
-		Bukkit.getLogger().info(color + "[" + Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName() + "] [DEBUG] " + ChatColor.RESET + msg);
+		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+		if (name == "" || name == null) name = "Anonymous";
+		Bukkit.getLogger().info("[" + name + "] [DEBUG] " + ChatColor.RESET + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
