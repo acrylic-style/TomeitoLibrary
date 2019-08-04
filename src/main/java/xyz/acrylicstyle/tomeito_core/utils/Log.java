@@ -19,8 +19,8 @@ public class Log {
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".")[];
 		try {
 			String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-			if (name == "" || name == null) name = "Anonymous";
-			Bukkit.getLogger().info("[" + name + "] " + ChatColor.RESET + msg);
+			if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+			Bukkit.getLogger().info("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -31,8 +31,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().warning("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().warning("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -43,8 +43,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().warning("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().warning("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -55,8 +55,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().severe("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().severe("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -67,8 +67,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().severe("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().severe("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -79,8 +79,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().config("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().config("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -91,8 +91,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().fine("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().fine("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -103,8 +103,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().finer("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().finer("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -115,8 +115,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().finest("[" + name + "] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().finest("[" + name + "] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -127,8 +127,8 @@ public class Log {
 		classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 		//classn = Thread.currentThread().getStackTrace()[2].getClassName();
 		String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
-		if (name == "" || name == null) name = "Anonymous";
-		Bukkit.getLogger().info("[" + name + "] [DEBUG] " + ChatColor.RESET + msg);
+		if (name.equalsIgnoreCase("") || name == null) name = "Anonymous";
+		Bukkit.getLogger().info("[" + name + "] [DEBUG] " + msg);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
