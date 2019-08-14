@@ -17,6 +17,7 @@ public class ConfigProvider extends YamlConfiguration {
 	public ConfigProvider(String path) throws FileNotFoundException, IOException, InvalidConfigurationException {
 		this.path = path;
 		this.file = new File(this.path);
+		this.file.mkdirs();
 		if (!this.file.exists()) this.file.createNewFile();
 		this.load(this.file);
 	}
