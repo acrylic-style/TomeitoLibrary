@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.acrylicstyle.tomeito_core.providers.LanguageProvider;
 
@@ -56,5 +57,25 @@ public class Lang {
 		LanguageProvider lang = this.languages.get(language);
 		if (lang == null) throw new IllegalStateException("Specified language was found, but value is not defined");
 		return lang;
+	}
+
+	/**
+	 * Copy resource to plugin folder.<br>
+	 * It will always replace existing file.
+	 * @param plugin A plugin that wants to copy resource to.
+	 * @param file File name
+	 */
+	public <T extends JavaPlugin> void saveResource(T plugin, String file) {
+		saveResource(plugin, file, true);
+	}
+
+	/**
+	 * Copy resource to plugin folder.
+	 * @param plugin A plugin that wants to copy resource to.
+	 * @param file File name
+	 * @param replace Replace existing file or not
+	 */
+	public <T extends JavaPlugin> void saveResource(T plugin, String file, boolean replace) {
+		T.getPlugin(plugin.getClass()).saveResource(file, replace);
 	}
 }
