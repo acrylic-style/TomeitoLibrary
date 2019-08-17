@@ -49,7 +49,7 @@ public class Lang {
 	/**
 	 * Get defined LanguageProvider with specified language.
 	 * @throws IllegalArgumentException When specified language is not defined
-	 * @throws IlleggalStateException When specified language was found but value is not defined
+	 * @throws IllegalStateException When specified language was found but value is not defined
 	 * @param language A language that you want to get LanguageProvider
 	 * @return LanguageProvider that initialized by {@link #addLanguage(String)}
 	 */
