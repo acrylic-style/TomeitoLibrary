@@ -65,7 +65,7 @@ public class Lang {
 	 * @param plugin A plugin that wants to copy resource to.
 	 * @param file File name
 	 */
-	public <T extends JavaPlugin> void saveResource(T plugin, String file) {
+	public static <T extends JavaPlugin> void saveResource(T plugin, String file) {
 		saveResource(plugin, file, true);
 	}
 
@@ -75,7 +75,7 @@ public class Lang {
 	 * @param file File name
 	 * @param replace Replace existing file or not
 	 */
-	public <T extends JavaPlugin> void saveResource(T plugin, String file, boolean replace) {
+	public static <T extends JavaPlugin> void saveResource(T plugin, String file, boolean replace) {
 		T.getPlugin(plugin.getClass()).saveResource(file, replace);
 	}
 }
