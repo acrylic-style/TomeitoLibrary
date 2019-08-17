@@ -15,11 +15,18 @@ public class ConfigProvider extends YamlConfiguration {
 	public final String path;
 
 	public ConfigProvider(String path) throws FileNotFoundException, IOException, InvalidConfigurationException {
+		this(path, false);
+	}
+
+	public ConfigProvider(String path, boolean disableConstructor) throws IOException, InvalidConfigurationException {
+		if (disableConstructor) throw new UnsupportedOperationException();
 		this.path = path;
 		this.file = new File(this.path);
-		this.file.mkdirs(); // creates directory(ies) including file name
-		this.file.delete(); // deletes file but not parent directory
-		if (!this.file.exists()) this.file.createNewFile();
+		if (!this.file.exists()) { // for avoid some dangerous situation
+			this.file.mkdirs(); // creates directory(ies) including file nameW
+			this.file.delete(); // deletes file but not parent directory
+			this.file.createNewFile();
+		}
 		this.load(this.file);
 	}
 
@@ -37,37 +44,28 @@ public class ConfigProvider extends YamlConfiguration {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked") // for cast to correct type
 	public static Map<String, Object> getConfigSectionValue(Object o, boolean deep) {
-
-		if (o == null) {
-			return null;
-		}
+		if (o == null) return null;
 		Map<String, Object> map;
 		if (o instanceof ConfigurationSection) {
 			map = ((ConfigurationSection) o).getValues(deep);
 		} else if (o instanceof Map) {
 			map = (Map<String, Object>) o;
-		} else {
-			return null;
-		}
+		} else return null;
 		return map;
 	}
 
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getConfigSectionValue(String path, boolean deep) {
 		Object o = this.get(path, new HashMap<String, Object>());
-		if (o == null) {
-			return null;
-		}
+		if (o == null) return null;
 		Map<String, Object> map;
 		if (o instanceof ConfigurationSection) {
 			map = ((ConfigurationSection) o).getValues(deep);
 		} else if (o instanceof Map) {
 			map = (Map<String, Object>) o;
-		} else {
-			return null;
-		}
+		} else return null;
 		return map;
 	}
 
