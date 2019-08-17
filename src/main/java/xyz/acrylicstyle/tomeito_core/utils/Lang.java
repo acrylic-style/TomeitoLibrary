@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -67,6 +68,10 @@ public class Lang {
 	 */
 	public static <T extends JavaPlugin> void saveResource(T plugin, String file) {
 		saveResource(plugin, file, true);
+	}
+
+	public static String format(String format, Object... args) {
+		return String.format(ChatColor.translateAlternateColorCodes('&', format), args);
 	}
 
 	/**
