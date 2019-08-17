@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_core.providers;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 public final class LanguageProvider extends ConfigProvider {
@@ -15,11 +16,11 @@ public final class LanguageProvider extends ConfigProvider {
 	}
 
 	public String get(String path, String def) {
-		return super.getString(path, def);
+		return ChatColor.translateAlternateColorCodes('&', super.getString(path, def));
 	}
 
 	public String get(String path) {
-		return super.getString(path);
+		return ChatColor.translateAlternateColorCodes('&', super.getString(path));
 	}
 
 	public String getVersion() {
