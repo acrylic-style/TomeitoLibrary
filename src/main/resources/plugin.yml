@@ -3,7 +3,8 @@ main: xyz.acrylicstyle.tomeito_core.TomeitoLib
 version: 1.0
 
 commands:
-   tlib:
-      description: Root command of TomeitoLib.
-      usage: /<command> [args]
-      permission: tomeitolib.info
+  tlib:
+    description: Root command of TomeitoLib.
+    usage: /<command> [args]
+    permission: tomeitolib.info
+    aliases: ["tl","tomeitolib","tomeitol"]
