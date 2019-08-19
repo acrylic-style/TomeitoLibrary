@@ -29,8 +29,15 @@ public class TomeitoLib extends JavaPlugin implements Listener {
 	public final class TomeitoCommand implements CommandExecutor {
 		@Override
 		public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-			if (args[0].equalsIgnoreCase("debug")) {
-				Debug.run(sender, args);
+			if (args.length != 0) {
+				if (args[0].equalsIgnoreCase("debug")) {
+					Debug.run(sender, args);
+				} else {
+					sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
+					sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
+					sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
+					sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
+				}
 			} else {
 				sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
 				sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
