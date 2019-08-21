@@ -2,7 +2,7 @@ package xyz.acrylicstyle.tomeito_core;
 
 import org.junit.Test;
 
-import xyz.acrylicstyle.tomeito_core.utils.ReflectionUtil;
+import xyz.acrylicstyle.tomeito_core.utils.TypeUtil;
 
 public class UtilTest {
 	private final static String not = "Not anything";
@@ -18,52 +18,52 @@ public class UtilTest {
 
 	@Test
 	public void isInt() {
-		if (!ReflectionUtil.isInt(itsInt)) throwNFE();
+		if (!TypeUtil.isInt(itsInt)) throwNFE();
 	}
 
 	@Test(expected=NumberFormatException.class)
 	public void isntIntItsDouble() {
-		if (!ReflectionUtil.isInt(itsDouble)) throwNFE();
+		if (!TypeUtil.isInt(itsDouble)) throwNFE();
 	}
 
 	@Test(expected=NumberFormatException.class)
 	public void isntInt() {
-		if (!ReflectionUtil.isInt(not)) throwNFE();
+		if (!TypeUtil.isInt(not)) throwNFE();
 	}
 
 	@Test
 	public void isDouble() {
-		if (!ReflectionUtil.isDouble(itsDouble)) throwNFE();
+		if (!TypeUtil.isDouble(itsDouble)) throwNFE();
 	}
 
 	@Test
 	public void isDoubleButInt() {
-		if (!ReflectionUtil.isDouble(itsInt)) throwNFE();
+		if (!TypeUtil.isDouble(itsInt)) throwNFE();
 	}
 
 	@Test(expected=NumberFormatException.class)
 	public void isntDouble() {
-		if (!ReflectionUtil.isDouble(not)) throwNFE();
+		if (!TypeUtil.isDouble(not)) throwNFE();
 	}
 
 	@Test
 	public void parseBoolean() throws Exception {
-		ReflectionUtil.parseBoolean(sTrue);
-		ReflectionUtil.parseBoolean(sFalse);
+		TypeUtil.parseBoolean(sTrue);
+		TypeUtil.parseBoolean(sFalse);
 	}
 
 	@Test(expected=Exception.class)
 	public void parseBooleanButNot() throws Exception {
-		ReflectionUtil.parseBoolean(not);
+		TypeUtil.parseBoolean(not);
 	}
 
 	@Test
 	public void parseFloat() {
-		if (!ReflectionUtil.isDouble(itsFloat)) throwNFE();
+		if (!TypeUtil.isDouble(itsFloat)) throwNFE();
 	}
 
 	@Test(expected=NumberFormatException.class)
 	public void parseFloatButNot() {
-		if (!ReflectionUtil.isDouble(not)) throwNFE();
+		if (!TypeUtil.isDouble(not)) throwNFE();
 	}
 }

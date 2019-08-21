@@ -8,7 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import xyz.acrylicstyle.tomeito_core.utils.ArrayUtil;
 import xyz.acrylicstyle.tomeito_core.utils.ReflectionUtil;
+import xyz.acrylicstyle.tomeito_core.utils.TypeUtil;
 
 public class Debug {
 	public static boolean run(CommandSender sender, String[] args) {
@@ -27,13 +29,13 @@ public class Debug {
 			for (int i = 1; i < args.length; i++) {
 				if (!did) did = true; else return true;
 				Class<?> clazz = Class.forName(args[1]);
-				if (ReflectionUtil.includes(args, "=")) {
+				if (ArrayUtil.includes(args, "=")) {
 					// set field, example: /tlib debug xyz.acrylicstyle.zombieescape.ZombieEscape gameStarted = true
 					// args[1] -> Class
 					// args[2] -> Field
 					// args[3] -> =
 					// args[4] -> value
-					if (args.length != (ReflectionUtil.indexOf(args, "=")+2)) throw new IllegalArgumentException("Missing 1 argument after =");
+					if (args.length != (ArrayUtil.indexOf(args, "=")+2)) throw new IllegalArgumentException("Missing 1 argument after =");
 					Field field = clazz.getDeclaredField(args[2]);
 					field.setAccessible(true);
 					Object clazzz = null;
@@ -43,23 +45,23 @@ public class Debug {
 					} catch (Exception e) {
 						clazzz = clazz;
 					}
-					String s = args[ReflectionUtil.indexOf(args, "=")+1];
-					if (ReflectionUtil.isInt(s)) {
+					String s = args[ArrayUtil.indexOf(args, "=")+1];
+					if (TypeUtil.isInt(s)) {
 						field.setInt(clazzz, Integer.parseInt(s));
-					} else if (ReflectionUtil.isBoolean(s)) {
+					} else if (TypeUtil.isBoolean(s)) {
 						field.setBoolean(clazzz, Boolean.parseBoolean(s));
-					} else if (ReflectionUtil.isDouble(s)) {
+					} else if (TypeUtil.isDouble(s)) {
 						field.setDouble(clazzz, Double.parseDouble(s));
-					} else if (ReflectionUtil.isFloat(s)) {
+					} else if (TypeUtil.isFloat(s)) {
 						field.setFloat(clazzz, Float.parseFloat(s));
 					} else if (s.equalsIgnoreCase("null")) {
 						field.set(clazzz, null);
 					} else {
 						field.set(clazzz, s);
 					}
-					sender.sendMessage(ChatColor.GREEN + "Field[" + Modifier.toString(field.getModifiers()) + "] " + args[ReflectionUtil.indexOf(args, "=")-1] + " has been set to:");
+					sender.sendMessage(ChatColor.GREEN + "Field[" + Modifier.toString(field.getModifiers()) + "] " + args[ArrayUtil.indexOf(args, "=")-1] + " has been set to:");
 					sender.sendMessage(ChatColor.GREEN + "" + field.get(clazzz));
-				} else if (ReflectionUtil.includes(args, "(") && ReflectionUtil.includes(args, ")")) {
+				} else if (ArrayUtil.includes(args, "(") && ArrayUtil.includes(args, ")")) {
 					// invoke method, example: /tlib debug xyz.acrylicstyle.zombieescape.ReflectionUtil.ReflectionUtil isInt ( 123 )
 					// args[1] -> Class
 					// args[2] -> Method
@@ -67,20 +69,20 @@ public class Debug {
 					// args[4] -> argument or )
 					// args[5] -> argument or )
 					// args[6] -> ) if args[5] was argument
-					if (ReflectionUtil.indexOf(args, ")") == ReflectionUtil.indexOf(args, "(")+1) { // /tlib debug ... ( )
+					if (ArrayUtil.indexOf(args, ")") == ArrayUtil.indexOf(args, "(")+1) { // /tlib debug ... ( )
 						Method method = clazz.getMethod(args[2]);
 						Object result = method.invoke(clazz);
 						sender.sendMessage(ChatColor.GREEN + "Result(" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
 						sender.sendMessage(ChatColor.GREEN + "" + result);
-					} else if (ReflectionUtil.indexOf(args, ")") == ReflectionUtil.indexOf(args, "(")+2) { // /tlib debug ... ( 1 )
+					} else if (ArrayUtil.indexOf(args, ")") == ArrayUtil.indexOf(args, "(")+2) { // /tlib debug ... ( 1 )
 						Object result = ReflectionUtil.invokeMethodWithType(clazz, args[2], args[4]);
 						sender.sendMessage(ChatColor.GREEN + "Result(" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
-					} else if (ReflectionUtil.indexOf(args, ")") == ReflectionUtil.indexOf(args, "(")+3) { // /tlib debug ... ( 1 2 )
+					} else if (ArrayUtil.indexOf(args, ")") == ArrayUtil.indexOf(args, "(")+3) { // /tlib debug ... ( 1 2 )
 						Object result = ReflectionUtil.invokeMethodWithType(clazz, args[2], args[4], args[5]);
 						sender.sendMessage(ChatColor.GREEN + "Result(" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
 						sender.sendMessage(ChatColor.GREEN + "" + result);
 					}
-				} else if (ReflectionUtil.includes(args, "()")) { // /tlib debug ... ()
+				} else if (ArrayUtil.includes(args, "()")) { // /tlib debug ... ()
 					Method method = clazz.getDeclaredMethod(args[2]);
 					method.setAccessible(true);
 					Object clazzz = null;
