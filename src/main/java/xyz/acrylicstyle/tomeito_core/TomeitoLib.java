@@ -29,7 +29,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
 		Log.info("Disabled TomeitoLib");
 	}
 
-	public final class TomeitoCommand implements CommandExecutor {
+	private static final class TomeitoCommand implements CommandExecutor {
 		@Override
 		public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 			if (args.length != 0) {

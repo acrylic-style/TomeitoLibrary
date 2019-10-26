@@ -1,6 +1,8 @@
 package xyz.acrylicstyle.tomeito_core.connection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import util.CollectionList;
 import util.CollectionStrictSync;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 import xyz.acrylicstyle.tomeito_core.utils.Callback;
@@ -9,6 +11,7 @@ import java.io.*;
 
 public class PluginChannelListener implements PluginMessageListener {
     private static CollectionStrictSync<String, Callback<String>> callbacks = new CollectionStrictSync<>();
+    private static CollectionList<String> registeredListeners = new CollectionList<>();
 
     @Override
     public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
@@ -25,6 +28,11 @@ public class PluginChannelListener implements PluginMessageListener {
     }
 
     public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String s, Callback<String> callback) {
+        if (!registeredListeners.contains(s)) {
+            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoLib.getPlugin(TomeitoLib.class), s, new PluginChannelListener());
+            Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoLib.getPlugin(TomeitoLib.class), s);
+            registeredListeners.add(s);
+        }
         sendToBungeeCord(p, subchannel, message, s);
         callbacks.put(p.getUniqueId().toString(), callback);
     }
