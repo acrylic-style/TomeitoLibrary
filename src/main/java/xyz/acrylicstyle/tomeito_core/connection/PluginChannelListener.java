@@ -29,7 +29,7 @@ public class PluginChannelListener implements PluginMessageListener {
 
     public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String s, Callback<String> callback) {
         if (!registeredListeners.contains(s)) {
-            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoLib.getPlugin(TomeitoLib.class), s, new PluginChannelListener());
+            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoLib.getPlugin(TomeitoLib.class), s, TomeitoLib.pcl);
             Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoLib.getPlugin(TomeitoLib.class), s);
             registeredListeners.add(s);
         }
