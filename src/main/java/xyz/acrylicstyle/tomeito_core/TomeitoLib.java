@@ -9,14 +9,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.acrylicstyle.tomeito_core.commands.Debug;
+import xyz.acrylicstyle.tomeito_core.connection.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 
 public class TomeitoLib extends JavaPlugin implements Listener {
 	public final static String version = "1.0.0";
+	public static PluginChannelListener pcl = null;
 
 	@Override
 	public void onEnable() {
+		pcl = new PluginChannelListener();
 		Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
 		Log.info("Enabled TomeitoLib");
 	}
