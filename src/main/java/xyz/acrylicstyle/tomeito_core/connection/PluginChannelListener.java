@@ -19,11 +19,11 @@ public class PluginChannelListener implements PluginMessageListener {
     public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
-            in.readUTF();
+            String subchannel = in.readUTF();
             String input = in.readUTF(); // message
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             lastTag = tag;
-            callbacks2.get(player.getUniqueId().toString()).done(input, null);
+            callbacks2.get(subchannel).done(input, null);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
