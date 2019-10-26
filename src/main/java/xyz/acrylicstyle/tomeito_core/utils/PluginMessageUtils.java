@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
 public class PluginMessageUtils {
-    static void getRank(Player player, Callback<Ranks> callback) {
+    public static void getRank(Player player, Callback<Ranks> callback) {
         TomeitoLib.pcl.get(player, player.getUniqueId().toString(), "", "dtc:rank", new Callback<String>() { // message isn't used
             @Override
             public void done(String rank, Throwable e) {
