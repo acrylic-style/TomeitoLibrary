@@ -12,6 +12,8 @@ import java.io.*;
 public class PluginChannelListener implements PluginMessageListener {
     private static CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
     private static CollectionList<String> registeredListeners = new CollectionList<>();
+    @SuppressWarnings("unused")
+    private String lastTag = null; // for debug
 
     @Override
     public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
@@ -20,6 +22,7 @@ public class PluginChannelListener implements PluginMessageListener {
             in.readUTF();
             String input = in.readUTF(); // message
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
+            lastTag = tag;
             callbacks2.get(player.getUniqueId().toString()).done(input, null);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
