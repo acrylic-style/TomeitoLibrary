@@ -27,6 +27,7 @@ public class PluginChannelListener implements PluginMessageListener {
             callbacks2.remove(subchannel);
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
+            e.printStackTrace();
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
