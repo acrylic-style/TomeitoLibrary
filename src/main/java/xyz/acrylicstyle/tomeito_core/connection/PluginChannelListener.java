@@ -13,8 +13,6 @@ import java.io.*;
 public class PluginChannelListener implements PluginMessageListener {
     private static CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
     private static CollectionList<String> registeredListeners = new CollectionList<>();
-    @SuppressWarnings("unused")
-    private String lastTag = null; // for debug
 
     @Override
     public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
@@ -22,12 +20,11 @@ public class PluginChannelListener implements PluginMessageListener {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subchannel = in.readUTF();
             String input = in.readUTF(); // message
-            //Log.debug("Received plugin message!");
-            //Log.debug("Tag: " + tag);
-            //Log.debug("Subchannel: " + subchannel);
-            //Log.debug("Input: " + input);
+            Log.debug("Received plugin message!");
+            Log.debug("Tag: " + tag);
+            Log.debug("Subchannel: " + subchannel);
+            Log.debug("Input: " + input);
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
-            lastTag = tag;
             callbacks2.get(subchannel).done(input, null);
             callbacks2.remove(subchannel);
             callbacks.put(tag, callbacks2);
@@ -35,7 +32,6 @@ public class PluginChannelListener implements PluginMessageListener {
             Log.error("Error when received plugin message");
             Log.debug("Tag: " + tag);
             e.printStackTrace();
-            lastTag = tag;
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
