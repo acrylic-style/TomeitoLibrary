@@ -6,7 +6,6 @@ import util.CollectionList;
 import util.CollectionStrictSync;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 import xyz.acrylicstyle.tomeito_core.utils.Callback;
-import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.io.*;
 
@@ -20,18 +19,17 @@ public class PluginChannelListener implements PluginMessageListener {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subchannel = in.readUTF();
             String input = in.readUTF(); // message
+            /*
             Log.debug("Received plugin message!");
             Log.debug("Tag: " + tag);
             Log.debug("Subchannel: " + subchannel);
             Log.debug("Input: " + input);
+            */
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             callbacks2.get(subchannel).done(input, null);
             callbacks2.remove(subchannel);
             callbacks.put(tag, callbacks2);
-        } catch (IOException e) {
-            Log.error("Error when received plugin message");
-            Log.debug("Tag: " + tag);
-            e.printStackTrace();
+        } catch (Exception e) {
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
