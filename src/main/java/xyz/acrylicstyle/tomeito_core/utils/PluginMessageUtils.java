@@ -30,5 +30,19 @@ public class PluginMessageUtils {
             }
         });
     }
+
+    public static void get(Player player, String message, String subchannel, String s, Callback<String> callback) {
+        TomeitoLib.pcl.get(player, subchannel, message, s, new Callback<String>() { // message isn't used
+            @Override
+            public void done(String s, Throwable e) {
+                if (s == null && e != null) { // it shouldn't happen... if happened, check the proxy log
+                    NullPointerException npe = new NullPointerException();
+                    npe.initCause(e);
+                    throw npe;
+                }
+                callback.done(s, null);
+            }
+        });
+    }
 }
 

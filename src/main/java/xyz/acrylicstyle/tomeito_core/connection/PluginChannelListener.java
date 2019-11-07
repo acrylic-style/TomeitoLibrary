@@ -22,10 +22,10 @@ public class PluginChannelListener implements PluginMessageListener {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subchannel = in.readUTF();
             String input = in.readUTF(); // message
-            Log.debug("Received plugin message!");
-            Log.debug("Tag: " + tag);
-            Log.debug("Subchannel: " + subchannel);
-            Log.debug("Input: " + input);
+            //Log.debug("Received plugin message!");
+            //Log.debug("Tag: " + tag);
+            //Log.debug("Subchannel: " + subchannel);
+            //Log.debug("Input: " + input);
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             lastTag = tag;
             callbacks2.get(subchannel).done(input, null);
@@ -33,6 +33,7 @@ public class PluginChannelListener implements PluginMessageListener {
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
             Log.error("Error when received plugin message");
+            Log.debug("Tag: " + tag);
             e.printStackTrace();
             lastTag = tag;
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
@@ -51,7 +52,7 @@ public class PluginChannelListener implements PluginMessageListener {
             callbacks.put(s, new CollectionStrictSync<>());
         }
         CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(s);
-        callbacks2.put(p.getUniqueId().toString(), callback);
+        callbacks2.put(subchannel, callback);
         callbacks.put(s, callbacks2);
         sendToBungeeCord(p, subchannel, message, s);
     }
