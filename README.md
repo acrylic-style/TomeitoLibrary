@@ -13,7 +13,7 @@ Library of some my bukkit plugins.
   <dependency>
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>tomeito_core</artifactId>
-    <version>15</version> # Specify version number because it could change breaking behavior at anytime!
+    <version>52</version> # Specify version number because it could change breaking behavior at anytime!
   </dependency>
 </dependencies>
 ```
