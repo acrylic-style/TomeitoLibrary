@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.acrylicstyle.tomeito_core.commands.Debug;
+import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.connection.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
@@ -35,19 +36,19 @@ public class TomeitoLib extends JavaPlugin implements Listener {
 			if (args.length != 0) {
 				if (args[0].equalsIgnoreCase("debug")) {
 					Debug.run(sender, args);
-				} else {
-					sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-					sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
-					sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
-					sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-				}
-			} else {
-				sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-				sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
-				sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
-				sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-			}
+				} else if (args[0].equalsIgnoreCase("debug-groovy")) {
+					DebugGroovy.run(sender, args);
+				} else sendHelp(sender);
+			} else sendHelp(sender);
 			return true;
+		}
+
+		private void sendHelp(CommandSender sender) {
+			sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
+			sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
+			sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
+			sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-groovy - Useful for debug. " + ChatColor.RED + "(Testing)");
+			sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
 		}
 	}
 }

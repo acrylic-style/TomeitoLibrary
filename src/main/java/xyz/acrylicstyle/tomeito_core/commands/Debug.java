@@ -13,21 +13,21 @@ import xyz.acrylicstyle.tomeito_core.utils.ReflectionUtil;
 import xyz.acrylicstyle.tomeito_core.utils.TypeUtil;
 
 public class Debug {
-	public static boolean run(CommandSender sender, String[] args) {
+	public static void run(CommandSender sender, String[] args) {
 		if (!sender.hasPermission("*") || !sender.isOp()) {
 			sender.sendMessage(ChatColor.RED + "Sorry but you don't have enough permission.");
-			return true;
+			return;
 		}
 		if (args.length <= 2) {
 			sender.sendMessage(ChatColor.RED + "Usage:");
 			sender.sendMessage(ChatColor.RED + "/tomeitolib debug <Class> <Field> [= [Value]] - Get / Set field.");
 			sender.sendMessage(ChatColor.RED + "/tomeitolib debug <Class> <Method> ( [[arg1] [arg2]] ) - Invoke method with args.");
-			return true;
+			return;
 		}
 		try {
 			boolean did = false;
 			for (int i = 1; i < args.length; i++) {
-				if (!did) did = true; else return true;
+				if (!did) did = true; else return;
 				Class<?> clazz = Class.forName(args[1]);
 				if (ArrayUtil.includes(args, "=")) {
 					// set field, example: /tlib debug xyz.acrylicstyle.zombieescape.ZombieEscape gameStarted = true
@@ -128,6 +128,5 @@ public class Debug {
 				sender.sendMessage(ChatColor.RED + "    " + st.toString());
 			}
 		}
-		return true;
 	}
 }
