@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_core.commands;
 import groovy.util.Eval;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.lang.reflect.Modifier;
 
@@ -24,8 +25,10 @@ public class DebugGroovy {
             Object result = Eval.me(argsString);
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
             sender.sendMessage(ChatColor.GREEN + "" + result);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             sender.sendMessage(ChatColor.RED + "An error occurred: " + e);
+            Log.error("Error occurred on eval: ");
+            e.printStackTrace();
             for (StackTraceElement st : e.getStackTrace()) {
                 sender.sendMessage(ChatColor.RED + "    " + st.toString());
             }
