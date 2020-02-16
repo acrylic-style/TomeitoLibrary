@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_core.utils;
 import org.bukkit.entity.Player;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
+@SuppressWarnings("unused")
 public class PluginMessageUtils {
     public static void getRank(Player player, Callback<Ranks> callback) {
         TomeitoLib.pcl.get(player, player.getUniqueId().toString(), "", "dtc:rank", new Callback<String>() { // message isn't used

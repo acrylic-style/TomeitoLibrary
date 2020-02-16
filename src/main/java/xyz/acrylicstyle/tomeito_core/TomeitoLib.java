@@ -15,40 +15,40 @@ import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 
 public class TomeitoLib extends JavaPlugin implements Listener {
-	public final static String version = "1.0.0";
-	public static PluginChannelListener pcl = null;
+    public final static String version = "1.0.0";
+    public static PluginChannelListener pcl = null;
 
-	@Override
-	public void onEnable() {
-		pcl = new PluginChannelListener();
-		Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
-		Log.info("Enabled TomeitoLib");
-	}
+    @Override
+    public void onEnable() {
+        pcl = new PluginChannelListener();
+        Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
+        Log.info("Enabled TomeitoLib");
+    }
 
-	@Override
-	public void onDisable() {
-		Log.info("Disabled TomeitoLib");
-	}
+    @Override
+    public void onDisable() {
+        Log.info("Disabled TomeitoLib");
+    }
 
-	private static final class TomeitoCommand implements CommandExecutor {
-		@Override
-		public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-			if (args.length != 0) {
-				if (args[0].equalsIgnoreCase("debug")) {
-					Debug.run(sender, args);
-				} else if (args[0].equalsIgnoreCase("debug-groovy")) {
-					DebugGroovy.run(sender, args);
-				} else sendHelp(sender);
-			} else sendHelp(sender);
-			return true;
-		}
+    private static final class TomeitoCommand implements CommandExecutor {
+        @Override
+        public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+            if (args.length != 0) {
+                if (args[0].equalsIgnoreCase("debug")) {
+                    Debug.run(sender, args);
+                } else if (args[0].equalsIgnoreCase("debug-groovy")) {
+                    DebugGroovy.run(sender, args);
+                } else sendHelp(sender);
+            } else sendHelp(sender);
+            return true;
+        }
 
-		private void sendHelp(CommandSender sender) {
-			sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-			sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
-			sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
-			sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-groovy - Useful for debug. " + ChatColor.RED + "(Testing)");
-			sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
-		}
-	}
+        private void sendHelp(CommandSender sender) {
+            sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
+            sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-groovy - Useful for debug. " + ChatColor.RED + "(Testing)");
+            sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
+        }
+    }
 }

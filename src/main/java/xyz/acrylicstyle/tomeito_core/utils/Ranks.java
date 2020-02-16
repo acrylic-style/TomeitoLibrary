@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
 
+@SuppressWarnings("unused")
 public enum Ranks {
 	OWNER("[OWNER] ", "OWNER", ChatColor.RED, null, false, true, false),
 	ADMIN("[ADMIN] ", "ADMIN", ChatColor.RED, null, false, true, false),
@@ -61,7 +62,7 @@ public enum Ranks {
 		return this.name;
 	}
 
-	private Ranks(String prefix, String name, ChatColor defaultColor, ChatColor plusColor, boolean changeablePlusColor, boolean specialRank, boolean purchaseable) {
+	Ranks(String prefix, String name, ChatColor defaultColor, ChatColor plusColor, boolean changeablePlusColor, boolean specialRank, boolean purchaseable) {
 		this.prefix = prefix;
 		this.name = name;
 		this.defaultColor = defaultColor;

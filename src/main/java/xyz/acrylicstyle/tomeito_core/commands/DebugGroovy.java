@@ -1,6 +1,7 @@
 package xyz.acrylicstyle.tomeito_core.commands;
 
-import groovy.util.Eval;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
@@ -22,7 +23,7 @@ public class DebugGroovy {
         for (int i = 1; i < args.length; i++) argsSB.append(args[i]);
         String argsString = argsSB.toString();
         try {
-            Object result = Eval.me(argsString);
+            Object result = eval(argsString);
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
             sender.sendMessage(ChatColor.GREEN + "" + result);
         } catch (Throwable e) {
@@ -33,5 +34,12 @@ public class DebugGroovy {
                 sender.sendMessage(ChatColor.RED + "    " + st.toString());
             }
         }
+    }
+
+    private static Object eval(String expression) {
+        Binding b = new Binding();
+        b.setVariable(null, null);
+        GroovyShell sh = new GroovyShell(b);
+        return sh.evaluate(expression);
     }
 }
