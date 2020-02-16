@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import xyz.acrylicstyle.tomeito_core.commands.Debug;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.connection.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
@@ -35,7 +34,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
             if (args.length != 0) {
                 if (args[0].equalsIgnoreCase("debug")) {
-                    Debug.run(sender, args);
+                    DebugGroovy.run(sender, args);
                 } else if (args[0].equalsIgnoreCase("debug-groovy")) {
                     DebugGroovy.run(sender, args);
                 } else sendHelp(sender);
@@ -46,8 +45,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         private void sendHelp(CommandSender sender) {
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
             sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + version);
-            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug something but it's not complete debug tool.");
-            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-groovy - Useful for debug. " + ChatColor.RED + "(Testing)");
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug.");
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
         }
     }
