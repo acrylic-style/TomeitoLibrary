@@ -23,7 +23,7 @@ public class DebugGroovy {
         for (int i = 1; i < args.length; i++) argsSB.append(args[i]);
         String argsString = argsSB.toString();
         try {
-            Object result = eval(argsString);
+            Object result = eval(sender, args, argsString);
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
             sender.sendMessage(ChatColor.GREEN + "" + result);
         } catch (Throwable e) {
@@ -36,9 +36,12 @@ public class DebugGroovy {
         }
     }
 
-    private static Object eval(String expression) {
+    private static Object eval(CommandSender sender, String[] args, String expression) {
         Binding b = new Binding();
-        b.setVariable(null, null);
+        b.setVariable("sender", sender);
+        b.setVariable("args", args);
+        b.setProperty("sender", sender);
+        b.setProperty("args", args);
         GroovyShell sh = new GroovyShell(b);
         return sh.evaluate(expression);
     }
