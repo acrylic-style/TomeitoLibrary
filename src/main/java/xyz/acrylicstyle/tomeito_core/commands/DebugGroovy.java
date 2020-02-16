@@ -27,12 +27,8 @@ public class DebugGroovy {
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
             sender.sendMessage(ChatColor.GREEN + "" + result);
         } catch (Throwable e) {
-            sender.sendMessage(ChatColor.RED + "An error occurred: " + e);
+            sender.sendMessage(ChatColor.RED + "An error occurred: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             Log.error("Error occurred on eval: ");
-            e.printStackTrace();
-            for (StackTraceElement st : e.getStackTrace()) {
-                sender.sendMessage(ChatColor.RED + "    " + st.toString());
-            }
         }
     }
 
