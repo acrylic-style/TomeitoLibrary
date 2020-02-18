@@ -4,7 +4,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.lang.reflect.Modifier;
@@ -30,6 +29,7 @@ public class DebugGroovy {
         } catch (Throwable e) {
             sender.sendMessage(ChatColor.RED + "An error occurred: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             Log.error("Error occurred on eval: ");
+            e.printStackTrace();
         }
     }
 
