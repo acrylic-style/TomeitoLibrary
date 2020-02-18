@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -81,6 +82,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
 
     @SuppressWarnings("unused")
     public static TextComponent getItemTooltipMessage(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) return null;
         TextComponent text = new TextComponent();
         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{ new TextComponent(convertItemStackToJson(item)) }));
         return text;
