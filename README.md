@@ -9,17 +9,17 @@ Library of some my bukkit plugins.
     <url>https://ci.acrylicstyle.xyz/job/TomeitoLib/ws/</url>
   </repository>
 </repositories>
-</dependencies>
+<dependencies>
   <dependency>
     <groupId>xyz.acrylicstyle</groupId>
-    <artifactId>tomeito_core</artifactId>
-    <version>52</version> # Specify version number because it could change breaking behavior at anytime!
+    <artifactId>tomeito_lib</artifactId>
+    <version>version</version>
   </dependency>
 </dependencies>
 ```
 
 ## Using in Server
-[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/job/TomeitoLib/lastSuccessfulBuild/artifact/TomeitoLib.jar)
+[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/job/TomeitoLib/)
 
 ## Donate
-[If you really want to donate me or wanna see my motivation, donate me on patreon!](https://patreon.com/acrylicstyle) (well you don't have to do it but i'll glad if you actually donated me!)
+[If you really want to donate me, do so on patreon!](https://patreon.com/acrylicstyle) (well you don't have to do it but i'll glad if you actually donated me!)
