@@ -39,7 +39,6 @@ public class DebugGroovy {
         b.setVariable("args", args);
         b.setProperty("sender", sender);
         b.setProperty("args", args);
-        GroovyShell sh = new GroovyShell(b);
-        return sh.evaluate(expression);
+        return new GroovyShell(b).evaluate(expression);
     }
 }
