@@ -98,7 +98,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         registerCommands(rootCommandName, subCommandsPackage, (sender, command, label, args) -> true);
     }
 
-    private static StringCollection<CollectionList<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
+    private final static StringCollection<CollectionList<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
 
     /**
      * Registers command with sub commands.
@@ -108,9 +108,11 @@ public class TomeitoLib extends JavaPlugin implements Listener {
      */
     public static void registerCommands(@NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
         CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(instance.getClassLoader(), subCommandsPackage, Command.class);
+        Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
             try {
+                Log.debug("Registering sub command at " + rootCommandName + ": " + command.name());
                 SubCommandExecutor subCommandExecutor = (SubCommandExecutor) clazz.newInstance();
                 CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
                 commands.add(new AbstractMap.SimpleEntry<>(command, subCommandExecutor));
@@ -118,6 +120,9 @@ public class TomeitoLib extends JavaPlugin implements Listener {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
+        });
+        subCommands.forEach((s, l) -> {
+            Log.debug("Command " + s + " has " + l.size() + " sub commands");
         });
         registerCommand(rootCommandName, new CommandExecutor() {
             @Override
@@ -127,9 +132,8 @@ public class TomeitoLib extends JavaPlugin implements Listener {
                     $sendMessage(sender);
                     return true;
                 }
-                String commandName = command.getName();
-                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(commandName);
-                if (commands == null) throw new IllegalStateException("Root command isn't defined! (Tried to get " + commandName + ")");
+                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
+                if (commands == null) throw new IllegalStateException("Root command isn't defined! (Tried to get " + rootCommandName + ")");
                 CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> entries = commands.filter(e -> e.getKey().name().equals(args[0]));
                 if (entries.size() == 0) {
                     $sendMessage(sender);
