@@ -100,6 +100,12 @@ public class TomeitoLib extends JavaPlugin implements Listener {
 
     private static StringCollection<CollectionList<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
 
+    /**
+     * Registers command with sub commands.
+     * @param rootCommandName A root command name. Must be defined at plugin.yml.
+     * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated by SubCommand and must extend SubCommandExecutor.
+     * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command.
+     */
     public static void registerCommands(@NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
         CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(instance.getClassLoader(), subCommandsPackage, Command.class);
         classes.forEach(clazz -> {
@@ -116,7 +122,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         registerCommand(rootCommandName, new CommandExecutor() {
             @Override
             public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
-                postCommand.onCommand(sender, command, label, args);
+                if (!postCommand.onCommand(sender, command, label, args)) return true;
                 if (args.length == 0) {
                     $sendMessage(sender);
                     return true;
