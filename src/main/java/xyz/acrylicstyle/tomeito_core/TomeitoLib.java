@@ -31,6 +31,8 @@ import xyz.acrylicstyle.tomeito_core.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -110,11 +112,12 @@ public class TomeitoLib extends JavaPlugin implements Listener {
     public static void registerCommands(@NotNull JavaPlugin plugin, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
         ClassLoader cl;
         try {
-            Field field = plugin.getClass().getField("classLoader");
-            field.setAccessible(true);
-            cl = (ClassLoader) field.get(plugin);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            Method method = plugin.getClass().getMethod("getClassLoader");
+            method.setAccessible(true);
+            cl = (ClassLoader) method.invoke(plugin);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            cl = plugin.getClass().getClassLoader();
         }
         CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(cl, subCommandsPackage, Command.class);
         Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
@@ -130,9 +133,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
                 e.printStackTrace();
             }
         });
-        subCommands.forEach((s, l) -> {
-            Log.debug("Command " + s + " has " + l.size() + " sub commands");
-        });
+        subCommands.forEach((s, l) -> Log.debug("Command " + s + " has " + l.size() + " sub commands"));
         registerCommand(rootCommandName, new CommandExecutor() {
             @Override
             public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
