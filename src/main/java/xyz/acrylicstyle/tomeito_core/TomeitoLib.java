@@ -101,6 +101,10 @@ public class TomeitoLib extends JavaPlugin implements Listener {
     public static void registerCommands(@NotNull ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
         CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, Command.class);
         Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
+        registerCommands(rootCommandName, classes, postCommand);
+    }
+
+    public static void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @NotNull CommandExecutor postCommand) {
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
             try {
