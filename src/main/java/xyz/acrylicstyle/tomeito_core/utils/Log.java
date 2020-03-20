@@ -2,9 +2,8 @@ package xyz.acrylicstyle.tomeito_core.utils;
 
 import org.bukkit.Bukkit;
 
-@SuppressWarnings({"SpellCheckingInspection", "unused"})
+@SuppressWarnings({"SpellCheckingInspection", "unused", "DuplicatedCode"})
 public class Log {
-    @SuppressWarnings("unused")
     private static String[] classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
 
     public static void info(String msg) {
@@ -19,14 +18,17 @@ public class Log {
     }
 
     public static void warning(String msg) {
-        logWarning(msg);
+        try {
+            classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+            String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+            if (name.equalsIgnoreCase("")) name = "Anonymous";
+            Bukkit.getLogger().warning("[" + name + "] " + msg);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void warn(String msg) {
-        logWarning(msg);
-    }
-
-    private static void logWarning(String msg) {
         try {
             classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -38,10 +40,6 @@ public class Log {
     }
 
     public static void severe(String msg) {
-        logSevere(msg);
-    }
-
-    private static void logSevere(String msg) {
         try {
             classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -53,7 +51,14 @@ public class Log {
     }
 
     public static void error(String msg) {
-        logSevere(msg);
+        try {
+            classn = Thread.currentThread().getStackTrace()[2].getClassName().split(".");
+            String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+            if (name.equalsIgnoreCase("")) name = "Anonymous";
+            Bukkit.getLogger().severe("[" + name + "] " + msg);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void config(String msg) {
