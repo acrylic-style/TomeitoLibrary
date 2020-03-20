@@ -3,10 +3,7 @@ package xyz.acrylicstyle.tomeito_core;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -14,25 +11,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import util.CollectionList;
-import util.ICollectionList;
-import util.ReflectionHelper;
-import util.StringCollection;
+import org.jetbrains.annotations.*;
+import util.*;
 import xyz.acrylicstyle.craftbukkit.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
+import xyz.acrylicstyle.tomeito_core.command.Command;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.connection.PluginChannelListener;
-import xyz.acrylicstyle.tomeito_core.command.Command;
 import xyz.acrylicstyle.tomeito_core.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_core.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -112,9 +102,9 @@ public class TomeitoLib extends JavaPlugin implements Listener {
     public static void registerCommands(@NotNull JavaPlugin plugin, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
         ClassLoader cl;
         try {
-            Method method = plugin.getClass().getMethod("getClassLoader");
-            method.setAccessible(true);
-            cl = (ClassLoader) method.invoke(plugin);
+            Field field = JavaPlugin.class.getDeclaredField("classLoader");
+            field.setAccessible(true);
+            cl = (ClassLoader) field.get(plugin);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             cl = plugin.getClass().getClassLoader();
