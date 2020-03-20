@@ -30,6 +30,7 @@ import xyz.acrylicstyle.tomeito_core.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_core.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
+import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -94,8 +95,8 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         return text;
     }
 
-    public static void registerCommands(@NotNull final String rootCommandName, @NotNull final String subCommandsPackage) {
-        registerCommands(rootCommandName, subCommandsPackage, (sender, command, label, args) -> true);
+    public static void registerCommands(@NotNull JavaPlugin plugin, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage) {
+        registerCommands(plugin, rootCommandName, subCommandsPackage, (sender, command, label, args) -> true);
     }
 
     private final static StringCollection<CollectionList<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
@@ -106,8 +107,16 @@ public class TomeitoLib extends JavaPlugin implements Listener {
      * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated by SubCommand and must extend SubCommandExecutor.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command.
      */
-    public static void registerCommands(@NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
-        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(instance.getClassLoader(), subCommandsPackage, Command.class);
+    public static void registerCommands(@NotNull JavaPlugin plugin, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
+        ClassLoader cl;
+        try {
+            Field field = plugin.getClass().getField("classLoader");
+            field.setAccessible(true);
+            cl = (ClassLoader) field.get(plugin);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(cl, subCommandsPackage, Command.class);
         Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
