@@ -99,7 +99,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command.
      */
     public static void registerCommands(@NotNull ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
-        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, Command.class);
+        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
         Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
         registerCommands(rootCommandName, classes, postCommand);
     }
