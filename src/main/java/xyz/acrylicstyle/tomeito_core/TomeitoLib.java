@@ -24,6 +24,7 @@ import xyz.acrylicstyle.tomeito_core.utils.Log;
 
 import java.security.SecureRandom;
 import java.util.AbstractMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -90,7 +91,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
         registerCommands(classLoader, rootCommandName, subCommandsPackage, (sender, command, label, args) -> true);
     }
 
-    private final static StringCollection<CollectionList<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
+    private final static StringCollection<List<Map.Entry<SubCommand, SubCommandExecutor>>> subCommands = new StringCollection<>();
 
     /**
      * Registers command with sub commands.
@@ -105,13 +106,13 @@ public class TomeitoLib extends JavaPlugin implements Listener {
     }
 
     public static void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @NotNull CommandExecutor postCommand) {
+        final CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
             try {
-                Log.debug("Registering sub command at " + rootCommandName + ": " + command.name());
                 SubCommandExecutor subCommandExecutor = (SubCommandExecutor) clazz.newInstance();
-                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
-                commands.add(new AbstractMap.SimpleEntry<>(command, subCommandExecutor));
+                commands.add(new AbstractMap.SimpleImmutableEntry<>(command, subCommandExecutor));
+                Log.debug("Registered sub command at " + rootCommandName + ": " + command.name());
                 subCommands.add(rootCommandName, commands);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -126,27 +127,29 @@ public class TomeitoLib extends JavaPlugin implements Listener {
                     $sendMessage(sender);
                     return true;
                 }
-                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
+                List<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
                 if (commands == null) throw new IllegalStateException("Root command isn't defined! (Tried to get " + rootCommandName + ")");
-                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> entries = commands.filter(e -> e.getKey().name().equals(args[0]));
+                List<Map.Entry<SubCommand, SubCommandExecutor>> entries = ICollectionList.asList(commands).filter(e -> e.getKey().name().equals(args[0]));
                 if (entries.size() == 0) {
                     $sendMessage(sender);
                     return true;
                 }
                 CollectionList<String> argsList = ICollectionList.asList(args);
                 argsList.shift();
-                entries.map(Map.Entry::getValue).forEach(s -> s.onCommand(sender, argsList.toArray(new String[0])));
+                ICollectionList.asList(entries).map(Map.Entry::getValue).forEach(s -> s.onCommand(sender, argsList.toArray(new String[0])));
                 return true;
             }
 
+            @NotNull
+            @Contract(pure = true)
             public String getCommandHelp(String command, String description) {
                 return ChatColor.YELLOW + command + ChatColor.GRAY + " - " + ChatColor.AQUA + description;
             }
 
-            public void $sendMessage(CommandSender sender) {
+            public void $sendMessage(@NotNull CommandSender sender) {
                 sender.sendMessage(ChatColor.GOLD + "-----------------------------------");
-                CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
-                commands.map(Map.Entry::getKey).forEach(s -> sender.sendMessage(getCommandHelp(s.usage(), s.description())));
+                List<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
+                ICollectionList.asList(commands).map(Map.Entry::getKey).forEach(s -> sender.sendMessage(getCommandHelp(s.usage(), s.description())));
                 sender.sendMessage(ChatColor.GOLD + "-----------------------------------");
             }
         });
