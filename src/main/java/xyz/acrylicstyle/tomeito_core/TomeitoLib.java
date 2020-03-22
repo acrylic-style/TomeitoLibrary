@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.*;
 import util.*;
+import util.promise.Promise;
 import xyz.acrylicstyle.craftbukkit.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_core.command.Command;
