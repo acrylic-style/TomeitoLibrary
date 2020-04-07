@@ -3,7 +3,10 @@ package xyz.acrylicstyle.tomeito_core;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -11,9 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.*;
-import util.*;
-import util.promise.Promise;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import util.CollectionList;
+import util.ICollectionList;
+import util.ReflectionHelper;
+import util.StringCollection;
 import xyz.acrylicstyle.craftbukkit.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_core.command.Command;
@@ -267,6 +274,7 @@ public class TomeitoLib extends JavaPlugin implements Listener {
      *     <li>90 -> 1:30</li>
      * </ul>
      */
+    @NotNull
     public static String secondsToTime(int seconds) {
         int minutes = (int) Math.floor((float) seconds / 60F);
         String sec = Integer.toString(seconds % 60);
