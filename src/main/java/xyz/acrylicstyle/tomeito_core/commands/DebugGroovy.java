@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import util.CollectionList;
 import util.ICollectionList;
 import xyz.acrylicstyle.tomeito_core.utils.Log;
 
@@ -20,7 +21,9 @@ public class DebugGroovy {
             sender.sendMessage(ChatColor.RED + "/tomeitolib debug-groovy <Script>");
             return;
         }
-        String argsString = ICollectionList.asList(args).join(" ");
+        CollectionList<String> argsList = ICollectionList.asList(args);
+        argsList.shift();
+        String argsString = argsList.join(" ");
         try {
             Object result = eval(sender, args, argsString);
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
