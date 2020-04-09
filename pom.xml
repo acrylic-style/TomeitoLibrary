@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>tomeito_lib</artifactId>
-    <version>0.1.52</version>
+    <version>0.1.53</version>
     <name>TomeitoLib</name>
     <build>
         <plugins>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>NMSAPI-1.8.8</artifactId>
-            <version>0.0.48</version>
+            <version>0.1.3</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
