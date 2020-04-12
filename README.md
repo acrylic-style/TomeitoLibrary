@@ -1,6 +1,8 @@
 # TomeitoLib [![Build Status](https://ci.acrylicstyle.xyz/job/TomeitoLib/badge/icon)](https://ci.acrylicstyle.xyz/job/TomeitoLib/)
 Library of some my bukkit plugins.
 
+Also you may use this for other purposes if you want. See licence for more information.
+
 ## Using maven
 ```xml
 <repositories>
