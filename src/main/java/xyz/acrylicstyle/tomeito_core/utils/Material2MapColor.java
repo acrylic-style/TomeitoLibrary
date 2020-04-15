@@ -3,7 +3,9 @@ package xyz.acrylicstyle.tomeito_core.utils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +15,8 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class Material2MapColor {
+    public static final List<Material> INVISIBLE_BLOCKS = new ArrayList<>();
+
     /**
      * Color mapping, mapped by their Material and values are byte that can be used to MapRenderer.
      */
@@ -20,6 +24,27 @@ public class Material2MapColor {
 
     // took from https://minecraft.gamepedia.com/Map_item_format#Original_Color_Table
     static {
+        INVISIBLE_BLOCKS.add(Material.AIR);
+        INVISIBLE_BLOCKS.add(Material.CAKE_BLOCK);
+        INVISIBLE_BLOCKS.add(Material.POWERED_RAIL);
+        INVISIBLE_BLOCKS.add(Material.DETECTOR_RAIL);
+        INVISIBLE_BLOCKS.add(Material.TORCH);
+        INVISIBLE_BLOCKS.add(Material.LADDER);
+        INVISIBLE_BLOCKS.add(Material.LEVER);
+        INVISIBLE_BLOCKS.add(Material.IRON_BARDING);
+        INVISIBLE_BLOCKS.add(Material.PORTAL);
+        INVISIBLE_BLOCKS.add(Material.ACTIVATOR_RAIL);
+        INVISIBLE_BLOCKS.add(Material.SKULL);
+        INVISIBLE_BLOCKS.add(Material.FLOWER_POT);
+        INVISIBLE_BLOCKS.add(Material.TRIPWIRE);
+        INVISIBLE_BLOCKS.add(Material.TRIPWIRE_HOOK);
+        INVISIBLE_BLOCKS.add(Material.DIODE_BLOCK_ON);
+        INVISIBLE_BLOCKS.add(Material.DIODE_BLOCK_OFF);
+        INVISIBLE_BLOCKS.add(Material.REDSTONE_TORCH_ON);
+        INVISIBLE_BLOCKS.add(Material.REDSTONE_TORCH_OFF);
+        INVISIBLE_BLOCKS.add(Material.WOOD_BUTTON);
+        INVISIBLE_BLOCKS.add(Material.STONE_BUTTON);
+
         COLOR.put(Material.AIR, (byte) 0);
         COLOR.put(Material.CAKE_BLOCK, (byte) 0);
         COLOR.put(Material.POWERED_RAIL, (byte) 0);
