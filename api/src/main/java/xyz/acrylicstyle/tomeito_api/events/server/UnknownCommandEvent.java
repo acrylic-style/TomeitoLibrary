@@ -1,11 +1,18 @@
 package xyz.acrylicstyle.tomeito_api.events.server;
 
+import com.google.common.annotations.Beta;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.server.ServerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Called when command sender has sent the invalid (unknown) command.<br />
+ * Marked as @{@link Beta} because this is still unstable.<br />
+ * <b>Also, this event is very unstable and it will not be called at runtime.</b>
+ */
+@Beta
 public class UnknownCommandEvent extends ServerEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     @NotNull protected final CommandSender sender;

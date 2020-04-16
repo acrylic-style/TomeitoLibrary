@@ -1,55 +1,40 @@
 package xyz.acrylicstyle.tomeito_core;
 
+import com.google.common.collect.Sets;
 import org.bukkit.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.CollectionList;
-import util.ICollectionList;
-import util.ReflectionHelper;
-import util.StringCollection;
-import xyz.acrylicstyle.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import xyz.acrylicstyle.minecraft.EntityPlayer;
+import util.*;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
-import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
-import xyz.acrylicstyle.tomeito_api.events.entity.EntityPreDeathEvent;
-import xyz.acrylicstyle.tomeito_api.events.misc.PreDeathReason;
-import xyz.acrylicstyle.tomeito_api.events.entity.WitherSkullBlockBreakEvent;
-import xyz.acrylicstyle.tomeito_api.events.player.PlayerJumpEvent;
-import xyz.acrylicstyle.tomeito_api.events.player.PlayerPreDeathEvent;
-import xyz.acrylicstyle.tomeito_api.events.block.PlayerTNTPrimeEvent;
-import xyz.acrylicstyle.tomeito_api.events.server.UnknownCommandEvent;
-import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
+import xyz.acrylicstyle.tomeito_api.events.block.*;
+import xyz.acrylicstyle.tomeito_api.events.entity.*;
+import xyz.acrylicstyle.tomeito_api.events.misc.*;
+import xyz.acrylicstyle.tomeito_api.events.player.*;
+import xyz.acrylicstyle.tomeito_api.events.server.*;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
+import xyz.acrylicstyle.tomeito_api.utils.DummyList;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
+import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
@@ -182,36 +167,68 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         }
     }
 
+    private final Set<UUID> prevPlayersOnGround = Sets.newHashSet(); // PlayerJumpEvent
+
     // PlayerJumpEvent
     @EventHandler
-    public void onPlayerStatisticIncrement(PlayerStatisticIncrementEvent e) {
-        if (e.getStatistic() == Statistic.JUMP) {
-            EntityPlayer p = new CraftPlayer(e.getPlayer()).getHandle();
-            Location from = new Location(e.getPlayer().getWorld(), p.lastX(), p.lastY(), p.lastZ()); // get player's last location using nms
-            from.setPitch(p.lastPitch());
-            from.setYaw(p.lastYaw());
-            PlayerJumpEvent event = new PlayerJumpEvent(e.getPlayer(), from, e.getPlayer().getLocation().clone());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) e.getPlayer().teleport(event.getFrom());
+    public void onPlayerMove(PlayerMoveEvent e) {
+        Player player = e.getPlayer();
+        if (player.getVelocity().getY() > 0) {
+            double jumpVelocity = 0.42F;
+            if (player.hasPotionEffect(PotionEffectType.JUMP)) {
+                AtomicInteger amplifier = new AtomicInteger();
+                player.getActivePotionEffects().forEach(p -> {
+                    if (p.getType() == PotionEffectType.JUMP) amplifier.set(p.getAmplifier());
+                });
+                jumpVelocity += (float) (amplifier.get() + 1) * 0.1F;
+            }
+            if (e.getPlayer().getLocation().getBlock().getType() != Material.LADDER && prevPlayersOnGround.contains(player.getUniqueId())) {
+                if (!((Entity) player).isOnGround() && Double.compare(player.getVelocity().getY(), jumpVelocity) == 0) {
+                    PlayerJumpEvent event = new PlayerJumpEvent(e.getPlayer(), e.getFrom().clone(), e.getTo().clone());
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if (event.isCancelled()) e.getPlayer().teleport(event.getFrom());
+                }
+            }
         }
+        if (((Entity) player).isOnGround()) {
+            prevPlayersOnGround.add(player.getUniqueId());
+        } else {
+            prevPlayersOnGround.remove(player.getUniqueId());
+        }
+    }
+
+    private @NotNull List<String> getCommands() {
+        if (Boolean.getBoolean("xyz.acrylicstyle.tomeito_core.useUnstableUnknownCommandEventISwear")) {
+            List<String> commands = new ArrayList<>();
+            for (HelpTopic t : Bukkit.getHelpMap().getHelpTopics())
+                commands.add(t.getName().replaceAll("/", "").split(" ")[0].toLowerCase());
+            return commands;
+        } else return new DummyList<>();
     }
 
     // UnknownCommandEvent
     @EventHandler(priority = EventPriority.LOWEST)
     public void onServerCommand(ServerCommandEvent e) {
-        List<String> commands = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
-            for (String command : plugin.getDescription().getCommands().keySet()) {
-                commands.add(command);
-                PluginCommand c = Bukkit.getPluginCommand(command);
-                if (c != null) commands.addAll(c.getAliases());
-            }
-        }
-        if (!commands.contains(e.getCommand().replaceAll("/", "").split("\\s+")[0])) {
+        if (!getCommands().contains(e.getCommand().replaceAll("/", "").split("\\s+")[0].toLowerCase())) {
             UnknownCommandEvent event = new UnknownCommandEvent(e.getSender(), e.getCommand());
             Bukkit.getPluginManager().callEvent(event);
-            if (event.getMessage() != null) e.getSender().sendMessage(event.getMessage());
-            e.setCommand("");
+            if (event.getMessage() != null) {
+                e.setCommand("");
+                e.getSender().sendMessage(event.getMessage());
+            }
+        }
+    }
+
+    // UnknownCommandEvent
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e) {
+        if (!getCommands().contains(e.getMessage().replaceAll("/", "").split("\\s+")[0].toLowerCase())) {
+            UnknownCommandEvent event = new UnknownCommandEvent(e.getPlayer(), e.getMessage());
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.getMessage() != null) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(event.getMessage());
+            }
         }
     }
 
