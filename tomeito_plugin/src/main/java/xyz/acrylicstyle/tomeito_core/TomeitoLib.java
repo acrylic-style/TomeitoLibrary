@@ -72,6 +72,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     @Override
     public void onEnable() {
         pcl = new PluginChannelListener();
+        Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
         Log.info("Enabled TomeitoLib");
