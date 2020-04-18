@@ -2,6 +2,7 @@ package xyz.acrylicstyle.tomeito_core;
 
 import com.google.common.collect.Sets;
 import org.bukkit.*;
+import xyz.acrylicstyle.tomeito_api.sounds.Sound;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
