@@ -2,7 +2,6 @@ package xyz.acrylicstyle.tomeito_core;
 
 import com.google.common.collect.Sets;
 import org.bukkit.*;
-import xyz.acrylicstyle.tomeito_api.sounds.Sound;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
@@ -136,18 +135,17 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             if (e.getItem().getType() == Material.FLINT_AND_STEEL) {
                 if (e.getClickedBlock() == null) return;
                 if (e.getClickedBlock().getType() == Material.TNT) {
-                    e.setCancelled(true);
                     PlayerTNTPrimeEvent event = new PlayerTNTPrimeEvent(e.getClickedBlock(), e.getPlayer());
                     Bukkit.getPluginManager().callEvent(event);
-                    if (event.isCancelled()) return;
-                    e.getClickedBlock().getLocation().getBlock().setType(Material.AIR);
-                    e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.FUSE, 1, 1);
-                    Location location = e.getClickedBlock().getLocation().add(0.5, 0, 0.5);
-                    TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
-                    tnt.setFuseTicks(event.getFuseTicks());
-                    tnt.setFireTicks(event.getFireTicks());
-                    if (event.getYield() != -1) tnt.setYield(event.getYield());
-                    if (event.getVelocity() != null) tnt.setVelocity(event.getVelocity().clone());
+                    e.setCancelled(event.isCancelled());
+                    // e.getClickedBlock().getLocation().getBlock().setType(Material.AIR);
+                    // e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.FUSE, 1, 1);
+                    // Location location = e.getClickedBlock().getLocation().add(0.5, 0, 0.5);
+                    // TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
+                    // tnt.setFuseTicks(event.getFuseTicks());
+                    // tnt.setFireTicks(event.getFireTicks());
+                    // if (event.getYield() != -1) tnt.setYield(event.getYield());
+                    // if (event.getVelocity() != null) tnt.setVelocity(event.getVelocity().clone());
                 }
             }
         }
