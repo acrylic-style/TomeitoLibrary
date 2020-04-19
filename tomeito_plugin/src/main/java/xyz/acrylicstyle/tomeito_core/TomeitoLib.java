@@ -89,46 +89,46 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 if (entity instanceof Player) {
                     PlayerPreDeathEvent event = new PlayerPreDeathEvent((Player) entity, killer, reason);
                     Bukkit.getPluginManager().callEvent(event);
-                    cancellableEvent.setCancelled(event.isCancelled());
+                    if (cancellableEvent.isCancelled()) cancellableEvent.setCancelled(true);
                 } else {
                     EntityPreDeathEvent event = new EntityPreDeathEvent(entity, killer, reason);
                     Bukkit.getPluginManager().callEvent(event);
-                    cancellableEvent.setCancelled(event.isCancelled());
+                    if (cancellableEvent.isCancelled()) cancellableEvent.setCancelled(true);
                 }
             }
         }
     }
 
     // (Player|Entity)PreDeathEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamage(EntityDamageEvent e) {
         a(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.UNKNOWN);
     }
 
     // (Player|Entity)PreDeathEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         a(e, e.getFinalDamage(), e.getEntity(), e.getDamager(), PreDeathReason.KILLED_BY_ENTITY);
     }
 
     // (Player|Entity)PreDeathEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
         a(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.KILLED_BY_BLOCK);
     }
 
     // DispenserTNTPrimeEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockDispense(BlockDispenseEvent e) {
         if (e.getItem().getType() == Material.TNT) {
             DispenserTNTPrimeEvent event = new DispenserTNTPrimeEvent(e.getBlock());
             Bukkit.getPluginManager().callEvent(event);
-            e.setCancelled(event.isCancelled());
+            if (event.isCancelled()) e.setCancelled(true);
         }
     }
 
     // PlayerTNTPrimeEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (!e.hasItem()) return;
@@ -137,7 +137,10 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 if (e.getClickedBlock().getType() == Material.TNT) {
                     PlayerTNTPrimeEvent event = new PlayerTNTPrimeEvent(e.getClickedBlock(), e.getPlayer());
                     Bukkit.getPluginManager().callEvent(event);
-                    e.setCancelled(event.isCancelled());
+                    if (event.isCancelled()) {
+                        e.setCancelled(true);
+                        return;
+                    }
                     // e.getClickedBlock().getLocation().getBlock().setType(Material.AIR);
                     // e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.FUSE, 1, 1);
                     // Location location = e.getClickedBlock().getLocation().add(0.5, 0, 0.5);
@@ -152,7 +155,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     }
 
     // WitherSkullBlockBreakEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityExplodeEvent(EntityExplodeEvent e) {
         if (e.getEntity().getType() == EntityType.WITHER_SKULL) {
             WitherSkull witherSkull = (WitherSkull) e.getEntity();
@@ -169,7 +172,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     private final Set<UUID> prevPlayersOnGround = Sets.newHashSet(); // PlayerJumpEvent
 
     // PlayerJumpEvent
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerMove(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (player.getVelocity().getY() > 0) {
