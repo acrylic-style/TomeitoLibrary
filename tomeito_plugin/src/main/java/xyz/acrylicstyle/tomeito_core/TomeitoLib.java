@@ -32,6 +32,7 @@ import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_api.utils.DummyList;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
+import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -240,6 +241,8 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             if (args.length != 0) {
                 if (args[0].equalsIgnoreCase("debug")) {
                     DebugGroovy.run(sender, args);
+                } else if (args[0].equalsIgnoreCase("debug-legacy")) {
+                    DebugLegacy.run(sender, args);
                 } else sendHelp(sender);
             } else sendHelp(sender);
             return true;
@@ -249,6 +252,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
             sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + TomeitoLib.instance.getDescription().getVersion());
             sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug.");
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-legacy - Useful for debug.");
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
         }
     }
