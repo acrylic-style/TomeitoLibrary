@@ -36,7 +36,7 @@ public class DebugLegacy {
                     if (args.length != (ArrayUtil.indexOf(args, "=")+2)) throw new IllegalArgumentException("Missing 1 argument after =");
                     Field field = clazz.getDeclaredField(args[2]);
                     field.setAccessible(true);
-                    Object clazzz = null;
+                    Object clazzz;
                     try {
                         if (clazz.getSuperclass() != null && clazz.getSuperclass().getCanonicalName().contains("JavaPlugin")) clazzz = JavaPlugin.getProvidingPlugin(clazz);
                         else clazzz = clazz.newInstance();
