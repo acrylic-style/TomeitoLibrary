@@ -5,6 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 
+/**
+ * Defines instance methods.<br />
+ * This interface only exists to define non-static methods.
+ */
 public interface BaseTomeitoAPI {
     void registerCommands(@NotNull final String packageName);
 

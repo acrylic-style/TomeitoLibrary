@@ -21,6 +21,7 @@ import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 
+import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.UUID;
 
@@ -30,7 +31,9 @@ import java.util.UUID;
 public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
     static TomeitoAPI getInstance() {
         try {
-            return (TomeitoAPI) Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance").get(null);
+            Field field = Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance");
+            field.setAccessible(true);
+            return (TomeitoAPI) field.get(null);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

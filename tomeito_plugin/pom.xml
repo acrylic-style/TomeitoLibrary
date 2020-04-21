@@ -15,7 +15,6 @@
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>api</artifactId>
             <version>0.3.7</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
