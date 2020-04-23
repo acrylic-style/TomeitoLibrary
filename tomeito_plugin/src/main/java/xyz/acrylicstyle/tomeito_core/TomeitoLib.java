@@ -90,11 +90,11 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 if (entity instanceof Player) {
                     PlayerPreDeathEvent event = new PlayerPreDeathEvent((Player) entity, killer, reason);
                     Bukkit.getPluginManager().callEvent(event);
-                    if (cancellableEvent.isCancelled()) cancellableEvent.setCancelled(true);
+                    if (event.isCancelled()) cancellableEvent.setCancelled(true);
                 } else {
                     EntityPreDeathEvent event = new EntityPreDeathEvent(entity, killer, reason);
                     Bukkit.getPluginManager().callEvent(event);
-                    if (cancellableEvent.isCancelled()) cancellableEvent.setCancelled(true);
+                    if (event.isCancelled()) cancellableEvent.setCancelled(true);
                 }
             }
         }
@@ -140,7 +140,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
                         e.setCancelled(true);
-                        return;
+                        // return;
                     }
                     // e.getClickedBlock().getLocation().getBlock().setType(Material.AIR);
                     // e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.FUSE, 1, 1);
