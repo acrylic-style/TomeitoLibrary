@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.3.15</version>
+        <version>0.3.16</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>api</artifactId>
-            <version>0.3.14</version>
+            <version>0.3.16</version>
         </dependency>
     </dependencies>
 </project>

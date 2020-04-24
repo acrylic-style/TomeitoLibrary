@@ -3,7 +3,7 @@
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>tomeito_lib</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.15</version>
+    <version>0.3.16</version>
     <modules>
         <module>api</module>
         <module>tomeito_plugin</module>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>NMSAPI-1.8.8</artifactId>
-            <version>0.1.21</version>
+            <version>0.1.22</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
