@@ -29,6 +29,11 @@ import java.util.UUID;
  * This interface defines static methods. For instance methods, see {@link BaseTomeitoAPI}.
  */
 public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
+    /**
+     * Obtain the instance of TomeitoAPI. Requires TomeitoLib (Plugin) to work.
+     * @return Instance of TomeitoAPI
+     * @throws RuntimeException When couldn't find plugin
+     */
     static TomeitoAPI getInstance() {
         try {
             Field field = Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance");
@@ -39,6 +44,11 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
         }
     }
 
+    /**
+     * Obtain the instance of PluginChannelListener. Requires TomeitoLib (Plugin) to work.
+     * @return Instance of {@link PluginChannelListener}
+     * @throws RuntimeException When couldn't find plugin
+     */
     static PluginChannelListener getPluginChannelListener() {
         try {
             return (PluginChannelListener) Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("pcl").get(null);

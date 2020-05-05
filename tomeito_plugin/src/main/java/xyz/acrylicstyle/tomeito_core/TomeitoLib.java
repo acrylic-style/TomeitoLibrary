@@ -107,9 +107,16 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     }
 
     // (Player|Entity)PreDeathEvent
+    // EntityDamageByPlayerEvent
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         a(e, e.getFinalDamage(), e.getEntity(), e.getDamager(), PreDeathReason.KILLED_BY_ENTITY);
+        if (e.getDamager() instanceof Player) {
+            EntityDamageByPlayerEvent event = new EntityDamageByPlayerEvent((Player) e.getDamager(), e.getEntity(), e.getDamage(), e.getFinalDamage());
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) e.setDamage(event.getDamage());
+            if (event.isCancelled()) e.setCancelled(true);
+        }
     }
 
     // (Player|Entity)PreDeathEvent
