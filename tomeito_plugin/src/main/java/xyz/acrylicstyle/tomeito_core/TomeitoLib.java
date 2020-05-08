@@ -1,41 +1,54 @@
 package xyz.acrylicstyle.tomeito_core;
 
 import com.google.common.collect.Sets;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
-import org.bukkit.event.*;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.player.*;
-import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.help.HelpTopic;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.*;
+import util.CollectionList;
+import util.ICollectionList;
+import util.ReflectionHelper;
+import util.StringCollection;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
-import xyz.acrylicstyle.tomeito_api.events.block.*;
-import xyz.acrylicstyle.tomeito_api.events.entity.*;
-import xyz.acrylicstyle.tomeito_api.events.misc.*;
-import xyz.acrylicstyle.tomeito_api.events.player.*;
-import xyz.acrylicstyle.tomeito_api.events.server.*;
+import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
+import xyz.acrylicstyle.tomeito_api.events.block.PlayerTNTPrimeEvent;
+import xyz.acrylicstyle.tomeito_api.events.entity.EntityPreDeathEvent;
+import xyz.acrylicstyle.tomeito_api.events.entity.WitherSkullBlockBreakEvent;
+import xyz.acrylicstyle.tomeito_api.events.misc.PreDeathReason;
+import xyz.acrylicstyle.tomeito_api.events.player.EntityDamageByPlayerEvent;
+import xyz.acrylicstyle.tomeito_api.events.player.PlayerJumpEvent;
+import xyz.acrylicstyle.tomeito_api.events.player.PlayerPreDeathEvent;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
-import xyz.acrylicstyle.tomeito_api.utils.DummyList;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
@@ -43,7 +56,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Or, please define TomeitoLib at softdepend or depend at least!
  */
 public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
-    public static PluginChannelListener pcl = null;
+    public static final Logger LOGGER = Logger.getLogger("TomeitoLib");
+    /**
+     * It only exists for backward compatibility.
+     */
+    public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
     public TomeitoLib() {
@@ -57,7 +74,6 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
 
     @Override
     public void onEnable() {
-        pcl = new PluginChannelListener();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
@@ -79,6 +95,10 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 TomeitoAPI.registerCommand(command.value(), (CommandExecutor) clazz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
+            } catch (ClassCastException e) {
+                LOGGER.warning("Couldn't cast class to CommandExecutor!");
+                LOGGER.warning("Class: " + clazz.getCanonicalName());
+                LOGGER.warning("Make sure this class extends/implements CommandExecutor, then try again.");
             }
         });
     }
@@ -207,41 +227,6 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         }
     }
 
-    private @NotNull List<String> getCommands() {
-        if (Boolean.getBoolean("xyz.acrylicstyle.tomeito_core.useUnstableUnknownCommandEventISwear")) {
-            List<String> commands = new ArrayList<>();
-            for (HelpTopic t : Bukkit.getHelpMap().getHelpTopics())
-                commands.add(t.getName().replaceAll("/", "").split(" ")[0].toLowerCase());
-            return commands;
-        } else return new DummyList<>();
-    }
-
-    // UnknownCommandEvent
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onServerCommand(ServerCommandEvent e) {
-        if (!getCommands().contains(e.getCommand().replaceAll("/", "").split("\\s+")[0].toLowerCase())) {
-            UnknownCommandEvent event = new UnknownCommandEvent(e.getSender(), e.getCommand());
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.getMessage() != null) {
-                e.setCommand("");
-                e.getSender().sendMessage(event.getMessage());
-            }
-        }
-    }
-
-    // UnknownCommandEvent
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e) {
-        if (!getCommands().contains(e.getMessage().replaceAll("/", "").split("\\s+")[0].toLowerCase())) {
-            UnknownCommandEvent event = new UnknownCommandEvent(e.getPlayer(), e.getMessage());
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.getMessage() != null) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage(event.getMessage());
-            }
-        }
-    }
-
     private static class TomeitoCommand implements CommandExecutor {
         @Override
         public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
@@ -279,10 +264,11 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
      * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated by SubCommand and must extend SubCommandExecutor.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    public void registerCommands(@Nullable ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommand) {
+    public void registerCommands(@Nullable ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @Nullable CommandExecutor postCommand) {
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
         CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
-        Log.debug("Found " + classes.size() + " classes under " + subCommandsPackage);
+        Log.info("Found " + classes.size() + " classes under " + subCommandsPackage + "(/" + rootCommandName + ")");
+        Log.info("If this was unexpected(it says 0 classes), try specifying ClassLoader of plugin.");
         registerCommands(rootCommandName, classes, postCommand);
     }
 
@@ -292,7 +278,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
      * @param classes Class list that will load. All classes must implement CommandExecutor or it will fail to load.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @NotNull CommandExecutor postCommand) {
+    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @Nullable CommandExecutor postCommand) {
         final CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
@@ -303,13 +289,18 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 subCommands.add(rootCommandName, commands);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
+            } catch (ClassCastException e) {
+                LOGGER.warning("Couldn't cast class to CommandExecutor!");
+                LOGGER.warning("Class: " + clazz.getCanonicalName());
+                LOGGER.warning("Make sure this class extends/implements CommandExecutor, then try again.");
             }
         });
         subCommands.forEach((s, l) -> Log.debug("Command " + s + " has " + l.size() + " sub commands"));
+        @NotNull CommandExecutor finalPostCommand = postCommand == null ? ((sender, command, label, args) -> true) : postCommand;
         TomeitoAPI.registerCommand(rootCommandName, new CommandExecutor() {
             @Override
             public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
-                if (!postCommand.onCommand(sender, command, label, args)) return true;
+                if (!finalPostCommand.onCommand(sender, command, label, args)) return true;
                 if (args.length == 0) {
                     $sendMessage(sender);
                     return true;

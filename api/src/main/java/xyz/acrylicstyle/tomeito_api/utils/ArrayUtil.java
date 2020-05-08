@@ -41,7 +41,7 @@ public class ArrayUtil {
      * If there are multiple needles in haystack, returns first one.
      * @param array Haystack
      * @param needle Needle
-     * @return a number except -1 if found, returns -1 if not found
+     * @return a positive number if found, returns -1 if not found
      */
     public static int indexOf(String[] array, String needle) {
         for (int i = 0; i < array.length; i++) {

@@ -10,8 +10,9 @@ import xyz.acrylicstyle.tomeito_api.utils.Callback;
 import java.io.*;
 
 public class PluginChannelListener implements PluginMessageListener {
-    private static final CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
-    private static final CollectionList<String> registeredListeners = new CollectionList<>();
+    public static final PluginChannelListener pcl = new PluginChannelListener();
+    private final CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
+    private final CollectionList<String> registeredListeners = new CollectionList<>();
 
     @Override
     public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
@@ -29,7 +30,8 @@ public class PluginChannelListener implements PluginMessageListener {
             callbacks2.get(subchannel).done(input, null);
             callbacks2.remove(subchannel);
             callbacks.put(tag, callbacks2);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
             callbacks2.remove(player.getUniqueId().toString());
             callbacks.put(tag, callbacks2);
@@ -57,9 +59,7 @@ public class PluginChannelListener implements PluginMessageListener {
         try {
             out.writeUTF(subchannel);
             out.writeUTF(message);
-        } catch (IOException e) { // impossible
-            e.printStackTrace();
-        }
+        } catch (IOException e) { throw new RuntimeException(e); }
         p.sendPluginMessage(TomeitoAPI.getInstance(), s, b.toByteArray());
     }
 }

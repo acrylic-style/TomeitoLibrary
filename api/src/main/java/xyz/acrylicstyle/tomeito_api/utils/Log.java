@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 
 @SuppressWarnings({"unused", "DuplicatedCode"})
 public class Log {
-
     public static void info(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();

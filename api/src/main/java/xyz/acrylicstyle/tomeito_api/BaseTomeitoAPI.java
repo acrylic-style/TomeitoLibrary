@@ -19,7 +19,7 @@ public interface BaseTomeitoAPI {
      * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated by SubCommand and must extend SubCommandExecutor.
      * @param postCommandExecutor A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    void registerCommands(@Nullable ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @NotNull CommandExecutor postCommandExecutor);
+    void registerCommands(@Nullable ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @Nullable CommandExecutor postCommandExecutor);
 
     void registerCommands(@NotNull ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage);
 
@@ -29,5 +29,5 @@ public interface BaseTomeitoAPI {
      * @param classes Class list that will load. All classes must implement CommandExecutor or it will fail to load.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @NotNull CommandExecutor postCommand);
+    void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @Nullable CommandExecutor postCommand);
 }

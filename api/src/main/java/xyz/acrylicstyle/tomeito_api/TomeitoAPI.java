@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +25,7 @@ import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * This interface defines static methods. For instance methods, see {@link BaseTomeitoAPI}.
@@ -45,21 +47,16 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
     }
 
     /**
-     * Obtain the instance of PluginChannelListener. Requires TomeitoLib (Plugin) to work.
+     * Obtain the instance of PluginChannelListener.
      * @return Instance of {@link PluginChannelListener}
-     * @throws RuntimeException When couldn't find plugin
      */
     static PluginChannelListener getPluginChannelListener() {
-        try {
-            return (PluginChannelListener) Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("pcl").get(null);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return PluginChannelListener.pcl;
     }
 
     @NotNull
-    @Contract("null -> new")
-    static TextComponent getItemTooltipMessage(ItemStack item) {
+    @Contract(value = "_ -> new", pure = true)
+    static TextComponent getItemTooltipMessage(@Nullable ItemStack item) {
         if (item == null || item.getType() == Material.AIR) return new TextComponent();
         TextComponent text = new TextComponent();
         text.setHoverEvent(
@@ -71,10 +68,16 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
         return text;
     }
 
-    static void registerCommand(String command, CommandExecutor executor) {
+    static void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
         PluginCommand pluginCommand = Bukkit.getPluginCommand(command);
         if (pluginCommand == null) throw new NullPointerException("Command '" + command + "' isn't defined inside plugin.yml!");
         pluginCommand.setExecutor(executor);
+    }
+
+    static void registerTabCompleter(@NotNull String command, @NotNull TabCompleter tabCompleter) {
+        PluginCommand pluginCommand = Bukkit.getPluginCommand(command);
+        if (pluginCommand == null) throw new NullPointerException("Command '" + command + "' isn't defined inside plugin.yml!");
+        pluginCommand.setTabCompleter(tabCompleter);
     }
 
     @NotNull
@@ -86,14 +89,14 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * Ensure the {@link CommandSender} is a {@link Player}.
      * @return {@link Player} if {@link CommandSender} was player, null otherwise.
      * You need to run only <pre>
-     *     {@link Player} player = {@link TomeitoAPI}.{@link TomeitoAPI#ensurePlayer(CommandSender)};<br />
+     *     Player player = TomeitoAPI.ensurePlayer(sender);<br />
      *     if (player == null) return;<br />
      *     // your code
-     * </pre>
+     * </pre> as this method sends message to the sender when does not meet requirements.
      */
     @SuppressWarnings("JavaDoc")
     @Nullable
-    static Player ensurePlayer(CommandSender sender) {
+    static Player ensurePlayer(@NotNull CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command cannot be invoked from console.");
             return null;
@@ -141,7 +144,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @param location2 Shape 2
      * @return If the target inside the shape or not
      */
-    static boolean inside(Location target, Location location1, Location location2) {
+    static boolean inside(@NotNull Location target, @NotNull Location location1, @NotNull Location location2) {
         double x = target.getX();
         double y = target.getY();
         double z = target.getZ();
@@ -172,5 +175,32 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
         int minutes = (int) Math.floor((float) seconds / 60F);
         String sec = Integer.toString(seconds % 60);
         return minutes + ":" + (sec.length() == 1 ? "0" + sec : sec);
+    }
+
+    /**
+     * Converts time (hh:mm) to seconds (integer).<br />
+     * Use {@link #timeToSeconds(String)} as it has better function.
+     * @param time Time, must be format in hh:mm
+     * @return Seconds in Integer
+     * @throws IllegalArgumentException When the time isn't format in hh:mm
+     */
+    static int timeToSeconds0(String time) {
+        if (!Pattern.compile("^\\d+:\\d+$").matcher(time).matches()) throw new IllegalArgumentException("Time must be format number:number.");
+        String[] times = time.split(":");
+        return Integer.parseInt(times[0])*60 + Integer.parseInt(times[1]);
+    }
+
+    /**
+     * Converts time (hh:mm or just seconds) to seconds (integer).
+     * @param s Time, must be format in seconds (it will just converts to integer) or hh:mm.
+     * @return Seconds in integer
+     * @throws IllegalArgumentException When couldn't parse time
+     */
+    static int timeToSeconds(String s) {
+        if (Pattern.compile("^\\d+$").matcher(s).matches()) {
+            return Integer.parseInt(s);
+        } else {
+            return timeToSeconds0(s);
+        }
     }
 }
