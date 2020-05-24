@@ -11,6 +11,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.SneakyThrow;
+import xyz.acrylicstyle.tomeito_api.utils.Log;
 
 @SuppressWarnings("unused")
 public class ConfigProvider extends YamlConfiguration {
@@ -47,7 +49,7 @@ public class ConfigProvider extends YamlConfiguration {
      * @return ConfigProvider
      */
     @Nullable
-    public static ConfigProvider initWithoutException(String path) {
+    public static ConfigProvider initWithoutException(@NotNull String path) {
         try {
             return new ConfigProvider(path);
         } catch (Exception e) {
@@ -61,7 +63,7 @@ public class ConfigProvider extends YamlConfiguration {
      * @return ConfigProvider
      */
     @Nullable
-    public static ConfigProvider initWithoutException(File file) {
+    public static ConfigProvider initWithoutException(@NotNull File file) {
         try {
             return new ConfigProvider(file);
         } catch (Exception e) {
@@ -90,7 +92,7 @@ public class ConfigProvider extends YamlConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getConfigSectionValue(Object o, boolean deep) {
+    public static Map<String, Object> getConfigSectionValue(@Nullable Object o, boolean deep) {
         if (o == null) return null;
         Map<String, Object> map;
         if (o instanceof ConfigurationSection) {
@@ -101,7 +103,7 @@ public class ConfigProvider extends YamlConfiguration {
         return map;
     }
 
-    public Map<String, Object> getConfigSectionValue(String path, boolean deep) {
+    public Map<String, Object> getConfigSectionValue(@NotNull String path, boolean deep) {
         Object o = this.get(path, new HashMap<String, Object>());
         return getConfigSectionValue(o, deep);
     }
@@ -122,16 +124,14 @@ public class ConfigProvider extends YamlConfiguration {
         }
     }
 
-    public void setThenSave(String path, Object value) {
+    public void setThenSave(@NotNull String path, @Nullable Object value) {
         this.set(path, value);
         this.save();
     }
 
+    @Deprecated
     public void setThenSaveWithoutException(String path, Object value) {
-        try {
-            this.set(path, value);
-            this.save();
-        } catch (Exception e) { throw new RuntimeException(e); }
+        setThenSave(path, value);
     }
 
     @Override
@@ -139,7 +139,8 @@ public class ConfigProvider extends YamlConfiguration {
         try {
             super.load(file);
         } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            Log.error("An error occurred while loading a config file: " + file.getAbsolutePath());
+            SneakyThrow.sneaky(e);
         }
     }
 
@@ -151,7 +152,8 @@ public class ConfigProvider extends YamlConfiguration {
             config.set(path, value);
             config.save(file);
         } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            Log.error("An error occurred while saving a config file: " + file.getAbsolutePath());
+            SneakyThrow.sneaky(e);
         }
     }
 
