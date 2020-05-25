@@ -43,6 +43,7 @@ import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
+import xyz.acrylicstyle.tomeito_core.command.TomeitoLibTabCompleter;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
 
@@ -77,6 +78,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
+        Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter(this.getClassLoader()));
         Log.info("Enabled TomeitoLib");
     }
 

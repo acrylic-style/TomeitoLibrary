@@ -92,7 +92,7 @@ public class DebugLegacy {
                     method.setAccessible(true);
                     Object clazzz;
                     if (clazz.getSuperclass() != null && clazz.getSuperclass().getCanonicalName().contains("JavaPlugin")) clazzz = JavaPlugin.getProvidingPlugin(clazz);
-                    else clazzz = clazz.newInstance();
+                    else clazzz = Modifier.isStatic(method.getModifiers()) ? null : clazz.newInstance();
                     Object result = method.invoke(clazzz);
                     sender.sendMessage(ChatColor.GREEN + "Result(" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");
                     sender.sendMessage(ChatColor.GREEN + "" + result);

@@ -15,12 +15,12 @@ public class DummyList<E> implements List<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean contains(Object o) {
-        return true;
+        return false;
     }
 
     @NotNull
@@ -49,12 +49,12 @@ public class DummyList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return true;
+        return false;
     }
 
     @Override
@@ -64,17 +64,17 @@ public class DummyList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, @NotNull Collection<? extends E> c) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-        return true;
+        return false;
     }
 
     @Override
