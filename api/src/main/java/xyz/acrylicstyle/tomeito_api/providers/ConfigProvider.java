@@ -138,7 +138,7 @@ public class ConfigProvider extends YamlConfiguration {
     public void load(File file) {
         try {
             super.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
+        } catch (IOException | InvalidConfigurationException | RuntimeException e) {
             Log.error("An error occurred while loading a config file: " + file.getAbsolutePath());
             SneakyThrow.sneaky(e);
         }

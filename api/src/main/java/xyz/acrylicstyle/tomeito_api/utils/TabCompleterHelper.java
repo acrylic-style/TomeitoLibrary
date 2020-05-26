@@ -9,5 +9,5 @@ public class TabCompleterHelper {
         return list.filter(s2 -> s2.toLowerCase().startsWith(s.toLowerCase()));
     }
 
-    public static List<String> filterArgsList(List<String> list, String s) { return filterArgsList(new CollectionList<>(list), s); }
+    public static CollectionList<String> filterArgsList(List<String> list, String s) { return filterArgsList(new CollectionList<>(list), s); }
 }

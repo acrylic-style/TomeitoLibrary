@@ -10,6 +10,7 @@ import util.ReflectionHelper;
 import util.reflect.Ref;
 import util.reflect.RefClass;
 import xyz.acrylicstyle.tomeito_api.reflection.Refs;
+import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper;
 
 import java.lang.reflect.Modifier;
@@ -132,7 +133,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     }
 
     @SuppressWarnings("StringConcatenationInLoop")
-    private CollectionList<String> getAllThings(String prev, String s) {
+    private @NotNull ICollectionList<String> getAllThings(String prev, String s) {
         String a = "";
         String[] c = s.split("\\.");
         for (int i = 0; i < c.length; i++) {
@@ -142,26 +143,30 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                 final RefClass<?> r = refClass.get();
                 boolean isStatic = prev == null || !prev.equals("new");
                 this.a = 0;
-                CollectionList<String> list = isStatic ? Refs.getStatics(refClass.get()).addChain("class") : Refs.getInstances(refClass.get());
+                ICollectionList<String> list = isStatic ? Refs.getStatics(refClass.get()).addChain("class") : Refs.getInstances(refClass.get());
                 while (hasNext(c, i)) {
                     synchronized (refClass) {
                         refClass.set(r);
                         String next = c[i + this.a];
-                        CollectionList<String> stacks = new CollectionList<>();
+                        List<String> stacks = new CollectionList<>();
                         if (i + this.a > 0) {
                             stacks.addAll(Arrays.asList(c).subList(i + 1, c.length));
                             if (!s.endsWith(".") && stacks.size() > 0) stacks.remove(stacks.size() - 1);
                         }
                         AtomicBoolean stackChanged = new AtomicBoolean(false);
                         stacks.forEach(p -> {
-                            stackChanged.set(true);
                             if (p.endsWith(")")) { // method call
-                                if (isMethodCall(refClass.get(), p))
+                                if (isMethodCall(refClass.get(), p)) {
                                     refClass.set(getMethodReturnValue(refClass.get(), p.replaceAll("(.*)(\\(.*\\)|)", "$1")));
+                                    stackChanged.set(true);
+                                }
                             } else { // field
-                                if (isField(refClass.get(), p))
+                                if (isField(refClass.get(), p)) {
                                     refClass.set(getFieldReturnValue(refClass.get(), p));
+                                    stackChanged.set(true);
+                                }
                             }
+                            Log.debug(p + " class: " + refClass.get().getClazz().getCanonicalName());
                         });
                         if (stackChanged.get()) list = Refs.getInstances(refClass.get());
                         if (isMethodCallOrField(refClass.get(), next, isStatic)) {
@@ -183,8 +188,9 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                     }
                 }
                 this.a = 0;
+                list = new CollectionList<>(list.unique());
                 list = list.filter(d -> !d.contains("$"));
-                return list.concat(COMMONS);
+                return list.concat(COMMONS).unique();
             }
         }
         if (!isValidClass(s)) {
@@ -295,10 +301,10 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             CollectionList<String> k = ICollectionList.asList(g);
             if (k.size() > 0 && !s.endsWith(".")) k.remove(k.size()-1);
             if (s.endsWith(".")) k.add("");
-            CollectionList<String> things = getAllThings(s0, s);
-            CollectionList<String> list = filterArgsList(things, k.join("."));
+            ICollectionList<String> things = getAllThings(s0, s);
+            ICollectionList<String> list = filterArgsList(things, k.join("."));
             if (list.size() != 0) return filterArgsList(list, s); // usually a package.class
-            CollectionList<String> lst = filterArgsList(things, s);
+            ICollectionList<String> lst = filterArgsList(things, s);
             if (lst.size() == 0) {
                 lst = filterArgsList(things, s.endsWith(".") ? "" : g[g.length-1]);
                 lst.removeAll(COMMONS);

@@ -1,6 +1,7 @@
 package xyz.acrylicstyle.tomeito_api.reflection;
 
 import util.CollectionList;
+import util.CollectionSet;
 import util.ICollectionList;
 import util.reflect.RefClass;
 import util.reflect.RefField;
@@ -13,7 +14,7 @@ public class Refs {
         return getAllMethods(refClass).concat(getAllFields(refClass));
     }
 
-    public static CollectionList<String> getInstances(RefClass<?> refClass) {
+    public static CollectionSet<String> getInstances(RefClass<?> refClass) {
         return getInstanceMethods(refClass).concat(getInstanceFields(refClass));
     }
 
@@ -31,7 +32,7 @@ public class Refs {
                 .filter(r -> Modifier.isStatic(r.getModifiers()))
                 .filter(s -> !s.getName().startsWith("lambda$"))
                 .map(m -> {
-                    String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getSimpleName).join(", ");
+                    String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
                     return m.getName() + "(" + signature + ")";
                 }).concat(getSuperMethodsAsString(refClass, true)).unique();
     }
@@ -41,7 +42,7 @@ public class Refs {
                 .filter(r -> Modifier.isStatic(r.getModifiers()) == isStatic)
                 .filter(s -> !s.getName().startsWith("lambda$"))
                 .map(m -> {
-            String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getSimpleName).join(", ");
+            String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
             return m.getName() + "(" + signature + ")";
         });
     }
@@ -50,7 +51,7 @@ public class Refs {
         CollectionList<RefMethod<?>[]> list0 = getSuperclasses(refClass).map(RefClass::getDeclaredMethods);
         CollectionList<RefMethod<?>> list = new CollectionList<>();
         list0.forEach(a -> list.addAll(ICollectionList.asList(a)));
-        return list;
+        return list.unique();
     }
 
     public static CollectionList<String> getSuperFields(RefClass<?> refClass, boolean isStatic) {
@@ -65,20 +66,21 @@ public class Refs {
         Class<?> clazz = refClass.getClazz();
         while (clazz.getSuperclass() != null) {
             list.add(new RefClass<>(clazz.getSuperclass()));
+            list.addAll(ICollectionList.asList(clazz.getInterfaces()).map(RefClass::new));
             clazz = clazz.getSuperclass();
         }
         return list;
     }
 
-    public static CollectionList<String> getInstanceMethods(RefClass<?> refClass) {
-        return ICollectionList
+    public static CollectionSet<String> getInstanceMethods(RefClass<?> refClass) {
+        return new CollectionSet<>(ICollectionList
                 .asList(refClass.getDeclaredMethods())
                 .filter(r -> !Modifier.isStatic(r.getModifiers()))
                 .filter(s -> !s.getName().startsWith("lambda$"))
                 .map(m -> {
-                    String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getSimpleName).join(", ");
+                    String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
                     return m.getName() + "(" + signature + ")";
-                }).concat(getSuperMethodsAsString(refClass, false)).unique();
+                }).concat(getSuperMethodsAsString(refClass, false)));
     }
 
     public static CollectionList<String> getAllFields(RefClass<?> refClass) {
