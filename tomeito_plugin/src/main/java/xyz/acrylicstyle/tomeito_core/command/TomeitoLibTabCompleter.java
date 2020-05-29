@@ -14,7 +14,7 @@ import util.reflect.Ref;
 import util.reflect.RefClass;
 import util.reflect.RefField;
 import xyz.acrylicstyle.tomeito_api.reflection.Refs;
-import xyz.acrylicstyle.tomeito_api.utils.Log;
+//import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
@@ -152,30 +152,32 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                             } else if (p.equals("getClass()")) {
                                 refClass.set(Ref.getClass(Class.class));
                             } else if (p.endsWith(")")) { // method call
-                                Log.info("< Is " + p + " Method?");
+                                //Log.info("< Is " + p + " Method?");
                                 if (isMethodCall(refClass.get(), p)) {
                                     refClass.set(getMethodReturnValue(refClass.get(), p.replaceAll("(.*)(\\(.*\\)|)", "$1")));
-                                    Log.info("> Yes");
+                                    //Log.info("> Yes");
                                 } else {
                                     refClass.set(null);
-                                    Log.info("> No");
+                                    //Log.info("> No");
                                 }
                             } else { // field
-                                Log.info("< Is " + p + " Field?");
+                                //Log.info("< Is " + p + " Field?");
                                 if (isField(refClass.get(), p)) {
                                     refClass.set(getFieldReturnValue(refClass.get(), p));
-                                    Log.info("> Yes");
+                                    //Log.info("> Yes");
                                 } else {
                                     refClass.set(null);
-                                    Log.info("> No");
+                                    //Log.info("> No");
                                 }
                             }
                             stackChanged.set(true);
+                            /*
                             if (refClass.get() == null) {
                                 Log.info(p + " -> null");
                             } else {
                                 Log.info(p + " -> " + refClass.get().getClazz().toGenericString());
                             }
+                            */
                         });
                         if (stackChanged.get()) {
                             if (refClass.get() == null ){
@@ -187,7 +189,6 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                                 });
                             }
                         }
-                        Log.info("List size: " + list.size());
                         if (isMethodCallOrField(refClass.get(), next)) {
                             if (isMethodCall(refClass.get(), next)) {
                                 next = next.replaceAll("(.*)(\\(.*\\)|)", "$1");
@@ -341,7 +342,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             if (k.size() > 0 && !s.endsWith(".")) k.remove(k.size()-1);
             if (s.endsWith(".")) k.add("");
             ICollectionList<String> things = getAllThings(s0, s);
-            Log.info("T: " + things.join(", "));
+            //Log.info("T: " + things.join(", "));
             ICollectionList<String> list = filterArgsList(things, k.join("."));
             if (list.size() != 0) return filterArgsList(list, s); // usually a package.class
             ICollectionList<String> lst = filterArgsList(things, s);
