@@ -61,6 +61,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     /**
      * It only exists for backward compatibility.
      */
+    @SuppressWarnings("unused")
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
@@ -78,7 +79,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
-        Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter(this.getClassLoader()));
+        Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter());
         Log.info("Enabled TomeitoLib");
     }
 
@@ -292,9 +293,9 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             } catch (ClassCastException e) {
-                LOGGER.warning("Couldn't cast class to CommandExecutor!");
+                LOGGER.warning("Couldn't cast class to SubCommandExecutor!");
                 LOGGER.warning("Class: " + clazz.getCanonicalName());
-                LOGGER.warning("Make sure this class extends/implements CommandExecutor, then try again.");
+                LOGGER.warning("Make sure this class implements SubCommandExecutor, then try again.");
             }
         });
         subCommands.forEach((s, l) -> Log.debug("Command " + s + " has " + l.size() + " sub commands"));

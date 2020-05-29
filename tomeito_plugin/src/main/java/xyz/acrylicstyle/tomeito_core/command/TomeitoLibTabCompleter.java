@@ -3,15 +3,20 @@ package xyz.acrylicstyle.tomeito_core.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
+import util.StringCollection;
 import util.reflect.Ref;
 import util.reflect.RefClass;
+import util.reflect.RefField;
 import xyz.acrylicstyle.tomeito_api.reflection.Refs;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper;
+import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -48,79 +53,66 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         COMMONS.add("&&");
         COMMONS.add("||");
         COMMONS.add("new");
+        COMMONS.add("null");
+        COMMONS.add("\"\"");
+        COMMONS.add("0");
+        COMMONS.add("false");
+        COMMONS.add("true");
+        COMMONS.add("void");
+        COMMONS.add("getClass()");
     }
 
-    private boolean isMethodCallOrField(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        return isMethodCall(clazz, s, isStatic) || isField(clazz, s, isStatic);
+    private boolean isMethodCallOrField(@Nullable RefClass<?> clazz, String s) {
+        if (clazz == null) return false;
+        return isMethodCall(clazz, s) || isField(clazz, s);
     }
 
-    private boolean isMethodCall(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        String r = s == null ? null : s.replaceAll("(.*?)\\(.*\\)", "$1");
-        return ICollectionList
-                .asList(clazz.getDeclaredMethods())
-                .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
-                .filter(m -> m.getName().equals(r))
-                .size() != 0;
-    }
-
-    private boolean isMethodCall(@NotNull RefClass<?> clazz, String s) {
-        String r = s == null ? null : s.replaceAll("(.*?)\\(.*\\)", "$1");
-        return ICollectionList
-                .asList(clazz.getDeclaredMethods())
-                .filter(m -> m.getName().equals(r))
-                .size() != 0;
+    private boolean isMethodCall(@Nullable RefClass<?> clazz, String s) {
+        if (clazz == null) return false;
+        String r = s == null ? null : s.replaceAll("(.*)\\(.*\\)", "$1");
+        return Refs.getAllMethods(clazz).map(a -> a.replaceAll("(.*)\\(.*\\)", "$1")).contains(r);
     }
 
     @NotNull
     private RefClass<?> getMethodReturnValue(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        String r = s == null ? null : s.replaceAll("(.*?)\\(.*\\)", "$1");
-        return Ref.getClass(Objects.requireNonNull(ICollectionList
-                .asList(clazz.getDeclaredMethods())
-                .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
-                .filter(m -> m.getName().equals(r))
-                .map(m -> m.getMethod().getReturnType())
-                .first()));
+        String r = s == null ? null : s.replaceAll("(.*)\\(.*\\)", "$1");
+        return new RefClass<>(Objects.requireNonNull(
+                Refs.getAllMethodsM(clazz)
+                        .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
+                        .filter(m -> m.getName().equals(r))
+                        .map(m -> m.getMethod().getReturnType())
+                        .first()
+        ));
     }
 
     @NotNull
     private RefClass<?> getMethodReturnValue(@NotNull RefClass<?> clazz, String s) {
-        String r = s == null ? null : s.replaceAll("(.*?)\\(.*\\)", "$1");
-        return Ref.getClass(Objects.requireNonNull(ICollectionList
-                .asList(clazz.getDeclaredMethods())
-                .filter(m -> m.getName().equals(r))
-                .map(m -> m.getMethod().getReturnType())
-                .first()));
+        String r = s == null ? null : s.replaceAll("(.*)\\(.*\\)", "$1");
+        return new RefClass<>(Objects.requireNonNull(
+                Refs.getAllMethodsM(clazz)
+                        .filter(m -> m.getName().equals(r))
+                        .map(m -> m.getMethod().getReturnType())
+                        .first()
+        ));
     }
 
-    private boolean isField(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        return ICollectionList
-                .asList(clazz.getDeclaredFields())
-                .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
-                .filter(m -> m.getName().equals(s))
-                .size() != 0;
-    }
-
-    private boolean isField(@NotNull RefClass<?> clazz, String s) {
-        return ICollectionList
-                .asList(clazz.getDeclaredFields())
-                .filter(m -> m.getName().equals(s))
-                .size() != 0;
+    private boolean isField(@Nullable RefClass<?> clazz, String s) {
+        if (clazz == null) return false;
+        return Refs.getFields(clazz).map(RefField::getName).filter(m -> m.equals(s)).size() != 0;
     }
 
     @NotNull
     private RefClass<?> getFieldReturnValue(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        return Ref.getClass(Objects.requireNonNull(ICollectionList
-                .asList(clazz.getDeclaredFields())
-                .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
-                .filter(m -> m.getName().equals(s))
+        return Ref.getClass(Objects.requireNonNull(Refs.getFields(clazz)
+                .filter(f -> Modifier.isStatic(f.getModifiers()) == isStatic)
+                .filter(f -> f.getName().equals(s))
                 .map(m -> m.getField().getType())
                 .first()));
     }
 
     @NotNull
     private RefClass<?> getFieldReturnValue(@NotNull RefClass<?> clazz, String s) {
-        return Ref.getClass(Objects.requireNonNull(ICollectionList
-                .asList(clazz.getDeclaredFields())
+        return Ref.getClass(Objects.requireNonNull(Refs.getFields(clazz)
                 .filter(m -> m.getName().equals(s))
                 .map(m -> m.getField().getType())
                 .first()));
@@ -132,7 +124,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return i + this.a++ < c.length - 1;
     }
 
-    @SuppressWarnings("StringConcatenationInLoop")
+    @SuppressWarnings({"StringConcatenationInLoop", "unchecked"})
     private @NotNull ICollectionList<String> getAllThings(String prev, String s) {
         String a = "";
         String[] c = s.split("\\.");
@@ -155,22 +147,49 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                         }
                         AtomicBoolean stackChanged = new AtomicBoolean(false);
                         stacks.forEach(p -> {
-                            if (p.endsWith(")")) { // method call
+                            if (p.equals("class")) {
+                                refClass.set(Ref.getClass(Class.class));
+                            } else if (p.equals("getClass()")) {
+                                refClass.set(Ref.getClass(Class.class));
+                            } else if (p.endsWith(")")) { // method call
+                                Log.info("< Is " + p + " Method?");
                                 if (isMethodCall(refClass.get(), p)) {
                                     refClass.set(getMethodReturnValue(refClass.get(), p.replaceAll("(.*)(\\(.*\\)|)", "$1")));
-                                    stackChanged.set(true);
+                                    Log.info("> Yes");
+                                } else {
+                                    refClass.set(null);
+                                    Log.info("> No");
                                 }
                             } else { // field
+                                Log.info("< Is " + p + " Field?");
                                 if (isField(refClass.get(), p)) {
                                     refClass.set(getFieldReturnValue(refClass.get(), p));
-                                    stackChanged.set(true);
+                                    Log.info("> Yes");
+                                } else {
+                                    refClass.set(null);
+                                    Log.info("> No");
                                 }
                             }
-                            Log.debug(p + " class: " + refClass.get().getClazz().getCanonicalName());
+                            stackChanged.set(true);
+                            if (refClass.get() == null) {
+                                Log.info(p + " -> null");
+                            } else {
+                                Log.info(p + " -> " + refClass.get().getClazz().toGenericString());
+                            }
                         });
-                        if (stackChanged.get()) list = Refs.getInstances(refClass.get());
-                        if (isMethodCallOrField(refClass.get(), next, isStatic)) {
-                            if (isMethodCall(refClass.get(), next, isStatic)) {
+                        if (stackChanged.get()) {
+                            if (refClass.get() == null ){
+                                list = new CollectionList<>();
+                            } else {
+                                list = Refs.getAllMethodsM(refClass.get()).map(m -> {
+                                    String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
+                                    return m.getName() + "(" + signature + ")";
+                                });
+                            }
+                        }
+                        Log.info("List size: " + list.size());
+                        if (isMethodCallOrField(refClass.get(), next)) {
+                            if (isMethodCall(refClass.get(), next)) {
                                 next = next.replaceAll("(.*)(\\(.*\\)|)", "$1");
                                 if (isStatic) {
                                     list = Refs.getInstances(getMethodReturnValue(refClass.get(), next, true));
@@ -194,23 +213,23 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             }
         }
         if (!isValidClass(s)) {
-            if (ReflectionHelper.isValidPackage(trim(s))) {
-                return findClasses(s).concat(COMMONS);
-            }
+            if (isValidPackage(trim(s))) return findClasses(s).concat(COMMONS);
             return findPackages(s).concat(COMMONS);
         }
-        return new CollectionList<>("u");
+        return new CollectionList<>();
     }
 
-    private final ClassLoader cl;
-
-    public TomeitoLibTabCompleter(@NotNull ClassLoader cl) {
-        this.cl = cl;
-    }
-
-    @NotNull
-    public ClassLoader getClassLoader() {
-        return cl;
+    private boolean isValidPackage(String pkg) {
+        CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
+                .accessible(true)
+                .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+        AtomicBoolean found = new AtomicBoolean(false);
+        loaders.forEach(cl -> {
+            if (!found.get() && Ref.getDeclaredMethod(ClassLoader.class, "getPackage", String.class)
+                    .accessible(true)
+                    .invoke(cl, pkg) != null) found.set(true);
+        });
+        return found.get();
     }
 
     private CollectionList<String> findClasses(String packageName) {
@@ -218,12 +237,24 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return list.size() == 0 ? findClasses(packageName, true) : list;
     }
 
+    private final StringCollection<Integer> loaders1 = new StringCollection<>();
+    private final StringCollection<Integer> loaders2 = new StringCollection<>();
+    private final StringCollection<CollectionList<String>> classes = new StringCollection<>();
+    private final StringCollection<CollectionList<String>> packages = new StringCollection<>();
+
     private CollectionList<String> findClasses(String packageName, boolean recursive) {
+        String p = trim(packageName);
+        if (!classes.containsKey(p)) classes.add(p, new CollectionList<>());
         try {
-            return ReflectionHelper
-                    .findAllClasses(cl, trim(packageName), recursive)
-                    .map(Class::getCanonicalName)
-                    .concat(findPackages(packageName), findSystemClasses(packageName, recursive));
+            CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
+                    .accessible(true)
+                    .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+            if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
+                this.loaders1.add(p, loaders.size());
+                classes.get(p).clear();
+                loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(Class::getCanonicalName)));
+            }
+            return classes.get(p).concat(findPackages(packageName), findSystemClasses(packageName, recursive));
         } catch (SecurityException e) {
             try {
                 return findPackages(packageName).concat(findSystemClasses(packageName, recursive));
@@ -242,17 +273,25 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
 
     private CollectionList<String> findPackages(String packageName) {
         CollectionList<String> list = findPackages(packageName, packageName.equalsIgnoreCase(""));
-        if (list.size() == 0) return findPackages(packageName, true);
+        if (list.size() == 0) list = findPackages(packageName, true);
+        if (list.size() == 0) list = findPackages(trim(packageName + "."), true);
+        if (list.size() == 0) list = findPackages(trim(trim(packageName + ".") + "."), true);
+        if (list.size() == 0) list = findPackages("", true);
         return list;
     }
 
     private CollectionList<String> findPackages(String packageName, boolean recursive) {
-        return ReflectionHelper
-                .findPackages(
-                        getClassLoader(),
-                        trim(packageName),
-                        recursive
-                );
+        String p = trim(packageName);
+        if (!packages.containsKey(p)) packages.add(p, new CollectionList<>());
+        CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
+                .accessible(true)
+                .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+        if (loaders.size() != this.loaders2.getOrDefault(p, -1)) {
+            this.loaders2.add(p, loaders.size());
+            packages.get(p).clear();
+            loaders.forEach(cl -> packages.get(p).addAll(ReflectionHelper.findPackages(cl, p, recursive)));
+        }
+        return packages.get(p);
     }
 
     private static String trim(String s) {
@@ -278,7 +317,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("debug-legacy")) {
                 if (!isValidClass(args[1])) {
-                    if (ReflectionHelper.isValidPackage(trim(args[1]))) {
+                    if (isValidPackage(trim(args[1]))) {
                         return filterArgsList(findClasses(args[1]), args[1]);
                     }
                     return filterArgsList(findPackages(args[1]), args[1]);
@@ -302,6 +341,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             if (k.size() > 0 && !s.endsWith(".")) k.remove(k.size()-1);
             if (s.endsWith(".")) k.add("");
             ICollectionList<String> things = getAllThings(s0, s);
+            Log.info("T: " + things.join(", "));
             ICollectionList<String> list = filterArgsList(things, k.join("."));
             if (list.size() != 0) return filterArgsList(list, s); // usually a package.class
             ICollectionList<String> lst = filterArgsList(things, s);
