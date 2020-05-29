@@ -20,7 +20,9 @@ import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -220,12 +222,22 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return new CollectionList<>();
     }
 
-    private boolean isValidPackage(String pkg) {
-        CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
+    public CollectionList<ClassLoader> getClassLoaders() {
+        Object loadrs = Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
                 .accessible(true)
-                .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+                .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader());
+        Collection<?> collection;
+        if (loadrs instanceof Map) { // some versions has LinkedHashMap<String, PluginClassLoader>
+            collection = ((Map<?, ?>) loadrs).values();
+        } else { // and some versions has just List<PluginClassLoader>
+            collection = (List<?>) loadrs;
+        }
+        return new CollectionList<>(collection).map(o -> (ClassLoader) o);
+    }
+
+    private boolean isValidPackage(String pkg) {
         AtomicBoolean found = new AtomicBoolean(false);
-        loaders.forEach(cl -> {
+        getClassLoaders().forEach(cl -> {
             if (!found.get() && Ref.getDeclaredMethod(ClassLoader.class, "getPackage", String.class)
                     .accessible(true)
                     .invoke(cl, pkg) != null) found.set(true);
@@ -247,9 +259,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         String p = trim(packageName);
         if (!classes.containsKey(p)) classes.add(p, new CollectionList<>());
         try {
-            CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
-                    .accessible(true)
-                    .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+            CollectionList<ClassLoader> loaders = getClassLoaders();
             if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
                 this.loaders1.add(p, loaders.size());
                 classes.get(p).clear();
@@ -284,9 +294,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     private CollectionList<String> findPackages(String packageName, boolean recursive) {
         String p = trim(packageName);
         if (!packages.containsKey(p)) packages.add(p, new CollectionList<>());
-        CollectionList<ClassLoader> loaders = ICollectionList.asList((List<?>) Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
-                .accessible(true)
-                .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader())).map(o -> (ClassLoader) o);
+        CollectionList<ClassLoader> loaders = getClassLoaders();
         if (loaders.size() != this.loaders2.getOrDefault(p, -1)) {
             this.loaders2.add(p, loaders.size());
             packages.get(p).clear();
