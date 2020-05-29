@@ -327,16 +327,16 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             if (args[0].equalsIgnoreCase("debug-legacy")) {
                 if (!isValidClass(args[1])) {
                     if (isValidPackage(trim(args[1]))) {
-                        return filterArgsList(findClasses(args[1]), args[1]);
+                        return filterArgsList(findClasses(args[1]), args[1]).unique();
                     }
-                    return filterArgsList(findPackages(args[1]), args[1]);
+                    return filterArgsList(findPackages(args[1]), args[1]).unique();
                 }
             }
         }
         if (args.length == 3) {
             if (args[0].equalsIgnoreCase("debug-legacy")) {
                 try {
-                    return filterArgsList(Refs.getAllThings(RefClass.forName(args[1])), args[2]);
+                    return filterArgsList(Refs.getAllThings(RefClass.forName(args[1])), args[2]).unique();
                 } catch (Exception e) {
                     if (!(e instanceof ClassNotFoundException)) throw e;
                 }
@@ -349,7 +349,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             CollectionList<String> k = ICollectionList.asList(g);
             if (k.size() > 0 && !s.endsWith(".")) k.remove(k.size()-1);
             if (s.endsWith(".")) k.add("");
-            ICollectionList<String> things = getAllThings(s0, s);
+            ICollectionList<String> things = getAllThings(s0, s).unique();
             //Log.info("T: " + things.join(", "));
             ICollectionList<String> list = filterArgsList(things, k.join("."));
             if (list.size() != 0) return filterArgsList(list, s); // usually a package.class
