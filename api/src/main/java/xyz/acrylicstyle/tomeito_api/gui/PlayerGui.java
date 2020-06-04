@@ -50,16 +50,19 @@ public interface PlayerGui extends Listener, InventoryHolder {
     static PlayerGui create(@NotNull Supplier<Inventory> getInventorySupplier, @NotNull Consumer<InventoryClickEvent> inventoryClickEventConsumer, @NotNull Consumer<InventoryDragEvent> inventoryDragEventConsumer) {
         return new PlayerGui() {
             @Override
+            @EventHandler
             public @NotNull Inventory getInventory() {
                 return getInventorySupplier.get();
             }
 
             @Override
+            @EventHandler
             public void onInventoryClick(InventoryClickEvent e) {
                 inventoryClickEventConsumer.accept(e);
             }
 
             @Override
+            @EventHandler
             public void onInventoryDrag(InventoryDragEvent e) {
                 inventoryDragEventConsumer.accept(e);
             }

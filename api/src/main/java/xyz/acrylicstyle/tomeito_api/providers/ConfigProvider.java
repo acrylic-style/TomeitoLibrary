@@ -35,11 +35,13 @@ public class ConfigProvider extends YamlConfiguration {
         this.path = path;
         this.file = new File(this.path);
         if (!this.file.exists()) { // for avoid some dangerous situation
-            this.file.mkdirs(); // creates directory(ies) including file nameW
+            this.file.mkdirs(); // creates directory(ies) including file name
             this.file.delete(); // deletes file but not parent directory
             try {
                 this.file.createNewFile();
-            } catch (IOException e) { e.printStackTrace(); }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.load(this.file);
     }

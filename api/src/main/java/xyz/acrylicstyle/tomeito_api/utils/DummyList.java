@@ -2,10 +2,15 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
- * Creates dummy list that does absolutely nothing.
+ * Creates dummy list that does absolutely nothing. Similar to EmptyList in {@link Collections}.
  */
 public class DummyList<E> implements List<E> {
     @Override
