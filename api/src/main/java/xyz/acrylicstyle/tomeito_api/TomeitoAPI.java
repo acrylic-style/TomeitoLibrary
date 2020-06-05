@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
+import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 
-import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -37,13 +37,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @throws RuntimeException When couldn't find plugin
      */
     static TomeitoAPI getInstance() {
-        try {
-            Field field = Class.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance");
-            field.setAccessible(true);
-            return (TomeitoAPI) field.get(null);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return (TomeitoAPI) Ref.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance").accessible(true).get(null);
     }
 
     /**
@@ -94,7 +88,6 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      *     // your code
      * </pre> as this method sends message to the sender when does not meet requirements.
      */
-    @SuppressWarnings("JavaDoc")
     @Nullable
     static Player ensurePlayer(@NotNull CommandSender sender) {
         if (!(sender instanceof Player)) {

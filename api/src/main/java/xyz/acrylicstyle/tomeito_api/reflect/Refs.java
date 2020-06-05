@@ -1,4 +1,4 @@
-package xyz.acrylicstyle.tomeito_api.reflection;
+package xyz.acrylicstyle.tomeito_api.reflect;
 
 import util.CollectionList;
 import util.CollectionSet;

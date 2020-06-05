@@ -1,5 +1,7 @@
 package xyz.acrylicstyle.tomeito_api.utils;
 
+import java.lang.reflect.Array;
+
 @SuppressWarnings("unused")
 public class ArrayUtil {
     /**
@@ -48,5 +50,20 @@ public class ArrayUtil {
             if (array[i].equalsIgnoreCase(needle)) return i;
         }
         return -1;
+    }
+
+    /**
+     * Expands array size to the specific size.
+     * @param array an array, it won't be modified.
+     * @param size the new size of the array, this won't do anything if array size >= size.
+     * @param <T> the array type
+     * @return new array or clone of the array at the param2 if array size >= param3
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] expand(T[] array, int size) {
+        if (array.length >= size) return array.clone();
+        Object arr = Array.newInstance(array.getClass().getComponentType(), size);
+        for (int i = 0; i < array.length; i++) Array.set(arr, i, array[i]);
+        return (T[]) arr;
     }
 }

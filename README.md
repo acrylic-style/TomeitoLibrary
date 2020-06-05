@@ -1,6 +1,8 @@
 # TomeitoLib [![Build Status](https://ci.acrylicstyle.xyz/job/TomeitoLib/badge/icon)](https://ci.acrylicstyle.xyz/job/TomeitoLib/)
 Library of my some bukkit plugins.
 
+Currently, compatible with: 1.8 - 1.15.2
+
 Please note that this plugin itself does not modify game play. It just adds some useful commands and APIs.
 
 Also, you may use this for other purposes if you want. See licence for more information.
@@ -9,19 +11,18 @@ With `/tl debug` command, you can debug anything, comes with tab completion. (it
 
 ## Using maven
 ```xml
-<repositories>
-  <repository>
-    <id>acrylicstyle-repo</id>
-    <url>https://ci.acrylicstyle.xyz/job/TomeitoLib/ws/</url>
-  </repository>
-</repositories>
-<dependencies>
-  <dependency>
+<repository>
+    <id>acrylic-repo</id>
+    <url>https://repo.acrylicstyle.xyz</url>
+</repository>
+```
+
+```xml
+<dependency>
     <groupId>xyz.acrylicstyle</groupId>
-    <artifactId>tomeito_lib</artifactId>
+    <artifactId>api</artifactId>
     <version>version</version>
-  </dependency>
-</dependencies>
+</dependency>
 ```
 
 ## Using in Server

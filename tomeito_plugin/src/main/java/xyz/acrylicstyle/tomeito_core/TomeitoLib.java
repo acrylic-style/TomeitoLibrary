@@ -196,7 +196,7 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
                 e.setCancelled(true);
                 return;
             }
-            e.setYield(event.getYield());
+            if (e.getYield() != event.getYield()) e.setYield(event.getYield());
         }
     }
 
