@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import static xyz.acrylicstyle.tomeito_api.TomeitoAPI.tryPreloadClass;
+
 /**
  * The Plugin implementation of TomeitoLib.<br />
  * Do not shade it if you plan to add TomeitoLib.jar in plugins folder, or it will fail to load.<br />
@@ -72,6 +74,24 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     @Override
     public void onLoad() {
         instance = this;
+        new Thread(() -> {
+            Log.info("Preloading classes");
+            tryPreloadClass("groovy.lang.GroovyObjectSupport");
+            tryPreloadClass("org.codehaus.groovy.control.Phases");
+            tryPreloadClass("groovy.lang.Binding");
+            tryPreloadClass("groovy.lang.GroovyShell");
+            tryPreloadClass("groovy.lang.GroovyClassLoader");
+            tryPreloadClass("org.codehaus.groovy.control.CompilationFailedException");
+            tryPreloadClass("groovy.security.GroovyCodeSourcePermission");
+            tryPreloadClass("groovy.lang.GroovyCodeSource");
+            tryPreloadClass("groovy.lang.Script");
+            tryPreloadClass("org.codehaus.groovy.runtime.InvokerHelper");
+            tryPreloadClass("groovy.lang.MissingMethodException");
+            tryPreloadClass("groovy.lang.MissingPropertyException");
+            tryPreloadClass("groovy.lang.GroovyRuntimeException");
+            tryPreloadClass("org.codehaus.groovy.runtime.typehandling.NumberMathModificationInfo");
+            Log.info("Done loading classes");
+        }).start();
     }
 
     @Override

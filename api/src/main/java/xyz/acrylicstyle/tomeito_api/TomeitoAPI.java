@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
+import util.SneakyThrow;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
@@ -46,6 +47,15 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      */
     static PluginChannelListener getPluginChannelListener() {
         return PluginChannelListener.pcl;
+    }
+
+    static void tryPreloadClass(@NotNull String clazz) { tryPreloadClass(clazz, false); }
+    static void tryPreloadClass(@NotNull String clazz, boolean required) {
+        try {
+            Class.forName(clazz);
+        } catch (ClassNotFoundException e) {
+            if (required) SneakyThrow.sneaky(e);
+        }
     }
 
     @NotNull
