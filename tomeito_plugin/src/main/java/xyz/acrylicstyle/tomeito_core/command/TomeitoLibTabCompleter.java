@@ -326,6 +326,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     @SuppressWarnings("ConstantConditions")
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("tomeitolib.cmd")) return Collections.emptyList();
         if (args.length == 0) return Arrays.asList("debug", "debug-legacy", "packet");
         if (args.length == 1) return filterArgsList(Arrays.asList("debug", "debug-legacy", "packet"), args[0]);
         if (args.length == 2) {
