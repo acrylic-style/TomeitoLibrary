@@ -10,8 +10,8 @@ import util.reflect.Ref;
 import util.reflect.RefConstructor;
 import xyz.acrylicstyle.minecraft.ChatMessage;
 import xyz.acrylicstyle.minecraft.IChatBaseComponent;
-import xyz.acrylicstyle.minecraft.NetworkManager;
 import xyz.acrylicstyle.minecraft.Packet;
+import xyz.acrylicstyle.minecraft.PlayerConnection;
 import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.shared.OBCAPI;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
@@ -93,7 +93,7 @@ public class PacketCommand {
             OBCAPI cp = OBCAPI.getEmptyOBCAPI(p, "entity.CraftPlayer");
             NMSAPI ep = NMSAPI.getEmptyNMSAPI(cp.invoke("getHandle"), "EntityPlayer");
             NMSAPI pc = NMSAPI.getEmptyNMSAPI(ep.getField("playerConnection"), "PlayerConnection");
-            Ref.getMethod(NetworkManager.CLASS, "sendPacket", Packet.CLASS).invokeObj(pc.getField("networkManager"), packet);
+            Ref.getMethod(PlayerConnection.CLASS, "sendPacket", Packet.CLASS).invokeObj(pc.getHandle(), packet);
         });
         player.sendMessage(ChatColor.GREEN + "Sent packet " + arguments.get(1) + " to " + ChatColor.GOLD + players.map(Player::getName).join(ChatColor.YELLOW + ", " + ChatColor.GOLD));
         if (unknownArguments.size() != 0) {
