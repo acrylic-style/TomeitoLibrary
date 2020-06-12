@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_core.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,19 +14,23 @@ import util.StringCollection;
 import util.reflect.Ref;
 import util.reflect.RefClass;
 import util.reflect.RefField;
+import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.reflect.Refs;
-//import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper;
 import xyz.acrylicstyle.tomeito_core.TomeitoLib;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+//import xyz.acrylicstyle.tomeito_api.utils.Log;
 
 public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCompleter {
     public static CollectionList<String> COMMONS = new CollectionList<>();
@@ -321,8 +326,8 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     @SuppressWarnings("ConstantConditions")
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 0) return Arrays.asList("debug", "debug-legacy");
-        if (args.length == 1) return filterArgsList(Arrays.asList("debug", "debug-legacy"), args[0]);
+        if (args.length == 0) return Arrays.asList("debug", "debug-legacy", "packet");
+        if (args.length == 1) return filterArgsList(Arrays.asList("debug", "debug-legacy", "packet"), args[0]);
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("debug-legacy")) {
                 if (!isValidClass(args[1])) {
@@ -331,6 +336,8 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                     }
                     return filterArgsList(findPackages(args[1]), args[1]).unique();
                 }
+            } else if (args[0].equalsIgnoreCase("packet")) {
+                return filterArgsList(TomeitoAPI.getOnlinePlayers().map(Player::getName).concat(CollectionList.of("@p", "@a", "@s", "@r")), args[1]);
             }
         }
         if (args.length == 3) {
@@ -340,9 +347,22 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                 } catch (Exception e) {
                     if (!(e instanceof ClassNotFoundException)) throw e;
                 }
+            } else if (args[0].equalsIgnoreCase("packet")) {
+                return filterArgsList(packets, args[2]);
             }
         }
-        if (args[0].equalsIgnoreCase("debug")) {
+        if (args[0].equalsIgnoreCase("packet")) {
+            String s = args[args.length-1];
+            List<String> list = new ArrayList<>();
+            if (s.matches("^\\d+") || s.equals("")) {
+                list.add(s + "f");
+                list.add(s + "d");
+                list.add(s + "l");
+                list.add(s + "s");
+            }
+            list.add(s);
+            return filterArgsList(list, s).concat(CollectionList.of("(ChatMessage)" + s));
+        } else if (args[0].equalsIgnoreCase("debug")) {
             String s0 = args.length-2 <= 0 ? null : args[args.length-2];
             String s = args[args.length-1];
             String[] g = s.split("\\.");
@@ -361,6 +381,101 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             }
             return lst;
         }
-        return new CollectionList<>();
+        return Collections.emptyList();
+    }
+
+    public static final CollectionList<String> packets = new CollectionList<>();
+
+    static {
+        packets.add("PacketPlayOutAbilities");
+        packets.add("PacketPlayOutAdvancements");
+        packets.add("PacketPlayOutAnimation");
+        packets.add("PacketPlayOutAttachEntity");
+        packets.add("PacketPlayOutAutoRecipe");
+        packets.add("PacketPlayOutBlockAction");
+        packets.add("PacketPlayOutBlockBreak");
+        packets.add("PacketPlayOutBlockBreakAnimation");
+        packets.add("PacketPlayOutBlockChange");
+        packets.add("PacketPlayOutBoss");
+        packets.add("PacketPlayOutCamera");
+        packets.add("PacketPlayOutChat");
+        packets.add("PacketPlayOutCloseWindow");
+        packets.add("PacketPlayOutCollect");
+        packets.add("PacketPlayOutCombatEvent");
+        packets.add("PacketPlayOutCommands");
+        packets.add("PacketPlayOutCustomPayload");
+        packets.add("PacketPlayOutCustomSoundEffect");
+        packets.add("PacketPlayOutEntity");
+        packets.add("PacketPlayOutEntityDestroy");
+        packets.add("PacketPlayOutEntityEffect");
+        packets.add("PacketPlayOutEntityEquipment");
+        packets.add("PacketPlayOutEntityHeadRotation");
+        packets.add("PacketPlayOutEntityMetadata");
+        packets.add("PacketPlayOutEntitySound");
+        packets.add("PacketPlayOutEntityStatus");
+        packets.add("PacketPlayOutEntityTeleport");
+        packets.add("PacketPlayOutEntityVelocity");
+        packets.add("PacketPlayOutExperience");
+        packets.add("PacketPlayOutExplosion");
+        packets.add("PacketPlayOutGameStateChange");
+        packets.add("PacketPlayOutHeldItemSlot");
+        packets.add("PacketPlayOutKeepAlive");
+        packets.add("PacketPlayOutKickDisconnect");
+        packets.add("PacketPlayOutLightUpdate");
+        packets.add("PacketPlayOutLogin");
+        packets.add("PacketPlayOutLookAt");
+        packets.add("PacketPlayOutMap");
+        packets.add("PacketPlayOutMapChunk");
+        packets.add("PacketPlayOutMount");
+        packets.add("PacketPlayOutMultiBlockChange");
+        packets.add("PacketPlayOutNamedEntitySpawn");
+        packets.add("PacketPlayOutNamedSoundEffect");
+        packets.add("PacketPlayOutNBTQuery");
+        packets.add("PacketPlayOutOpenBook");
+        packets.add("PacketPlayOutOpenSignEditor");
+        packets.add("PacketPlayOutOpenWindow");
+        packets.add("PacketPlayOutOpenWindowHorse");
+        packets.add("PacketPlayOutOpenWindowMerchant");
+        packets.add("PacketPlayOutPlayerInfo");
+        packets.add("PacketPlayOutPlayerListHeaderFooter");
+        packets.add("PacketPlayOutPosition");
+        packets.add("PacketPlayOutRecipes");
+        packets.add("PacketPlayOutRecipeUpdate");
+        packets.add("PacketPlayOutRemoveEntityEffect");
+        packets.add("PacketPlayOutResourcePackSend");
+        packets.add("PacketPlayOutRespawn");
+        packets.add("PacketPlayOutScoreboardDisplayObjective");
+        packets.add("PacketPlayOutScoreboardObjective");
+        packets.add("PacketPlayOutScoreboardScore");
+        packets.add("PacketPlayOutScoreboardTeam");
+        packets.add("PacketPlayOutSelectAdvancementTab");
+        packets.add("PacketPlayOutServerDifficulty");
+        packets.add("PacketPlayOutSetCooldown");
+        packets.add("PacketPlayOutSetSlot");
+        packets.add("PacketPlayOutSpawnEntity");
+        packets.add("PacketPlayOutSpawnEntityExperienceOrb");
+        packets.add("PacketPlayOutSpawnEntityLiving");
+        packets.add("PacketPlayOutSpawnEntityPainting");
+        packets.add("PacketPlayOutSpawnEntityWeather");
+        packets.add("PacketPlayOutSpawnPosition");
+        packets.add("PacketPlayOutStatistic");
+        packets.add("PacketPlayOutStopSound");
+        packets.add("PacketPlayOutTabComplete");
+        packets.add("PacketPlayOutTags");
+        packets.add("PacketPlayOutTileEntityData");
+        packets.add("PacketPlayOutTitle");
+        packets.add("PacketPlayOutTransaction");
+        packets.add("PacketPlayOutUnloadChunk");
+        packets.add("PacketPlayOutUpdateAttributes");
+        packets.add("PacketPlayOutUpdateHealth");
+        packets.add("PacketPlayOutUpdateTime");
+        packets.add("PacketPlayOutVehicleMove");
+        packets.add("PacketPlayOutViewCentre");
+        packets.add("PacketPlayOutViewDistance");
+        packets.add("PacketPlayOutWindowData");
+        packets.add("PacketPlayOutWindowItems");
+        packets.add("PacketPlayOutWorldBorder");
+        packets.add("PacketPlayOutWorldEvent");
+        packets.add("PacketPlayOutWorldParticles");
     }
 }

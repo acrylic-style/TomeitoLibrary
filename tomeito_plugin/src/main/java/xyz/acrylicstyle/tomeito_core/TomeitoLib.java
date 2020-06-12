@@ -46,6 +46,7 @@ import xyz.acrylicstyle.tomeito_api.utils.Log;
 import xyz.acrylicstyle.tomeito_core.command.TomeitoLibTabCompleter;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
+import xyz.acrylicstyle.tomeito_core.commands.PacketCommand;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,6 +91,8 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             tryPreloadClass("groovy.lang.MissingPropertyException");
             tryPreloadClass("groovy.lang.GroovyRuntimeException");
             tryPreloadClass("org.codehaus.groovy.runtime.typehandling.NumberMathModificationInfo");
+            tryPreloadClass("org.codehaus.groovy.runtime.callsite.PojoMetaMethodsSite$PojoCachedMethodSiteNoWrapNoCoerce");
+            tryPreloadClass("org.codehaus.groovy.classgen.asm.OptimizingStatementWriter$FastPathData");
             Log.info("Done loading classes");
         }).start();
     }
@@ -254,10 +257,15 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         @Override
         public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
             if (args.length != 0) {
+                CollectionList<String> list = ICollectionList.asList(args);
+                list.shift();
+                String[] trimmedArgs = list.toArray(new String[0]);
                 if (args[0].equalsIgnoreCase("debug")) {
                     DebugGroovy.run(sender, args);
                 } else if (args[0].equalsIgnoreCase("debug-legacy")) {
                     DebugLegacy.run(sender, args);
+                } else if (args[0].equalsIgnoreCase("packet")) {
+                    PacketCommand.run(sender, trimmedArgs);
                 } else sendHelp(sender);
             } else sendHelp(sender);
             return true;
@@ -267,7 +275,8 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
             sender.sendMessage(ChatColor.AQUA + "TomeitoLibrary v" + TomeitoLib.instance.getDescription().getVersion());
             sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug - Useful for debug.");
-            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-legacy - Useful for debug.");
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib debug-legacy - Not Useful for debug. (legacy)");
+            sender.sendMessage(ChatColor.GREEN + " /tomeitolib packet <player> <Packet> <arguments...> - Sends packet to the player");
             sender.sendMessage(ChatColor.BLUE + "--------------------------------------------------");
         }
     }

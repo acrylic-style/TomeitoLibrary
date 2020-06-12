@@ -96,13 +96,12 @@ public class ConfigProvider extends YamlConfiguration {
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getConfigSectionValue(@Nullable Object o, boolean deep) {
         if (o == null) return null;
-        Map<String, Object> map;
         if (o instanceof ConfigurationSection) {
-            map = ((ConfigurationSection) o).getValues(deep);
+            return ((ConfigurationSection) o).getValues(deep);
         } else if (o instanceof Map) {
-            map = (Map<String, Object>) o;
-        } else return null;
-        return map;
+            return (Map<String, Object>) o;
+        }
+        return null;
     }
 
     public Map<String, Object> getConfigSectionValue(@NotNull String path, boolean deep) {
