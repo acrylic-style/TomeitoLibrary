@@ -4,12 +4,16 @@ import org.bukkit.command.CommandExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
+import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 
 /**
  * Defines instance methods.<br />
  * This interface only exists to define non-static methods.
  */
 public interface BaseTomeitoAPI {
+    @NotNull
+    TomeitoScheduler getTomeitoScheduler();
+
     void registerCommands(@NotNull final String packageName);
 
     /**

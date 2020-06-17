@@ -7,6 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import util.Validate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,6 +18,16 @@ public class ClickableItem {
     private ClickableItem(@NotNull ItemStack itemStack, @NotNull Consumer<InventoryClickEvent> executor) {
         this.item = itemStack;
         this.executor = executor;
+    }
+
+    @NotNull
+    public static ClickableItem of(@NotNull Material material, @NotNull String name, @NotNull Consumer<InventoryClickEvent> executor) {
+        return of(material, 1, name, new ArrayList<>(), executor);
+    }
+
+    @NotNull
+    public static ClickableItem of(@NotNull Material material, int amount, @NotNull String name, @NotNull Consumer<InventoryClickEvent> executor) {
+        return of(material, amount, name, new ArrayList<>(), executor);
     }
 
     @NotNull

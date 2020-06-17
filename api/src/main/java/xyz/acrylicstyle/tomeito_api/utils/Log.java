@@ -2,8 +2,14 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import org.bukkit.Bukkit;
 
+import java.util.logging.Logger;
+
 @SuppressWarnings({"unused", "DuplicatedCode"})
 public class Log {
+    public static Logger as(String title) {
+        return Logger.getLogger(title);
+    }
+
     public static void info(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();

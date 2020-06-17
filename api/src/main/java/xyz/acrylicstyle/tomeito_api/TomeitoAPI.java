@@ -7,22 +7,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.SneakyThrow;
 import util.reflect.Ref;
+import xyz.acrylicstyle.craftbukkit.v1_8_R3.CraftServer;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
+import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 
 import java.security.SecureRandom;
 import java.util.UUID;
@@ -31,13 +36,13 @@ import java.util.regex.Pattern;
 /**
  * This interface defines static methods. For instance methods, see {@link BaseTomeitoAPI}.
  */
-public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
+public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, Plugin {
     /**
      * Obtain the instance of TomeitoAPI. Requires TomeitoLib (Plugin) to work.
      * @return Instance of TomeitoAPI
      * @throws RuntimeException When couldn't find plugin
      */
-    static TomeitoAPI getInstance() {
+    public static TomeitoAPI getInstance() {
         return (TomeitoAPI) Ref.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance").accessible(true).get(null);
     }
 
@@ -45,12 +50,12 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * Obtain the instance of PluginChannelListener.
      * @return Instance of {@link PluginChannelListener}
      */
-    static PluginChannelListener getPluginChannelListener() {
+    public static PluginChannelListener getPluginChannelListener() {
         return PluginChannelListener.pcl;
     }
 
-    static void tryPreloadClass(@NotNull String clazz) { tryPreloadClass(clazz, false); }
-    static void tryPreloadClass(@NotNull String clazz, boolean required) {
+    public static void tryPreloadClass(@NotNull String clazz) { tryPreloadClass(clazz, false); }
+    public static void tryPreloadClass(@NotNull String clazz, boolean required) {
         try {
             Class.forName(clazz);
         } catch (ClassNotFoundException e) {
@@ -60,7 +65,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
 
     @NotNull
     @Contract(value = "_ -> new", pure = true)
-    static TextComponent getItemTooltipMessage(@Nullable ItemStack item) {
+    public static TextComponent getItemTooltipMessage(@Nullable ItemStack item) {
         if (item == null || item.getType() == Material.AIR) return new TextComponent();
         TextComponent text = new TextComponent();
         text.setHoverEvent(
@@ -72,20 +77,51 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
         return text;
     }
 
-    static void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
+    @SuppressWarnings("deprecation")
+    public static void registerCommand(@NotNull String prefix, @NotNull String label, @NotNull Command command) {
+        SimpleCommandMap map = (SimpleCommandMap) Ref.getClass(Bukkit.getServer().getClass())
+                .getDeclaredField("commandMap")
+                .accessible(true)
+                .getObj(Bukkit.getServer());
+        map.register(label, prefix, command);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void registerCommand(@NotNull String label, @NotNull Plugin plugin) {
+        SimpleCommandMap map = (SimpleCommandMap) Ref.getClass(Bukkit.getServer().getClass())
+                .getDeclaredField("commandMap")
+                .accessible(true)
+                .getObj(Bukkit.getServer());
+        PluginCommand command = Ref.getClass(PluginCommand.class).getDeclaredConstructor(String.class, Plugin.class).newInstance(label, plugin);
+        map.register(label, plugin.getName().toLowerCase(), command);
+    }
+
+    public static void registerTextCommand(@NotNull String label, @NotNull Plugin plugin, @NotNull String text) {
+        registerCommand(label, plugin);
+        TomeitoAPI.registerCommand(label, (sender, command, label1, args) -> {
+            sender.sendMessage(text);
+            return true;
+        });
+    }
+
+    public static TomeitoScheduler getScheduler() {
+        return getInstance().getTomeitoScheduler();
+    }
+
+    public static void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
         PluginCommand pluginCommand = Bukkit.getPluginCommand(command);
         if (pluginCommand == null) throw new NullPointerException("Command '" + command + "' isn't defined inside plugin.yml!");
         pluginCommand.setExecutor(executor);
     }
 
-    static void registerTabCompleter(@NotNull String command, @NotNull TabCompleter tabCompleter) {
+    public static void registerTabCompleter(@NotNull String command, @NotNull TabCompleter tabCompleter) {
         PluginCommand pluginCommand = Bukkit.getPluginCommand(command);
         if (pluginCommand == null) throw new NullPointerException("Command '" + command + "' isn't defined inside plugin.yml!");
         pluginCommand.setTabCompleter(tabCompleter);
     }
 
     @NotNull
-    static UUID uuidFromStringWithoutDashes(@NotNull String s) {
+    public static UUID uuidFromStringWithoutDashes(@NotNull String s) {
         return UUID.fromString(s.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
     }
 
@@ -99,7 +135,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * </pre> as this method sends message to the sender when does not meet requirements.
      */
     @Nullable
-    static Player ensurePlayer(@NotNull CommandSender sender) {
+    public static Player ensurePlayer(@NotNull CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command cannot be invoked from console.");
             return null;
@@ -112,7 +148,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @return All online players as list.
      */
     @NotNull
-    static CollectionList<Player> getOnlinePlayers() {
+    public static CollectionList<Player> getOnlinePlayers() {
         CollectionList<Player> players = new CollectionList<>();
         players.addAll(Bukkit.getOnlinePlayers());
         return players;
@@ -123,7 +159,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @return All online operators as list.
      */
     @NotNull
-    static CollectionList<Player> getOnlineOperators() { return getOnlinePlayers().filter(Player::isOp); }
+    public static CollectionList<Player> getOnlineOperators() { return getOnlinePlayers().filter(Player::isOp); }
 
     /**
      * Random number between 0 - max.<br />
@@ -131,14 +167,14 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @param max Maximum random number.
      * @return Random number
      */
-    static int randomNumber(int max) { return (int) (Math.random() * max + 1); }
+    public static int randomNumber(int max) { return (int) (Math.random() * max + 1); }
 
     /**
      * Random number between 0 - max.
      * @param max Maximum random number.
      * @return Unique random number
      */
-    static int randomSecureNumber(int max) { return new SecureRandom().nextInt() * max + 1; }
+    public static int randomSecureNumber(int max) { return new SecureRandom().nextInt() * max + 1; }
 
     /**
      * Checks if the target is inside the between location1 and location2.
@@ -147,7 +183,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @param location2 Shape 2
      * @return If the target inside the shape or not
      */
-    static boolean inside(@NotNull Location target, @NotNull Location location1, @NotNull Location location2) {
+    public static boolean inside(@NotNull Location target, @NotNull Location location1, @NotNull Location location2) {
         double x = target.getX();
         double y = target.getY();
         double z = target.getZ();
@@ -174,7 +210,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * </ul>
      */
     @NotNull
-    static String secondsToTime(int seconds) {
+    public static String secondsToTime(int seconds) {
         int minutes = (int) Math.floor((float) seconds / 60F);
         String sec = Integer.toString(seconds % 60);
         return minutes + ":" + (sec.length() == 1 ? "0" + sec : sec);
@@ -187,7 +223,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @return Seconds in Integer
      * @throws IllegalArgumentException When the time isn't format in hh:mm
      */
-    static int timeToSeconds0(String time) {
+    public static int timeToSeconds0(String time) {
         if (!Pattern.compile("^\\d+:\\d+$").matcher(time).matches()) throw new IllegalArgumentException("Time must be format number:number.");
         String[] times = time.split(":");
         return Integer.parseInt(times[0])*60 + Integer.parseInt(times[1]);
@@ -199,7 +235,7 @@ public interface TomeitoAPI extends BaseTomeitoAPI, Plugin {
      * @return Seconds in integer
      * @throws IllegalArgumentException When couldn't parse time
      */
-    static int timeToSeconds(String s) {
+    public static int timeToSeconds(String s) {
         if (Pattern.compile("^\\d+$").matcher(s).matches()) {
             return Integer.parseInt(s);
         } else {

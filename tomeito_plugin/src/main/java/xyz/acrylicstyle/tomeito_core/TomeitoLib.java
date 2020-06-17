@@ -6,7 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,8 +24,8 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +44,7 @@ import xyz.acrylicstyle.tomeito_api.events.player.EntityDamageByPlayerEvent;
 import xyz.acrylicstyle.tomeito_api.events.player.PlayerJumpEvent;
 import xyz.acrylicstyle.tomeito_api.events.player.PlayerPreDeathEvent;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
+import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
@@ -47,19 +52,26 @@ import xyz.acrylicstyle.tomeito_core.command.TomeitoLibTabCompleter;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
 import xyz.acrylicstyle.tomeito_core.commands.PacketCommand;
+import xyz.acrylicstyle.tomeito_core.scheduler.CraftTomeitoScheduler;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-
-import static xyz.acrylicstyle.tomeito_api.TomeitoAPI.tryPreloadClass;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
  * Do not shade it if you plan to add TomeitoLib.jar in plugins folder, or it will fail to load.<br />
  * Or, please define TomeitoLib at softdepend or depend at least!
  */
-public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
+public class TomeitoLib extends TomeitoAPI implements Listener {
     public static final Logger LOGGER = Logger.getLogger("TomeitoLib");
     /**
      * It only exists for backward compatibility.
@@ -67,6 +79,8 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
     @SuppressWarnings("unused")
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
+
+    private final CraftTomeitoScheduler scheduler = new CraftTomeitoScheduler();
 
     public TomeitoLib() {
         instance = this;
@@ -97,19 +111,43 @@ public class TomeitoLib extends JavaPlugin implements Listener, TomeitoAPI {
         }).start();
     }
 
+    private static final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    private static final Timer timer = new Timer();
+
     @Override
     public void onEnable() {
+        for (int i = 0; i < 300; i++) System.currentTimeMillis(); // warm up
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
         Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter());
         Log.info("Enabled TomeitoLib");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                scheduler.tick();
+            }
+        }.runTaskTimer(this, 1, 1);
+        pool.execute(() -> {
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    pool.execute(scheduler::tickAsync);
+                }
+            };
+            timer.scheduleAtFixedRate(task, 50, 50);
+        });
     }
 
     @Override
     public void onDisable() {
+        Log.info("Stopping timer!");
+        timer.cancel();
         Log.info("Disabled TomeitoLib");
     }
+
+    @Override
+    public @NotNull TomeitoScheduler getTomeitoScheduler() { return scheduler; }
 
     @Override
     public void registerCommands(@NotNull String packageName) {
