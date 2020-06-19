@@ -6,6 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import xyz.acrylicstyle.tomeito_api.gui.impl.SimpleGuiBuilder;
 
@@ -44,10 +45,19 @@ public interface GuiBuilder extends Listener, InventoryHolder {
     @NotNull
     Map<Integer, Consumer<InventoryClickEvent>> getClickEvents();
 
+    boolean isClickable();
+
+    @NotNull
+    GuiBuilder setClickable(boolean clickable);
+
+    @NotNull
+    GuiBuilder setClickEvents(@NotNull Map<Integer, Consumer<InventoryClickEvent>> clickEvents);
+
     /**
      * Constructs GuiBuilder with specified inventory.
      * After calling constructor, you must call {@link #register(Plugin)} or the events doesn't work.
      */
+    @Contract("_ -> new")
     @NotNull
     static GuiBuilder newInstance(Inventory inventory) { return new SimpleGuiBuilder(inventory); }
 
@@ -55,6 +65,7 @@ public interface GuiBuilder extends Listener, InventoryHolder {
      * Constructs GuiBuilder with newly created inventory with specified name and the size.
      * After calling constructor, you must call {@link #register(Plugin)} or the events doesn't work.
      */
+    @Contract("_, _ -> new")
     @NotNull
     static GuiBuilder newInstance(@NotNull String name, int size) { return new SimpleGuiBuilder(name, size); }
 
@@ -62,6 +73,7 @@ public interface GuiBuilder extends Listener, InventoryHolder {
      * Constructs GuiBuilder with newly created inventory with specified size.
      * After calling constructor, you must call {@link #register(Plugin)} or the events doesn't work.
      */
+    @Contract("_ -> new")
     @NotNull
     static GuiBuilder newInstance(int size) { return new SimpleGuiBuilder(size); }
 }

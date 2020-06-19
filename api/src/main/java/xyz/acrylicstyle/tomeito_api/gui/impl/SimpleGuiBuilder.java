@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_api.gui.impl;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -16,8 +17,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SimpleGuiBuilder implements GuiBuilder {
-    @NotNull private final Map<Integer, Consumer<InventoryClickEvent>> clickEvents = new HashMap<>();
+    @NotNull private Map<Integer, Consumer<InventoryClickEvent>> clickEvents = new HashMap<>();
     @NotNull private final Inventory inventory;
+    private boolean clickable = true;
 
     /**
      * Constructs GuiBuilder with specified inventory.
@@ -48,6 +50,22 @@ public class SimpleGuiBuilder implements GuiBuilder {
         return ICollection.asCollection(clickEvents).clone();
     }
 
+    @Override
+    public boolean isClickable() {
+        return clickable;
+    }
+
+    @Override
+    public @NotNull SimpleGuiBuilder setClickable(boolean clickable) {
+        this.clickable = clickable;
+        return this;
+    }
+
+    public @NotNull SimpleGuiBuilder setClickEvents(@NotNull Map<Integer, Consumer<InventoryClickEvent>> clickEvents) {
+        this.clickEvents = clickEvents;
+        return this;
+    }
+
     @NotNull
     public SimpleGuiBuilder setItem(int slot, @NotNull ItemStack itemStack) {
         this.inventory.setItem(slot, itemStack);
@@ -72,8 +90,15 @@ public class SimpleGuiBuilder implements GuiBuilder {
     public Inventory getInventory() { return inventory; }
 
     @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e) {
+        if (e.getInventory().getHolder() == null) e.setCancelled(true);
+    }
+
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getInventory().getHolder() != this) return;
+        if (e.getClickedInventory() == null || e.getClickedInventory().getHolder() != this) return;
+        if (!clickable) e.setCancelled(true);
         if (clickEvents.containsKey(e.getSlot())) clickEvents.get(e.getSlot()).accept(e);
     }
 }
