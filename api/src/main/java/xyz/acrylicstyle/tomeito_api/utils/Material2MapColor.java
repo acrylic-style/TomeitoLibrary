@@ -702,6 +702,8 @@ public enum Material2MapColor {
 
     static {
         MINECRAFT_1_8.init();
+        MINECRAFT_1_12.init();
+        MINECRAFT_1_15_2.init();
     }
 
     protected abstract void init();
