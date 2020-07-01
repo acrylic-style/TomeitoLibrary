@@ -44,7 +44,6 @@ import xyz.acrylicstyle.tomeito_api.utils.Callback;
 import xyz.acrylicstyle.tomeito_api.utils.DummyList;
 import xyz.acrylicstyle.tomeito_api.utils.Lang;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
-import xyz.acrylicstyle.tomeito_api.utils.Material2MapColor;
 import xyz.acrylicstyle.tomeito_api.utils.Performance;
 import xyz.acrylicstyle.tomeito_api.utils.PluginMessageUtils;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
@@ -87,7 +86,6 @@ public class VisibilityTest {
         add(ReflectionUtil.class);
         add(PluginMessageUtils.class);
         add(Performance.class, Target.METHOD, Target.CONSTRUCTOR);
-        add(Material2MapColor.class);
         add(Log.class);
         add(Lang.class);
         add(DummyList.class);
