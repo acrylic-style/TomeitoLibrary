@@ -24,7 +24,6 @@ import util.CollectionList;
 import util.SneakyThrow;
 import util.Validate;
 import util.reflect.Ref;
-import xyz.acrylicstyle.craftbukkit.v1_8_R3.CraftServer;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
