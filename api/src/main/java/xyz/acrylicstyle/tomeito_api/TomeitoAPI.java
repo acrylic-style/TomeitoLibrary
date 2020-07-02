@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.SneakyThrow;
+import util.Validate;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.CraftServer;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -102,6 +103,13 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
             sender.sendMessage(text);
             return true;
         });
+    }
+
+    @NotNull
+    public static String getFriendlyName(@NotNull Material material) {
+        Validate.notNull(material, "material cannot be null");
+        String name = material.name().replaceAll("_", " ").toLowerCase();
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
     public static TomeitoScheduler getScheduler() {
