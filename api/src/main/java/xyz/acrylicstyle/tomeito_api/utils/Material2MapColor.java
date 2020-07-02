@@ -52,6 +52,8 @@ public enum Material2MapColor {
             COLOR.put(Material.ENDER_STONE, (byte) 10);
             COLOR.put(Material.WOOD, (byte) 48);
             COLOR.put(Material.WATER, (byte) 54);
+            COLOR.put(Material.STATIONARY_LAVA, (byte) 18);
+            COLOR.put(Material.STATIONARY_WATER, (byte) 54);
             COLOR.put(Material.GLOWSTONE, (byte) 10);
             COLOR.put(Material.BED_BLOCK, (byte) 12);
             COLOR.put(Material.LAVA, (byte) 17);
@@ -278,6 +280,8 @@ public enum Material2MapColor {
             COLOR.put(Material.ENDER_STONE, (byte) 10);
             COLOR.put(Material.WOOD, (byte) 52);
             COLOR.put(Material.WATER, (byte) 50);
+            COLOR.put(Material.STATIONARY_WATER, (byte) 50);
+            COLOR.put(Material.STATIONARY_LAVA, (byte) 18);
             COLOR.put(Material.GLOWSTONE, (byte) 10);
             COLOR.put(Material.BED_BLOCK, (byte) 12);
             COLOR.put(Material.LAVA, (byte) 17);
