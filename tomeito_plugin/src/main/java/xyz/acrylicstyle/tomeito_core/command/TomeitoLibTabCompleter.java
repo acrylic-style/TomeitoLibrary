@@ -85,7 +85,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         String r = s == null ? null : s.replaceAll("(.*)\\(.*\\)", "$1");
         return new RefClass<>(Objects.requireNonNull(
                 Refs.getAllMethodsM(clazz)
-                        .filter(m -> Modifier.isStatic(m.getModifiers()) == isStatic)
+                        .filter(m -> !isStatic || Modifier.isStatic(m.getModifiers()))
                         .filter(m -> m.getName().equals(r))
                         .map(m -> m.getMethod().getReturnType())
                         .first()
