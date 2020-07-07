@@ -29,10 +29,43 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.reflections.Configuration;
+import org.reflections.ReflectionUtils;
+import org.reflections.Reflections;
+import org.reflections.ReflectionsException;
+import org.reflections.Store;
+import org.reflections.adapters.JavaReflectionAdapter;
+import org.reflections.adapters.JavassistAdapter;
+import org.reflections.adapters.MetadataAdapter;
+import org.reflections.scanners.AbstractScanner;
+import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.MemberUsageScanner;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.MethodParameterNamesScanner;
+import org.reflections.scanners.MethodParameterScanner;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.serializers.Serializer;
+import org.reflections.serializers.XmlSerializer;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+import org.reflections.util.Utils;
+import org.reflections.vfs.JarInputDir;
+import org.reflections.vfs.JarInputFile;
+import org.reflections.vfs.SystemDir;
+import org.reflections.vfs.SystemFile;
+import org.reflections.vfs.UrlTypeVFS;
+import org.reflections.vfs.Vfs;
+import org.reflections.vfs.ZipDir;
+import org.reflections.vfs.ZipFile;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
+import util.inject.Injector;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
 import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
@@ -44,10 +77,13 @@ import xyz.acrylicstyle.tomeito_api.events.player.EntityDamageByPlayerEvent;
 import xyz.acrylicstyle.tomeito_api.events.player.PlayerJumpEvent;
 import xyz.acrylicstyle.tomeito_api.events.player.PlayerPreDeathEvent;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
+import xyz.acrylicstyle.tomeito_api.nms.craftbukkit.CraftPlayer;
+import xyz.acrylicstyle.tomeito_api.nms.minecraft.EntityPlayer;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
+import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 import xyz.acrylicstyle.tomeito_core.command.TomeitoLibTabCompleter;
 import xyz.acrylicstyle.tomeito_core.commands.DebugGroovy;
 import xyz.acrylicstyle.tomeito_core.commands.DebugLegacy;
@@ -80,17 +116,57 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
+    static {
+        Injector.tryAttachAgent();
+        Injector.inject(EntityPlayer.class, ReflectionUtil.getNMSPackage() + ".EntityPlayer");
+        Injector.inject(CraftPlayer.class, ReflectionUtil.getCraftBukkitPackage() + ".entity.CraftPlayer");
+    }
+
     private final CraftTomeitoScheduler scheduler = new CraftTomeitoScheduler();
 
     public TomeitoLib() {
         instance = this;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onLoad() {
         instance = this;
+        Log.info("Preloading classes");
+        long start = System.currentTimeMillis();
+        Reflections.class.getClass();
+        ReflectionUtils.class.getClass();
+        Configuration.class.getClass();
+        Store.class.getClass();
+        ReflectionsException.class.getClass();
+        Utils.class.getClass();
+        ClasspathHelper.class.getClass();
+        ConfigurationBuilder.class.getClass();
+        FilterBuilder.class.getClass();
+        Serializer.class.getClass();
+        XmlSerializer.class.getClass();
+        AbstractScanner.class.getClass();
+        ResourcesScanner.class.getClass();
+        SubTypesScanner.class.getClass();
+        TypeAnnotationsScanner.class.getClass();
+        Scanner.class.getClass();
+        MethodParameterScanner.class.getClass();
+        MethodParameterNamesScanner.class.getClass();
+        MethodAnnotationsScanner.class.getClass();
+        MemberUsageScanner.class.getClass();
+        FieldAnnotationsScanner.class.getClass();
+        MetadataAdapter.class.getClass();
+        JavassistAdapter.class.getClass();
+        JavaReflectionAdapter.class.getClass();
+        JarInputDir.class.getClass();
+        JarInputFile.class.getClass();
+        SystemDir.class.getClass();
+        SystemFile.class.getClass();
+        UrlTypeVFS.class.getClass();
+        Vfs.class.getClass();
+        ZipDir.class.getClass();
+        ZipFile.class.getClass();
         new Thread(() -> {
-            Log.info("Preloading classes");
             tryPreloadClass("groovy.lang.GroovyObjectSupport");
             tryPreloadClass("org.codehaus.groovy.control.Phases");
             tryPreloadClass("groovy.lang.Binding");
@@ -107,7 +183,8 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             tryPreloadClass("org.codehaus.groovy.runtime.typehandling.NumberMathModificationInfo");
             tryPreloadClass("org.codehaus.groovy.runtime.callsite.PojoMetaMethodsSite$PojoCachedMethodSiteNoWrapNoCoerce");
             tryPreloadClass("org.codehaus.groovy.classgen.asm.OptimizingStatementWriter$FastPathData");
-            Log.info("Done loading classes");
+            long end = System.currentTimeMillis();
+            Log.info("Done loading classes (took " + (end-start) + "ms)");
         }).start();
     }
 
