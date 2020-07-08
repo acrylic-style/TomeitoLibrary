@@ -86,7 +86,7 @@
         </dependency>
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
-            <artifactId>Util</artifactId>
+            <artifactId>java-util-all</artifactId>
             <version>0.11.20c</version>
         </dependency>
         <dependency>
