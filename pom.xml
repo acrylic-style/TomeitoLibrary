@@ -87,7 +87,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>Util</artifactId>
-            <version>0.11.18c</version>
+            <version>0.11.20c</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
