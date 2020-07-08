@@ -5,18 +5,23 @@ import org.jetbrains.annotations.NotNull;
 import util.Collection;
 
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PerPlayerInventory<V> extends Collection<UUID, V> {
-    private final Supplier<V> constructor;
+    private final Function<UUID, V> constructor;
 
     public PerPlayerInventory(@NotNull Supplier<V> constructor) {
+        this(uuid -> constructor.get());
+    }
+
+    public PerPlayerInventory(@NotNull Function<UUID, V> constructor) {
         this.constructor = constructor;
     }
 
     @NotNull
     public V get(@NotNull UUID key) {
-        if (!this.containsKey(key)) super.put(key, constructor.get());
+        if (!this.containsKey(key)) super.put(key, constructor.apply(key));
         return super.get(key);
     }
 
