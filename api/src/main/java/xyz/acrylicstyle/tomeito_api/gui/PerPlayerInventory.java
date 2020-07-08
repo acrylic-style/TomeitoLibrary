@@ -1,33 +1,28 @@
 package xyz.acrylicstyle.tomeito_api.gui;
 
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import util.Collection;
-import util.StringCollection;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
-public class PerPlayerInventory extends StringCollection<Collection<UUID, Inventory>> {
-    private static final PerPlayerInventory instance = new PerPlayerInventory();
+public class PerPlayerInventory<V> extends Collection<UUID, V> {
+    private final Supplier<V> constructor;
 
-    @NotNull
-    public static PerPlayerInventory getInstance() { return instance; }
-
-    @NotNull
-    public static Collection<UUID, Inventory> getMap(@NotNull String key) {
-        return instance.get(key);
+    public PerPlayerInventory(@NotNull Supplier<V> constructor) {
+        this.constructor = constructor;
     }
 
     @NotNull
-    public Collection<UUID, Inventory> get(@NotNull String key) {
-        if (!this.containsKey(key)) super.put(key, new Collection<>());
+    public V get(@NotNull UUID key) {
+        if (!this.containsKey(key)) super.put(key, constructor.get());
         return super.get(key);
     }
 
     @Override
     @Contract("_ -> fail")
-    public Collection<UUID, Inventory> get(Object key) {
+    public V get(Object key) {
         throw new UnsupportedOperationException();
     }
 }
