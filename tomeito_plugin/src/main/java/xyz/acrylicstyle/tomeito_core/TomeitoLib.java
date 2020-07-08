@@ -116,12 +116,6 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
-    static {
-        Injector.tryAttachAgent();
-        Injector.inject(EntityPlayer.class, ReflectionUtil.getNMSPackage() + ".EntityPlayer");
-        Injector.inject(CraftPlayer.class, ReflectionUtil.getCraftBukkitPackage() + ".entity.CraftPlayer");
-    }
-
     private final CraftTomeitoScheduler scheduler = new CraftTomeitoScheduler();
 
     public TomeitoLib() {
