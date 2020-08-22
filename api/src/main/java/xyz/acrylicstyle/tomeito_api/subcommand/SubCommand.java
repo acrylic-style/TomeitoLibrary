@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SubCommand {
     String name();
+    String alias() default "";
     String usage();
     String description();
 }

@@ -56,7 +56,7 @@ public class PacketCommand {
             } else if (s.matches("^(\\d+(\\.\\d+|))[dD]$")) {
                 return Double.parseDouble(s.replaceAll("(\\d+(\\.\\d+|))[dD]", "$1"));
             } else if (s.matches("^(\\d+(\\.\\d+|))[lL]$")) {
-                return Double.parseDouble(s.replaceAll("(\\d+(\\.\\d+|))[lL]", "$1"));
+                return Long.parseLong(s.replaceAll("(\\d+(\\.\\d+|))[lL]", "$1"));
             } else if (s.matches("^(\\d+)[sS]$")) {
                 return Short.parseShort(s.replaceAll("(\\d+)[sS]", "$1"));
             } else if (s.matches("^\\d+$")) {

@@ -10,7 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import xyz.acrylicstyle.tomeito_api.events.misc.PreDeathReason;
 
 /**
- * Fired when player is about to death.
+ * Fired when player is about to die.
+ * <b>This event may produce unreliable, unpredictable results. Your event listener should handle them accordingly.</b>
  */
 public class PlayerPreDeathEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();

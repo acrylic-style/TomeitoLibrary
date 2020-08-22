@@ -444,7 +444,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
                 }
                 List<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
                 if (commands == null) throw new IllegalStateException("Root command isn't defined! (Tried to get " + rootCommandName + ")");
-                List<Map.Entry<SubCommand, SubCommandExecutor>> entries = ICollectionList.asList(commands).filter(e -> e.getKey().name().equals(args[0]));
+                List<Map.Entry<SubCommand, SubCommandExecutor>> entries = ICollectionList.asList(commands).filter(e -> e.getKey().name().equals(args[0]) || e.getKey().alias().equals(args[0]));
                 if (entries.size() == 0) {
                     $sendMessage(sender);
                     return true;

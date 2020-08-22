@@ -16,7 +16,7 @@ public class EventsBuilder extends CollectionList<PendingEvent<?>> {
 
     @Override
     @NotNull
-    public EventsBuilder addChain(@NotNull PendingEvent pendingEvent) {
+    public EventsBuilder addChain(@NotNull PendingEvent<?> pendingEvent) {
         super.add(pendingEvent);
         return this;
     }

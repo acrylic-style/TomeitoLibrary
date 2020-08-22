@@ -111,9 +111,11 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
                 .filter(TomeitoTask::isSync)
                 .filter(TomeitoTask::isCancelled)
                 .forEach((i, task) -> tasks.remove(i));
+        // increases tick count
         tasks.clone()
                 .filter(TomeitoTask::isSync)
                 .forEach((i, task) -> ((CraftTomeitoTask) task).cycle.incrementAndGet());
+        // run tasks and remove if it isn't repeatable
         tasks.clone()
                 .filter(TomeitoTask::isSync)
                 .filter(task -> !((CraftTomeitoTask) task).hasRunDelayed)
@@ -123,6 +125,7 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
                     task.getRunnable().run();
                     if (!task.isRepeatable()) tasks.remove(i);
                 });
+        // run tasks and remove if it isn't repeatable
         tasks.clone()
                 .filter(TomeitoTask::isSync)
                 .filter(TomeitoTask::isRepeatable)
