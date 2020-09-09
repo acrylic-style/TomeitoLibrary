@@ -1,112 +1,169 @@
 package xyz.acrylicstyle.tomeito_api.utils;
 
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
+import sun.reflect.CallerSensitive;
+import util.Validate;
 
-import java.util.logging.Logger;
-
-@SuppressWarnings({"unused", "DuplicatedCode"})
 public class Log {
-    public static Logger as(String title) {
-        return Logger.getLogger(title);
-    }
+    @NotNull
+    public static java.util.logging.Logger as(String title) { return java.util.logging.Logger.getLogger(title); }
 
+    public static void info(String name, String msg) { Bukkit.getLogger().info("[" + name + "] " + msg); }
+    public static void warning(String name, String msg) { Bukkit.getLogger().warning("[" + name + "] " + msg); }
+    public static void severe(String name, String msg) { Bukkit.getLogger().severe("[" + name + "] " + msg); }
+    public static void config(String name, String msg) { Bukkit.getLogger().config("[" + name + "] " + msg); }
+    public static void fine(String name, String msg) { Bukkit.getLogger().fine("[" + name + "] " + msg); }
+    public static void finer(String name, String msg) { Bukkit.getLogger().finer("[" + name + "] " + msg); }
+    public static void finest(String name, String msg) { Bukkit.getLogger().finest("[" + name + "] " + msg); }
+    public static void debug(String name, String msg) { Bukkit.getLogger().info("[" + name + "] [DEBUG] " + msg); }
+
+    @CallerSensitive
     public static void info(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().info("[" + name + "] " + msg);
+            info(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void warning(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().warning("[" + name + "] " + msg);
+            warning(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void warn(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().warning("[" + name + "] " + msg);
+            warning(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void severe(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().severe("[" + name + "] " + msg);
+            severe(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void error(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().severe("[" + name + "] " + msg);
+            severe(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void config(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().config("[" + name + "] " + msg);
+            config(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void fine(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().fine("[" + name + "] " + msg);
+            fine(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void finer(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().finer("[" + name + "] " + msg);
+            finer(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void finest(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().finest("[" + name + "] " + msg);
+            finest(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    @CallerSensitive
     public static void debug(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
             if (name.equalsIgnoreCase("")) name = "Anonymous";
-            Bukkit.getLogger().info("[" + name + "] [DEBUG] " + msg);
+            debug(name, msg);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @NotNull
+    public static Logger with(String title) { return new Logger(title); }
+
+    @NotNull
+    public static Logger getLogger(String title) { return new Logger(title); }
+
+    @CallerSensitive
+    @NotNull
+    public static Logger getLogger() {
+        String name;
+        try {
+            name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (name.equalsIgnoreCase("")) name = "Anonymous";
+        return new Logger(name);
+    }
+
+    public static final class Logger {
+        private final String name;
+
+        private Logger(String name) {
+            Validate.notNull(name, "title cannot be null");
+            this.name = name;
+        }
+
+        public void info(String msg) { Log.info(name, msg); }
+        public void warning(String msg) { Log.warning(name, msg); }
+        public void warn(String msg) { Log.warning(name, msg); }
+        public void severe(String msg) { Log.severe(name, msg); }
+        public void error(String msg) { Log.severe(name, msg); }
+        public void config(String msg) { Log.config(name, msg); }
+        public void fine(String msg) { Log.fine(name, msg); }
+        public void finer(String msg) { Log.finer(name, msg); }
+        public void finest(String msg) { Log.finest(name, msg); }
+        public void debug(String msg) { Log.debug(name, msg); }
     }
 }

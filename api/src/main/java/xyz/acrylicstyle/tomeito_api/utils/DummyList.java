@@ -2,6 +2,7 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +12,9 @@ import java.util.ListIterator;
 
 /**
  * Creates dummy list that does absolutely nothing. Similar to EmptyList in {@link Collections}.
+ * @deprecated useless class
  */
+@Deprecated
 public class DummyList<E> implements List<E> {
     @Override
     public int size() {
@@ -40,11 +43,11 @@ public class DummyList<E> implements List<E> {
         return new Object[0];
     }
 
-    @SuppressWarnings("SuspiciousToArrayCall")
+    @SuppressWarnings({ "unchecked" })
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] a) {
-        return new ArrayList<E>().toArray(a);
+        return (T[]) Array.newInstance(a.getClass().getComponentType(), 0);
     }
 
     @Override

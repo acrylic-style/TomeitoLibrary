@@ -29,38 +29,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Configuration;
-import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
-import org.reflections.ReflectionsException;
-import org.reflections.Store;
-import org.reflections.adapters.JavaReflectionAdapter;
-import org.reflections.adapters.JavassistAdapter;
-import org.reflections.adapters.MetadataAdapter;
-import org.reflections.scanners.AbstractScanner;
-import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.scanners.MemberUsageScanner;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.scanners.MethodParameterNamesScanner;
-import org.reflections.scanners.MethodParameterScanner;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.Scanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.serializers.Serializer;
-import org.reflections.serializers.XmlSerializer;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
-import org.reflections.util.Utils;
-import org.reflections.vfs.JarInputDir;
-import org.reflections.vfs.JarInputFile;
-import org.reflections.vfs.SystemDir;
-import org.reflections.vfs.SystemFile;
-import org.reflections.vfs.UrlTypeVFS;
-import org.reflections.vfs.Vfs;
-import org.reflections.vfs.ZipDir;
-import org.reflections.vfs.ZipFile;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
@@ -100,7 +68,7 @@ import java.util.logging.Logger;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
- * Do not shade it if you plan to add TomeitoLib.jar in plugins folder, or it will fail to load.<br />
+ * Do not shade it if you plan to add TomeitoLib.jar in plugins folder, or it will fail to load. (or relocate them)<br />
  * Or, please define TomeitoLib at softdepend or depend at least!
  */
 public class TomeitoLib extends TomeitoAPI implements Listener {
@@ -108,7 +76,6 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
     /**
      * It only exists for backward compatibility.
      */
-    @SuppressWarnings("unused")
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
@@ -118,45 +85,44 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         instance = this;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onLoad() {
         instance = this;
-        Log.info("Preloading classes");
-        long start = System.currentTimeMillis();
-        Reflections.class.getClass();
-        ReflectionUtils.class.getClass();
-        Configuration.class.getClass();
-        Store.class.getClass();
-        ReflectionsException.class.getClass();
-        Utils.class.getClass();
-        ClasspathHelper.class.getClass();
-        ConfigurationBuilder.class.getClass();
-        FilterBuilder.class.getClass();
-        Serializer.class.getClass();
-        XmlSerializer.class.getClass();
-        AbstractScanner.class.getClass();
-        ResourcesScanner.class.getClass();
-        SubTypesScanner.class.getClass();
-        TypeAnnotationsScanner.class.getClass();
-        Scanner.class.getClass();
-        MethodParameterScanner.class.getClass();
-        MethodParameterNamesScanner.class.getClass();
-        MethodAnnotationsScanner.class.getClass();
-        MemberUsageScanner.class.getClass();
-        FieldAnnotationsScanner.class.getClass();
-        MetadataAdapter.class.getClass();
-        JavassistAdapter.class.getClass();
-        JavaReflectionAdapter.class.getClass();
-        JarInputDir.class.getClass();
-        JarInputFile.class.getClass();
-        SystemDir.class.getClass();
-        SystemFile.class.getClass();
-        UrlTypeVFS.class.getClass();
-        Vfs.class.getClass();
-        ZipDir.class.getClass();
-        ZipFile.class.getClass();
         new Thread(() -> {
+            Log.info("Preloading classes");
+            long start = System.currentTimeMillis();
+            tryPreloadClass("org.reflections.serializers.Serializer");
+            tryPreloadClass("org.reflections.serializers.XmlSerializer");
+            tryPreloadClass("org.reflections.scanners.TypeAnnotationsScanner");
+            tryPreloadClass("org.reflections.scanners.AbstractScanner");
+            tryPreloadClass("org.reflections.scanners.ResourcesScanner");
+            tryPreloadClass("org.reflections.scanners.SubTypesScanner");
+            tryPreloadClass("org.reflections.scanners.Scanner");
+            tryPreloadClass("org.reflections.scanners.MethodParameterScanner");
+            tryPreloadClass("org.reflections.scanners.MethodParameterNamesScanner");
+            tryPreloadClass("org.reflections.scanners.MethodAnnotationsScanner");
+            tryPreloadClass("org.reflections.scanners.MemberUsageScanner");
+            tryPreloadClass("org.reflections.scanners.FieldAnnotationsScanner");
+            tryPreloadClass("org.reflections.adapters.MetadataAdapter");
+            tryPreloadClass("org.reflections.adapters.JavassistAdapter");
+            tryPreloadClass("org.reflections.adapters.JavaReflectionAdapter");
+            tryPreloadClass("org.reflections.vfs.Vfs");
+            tryPreloadClass("org.reflections.vfs.JarInputDir");
+            tryPreloadClass("org.reflections.vfs.JarInputFile");
+            tryPreloadClass("org.reflections.vfs.SystemDir");
+            tryPreloadClass("org.reflections.vfs.SystemFile");
+            tryPreloadClass("org.reflections.vfs.ZipDir");
+            tryPreloadClass("org.reflections.vfs.ZipFile");
+            tryPreloadClass("org.reflections.vfs.UrlTypeVFS");
+            tryPreloadClass("org.reflections.Reflections");
+            tryPreloadClass("org.reflections.ReflectionUtils");
+            tryPreloadClass("org.reflections.Configuration");
+            tryPreloadClass("org.reflections.Store");
+            tryPreloadClass("org.reflections.ReflectaionsException");
+            tryPreloadClass("org.reflections.util.Utils");
+            tryPreloadClass("org.reflections.util.ClasspathHelper");
+            tryPreloadClass("org.reflections.util.ConfigurationBuilder");
+            tryPreloadClass("org.reflections.util.FilterBuilder");
             tryPreloadClass("groovy.lang.GroovyObjectSupport");
             tryPreloadClass("org.codehaus.groovy.control.Phases");
             tryPreloadClass("groovy.lang.Binding");

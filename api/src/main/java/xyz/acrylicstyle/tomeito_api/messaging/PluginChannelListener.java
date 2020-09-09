@@ -38,19 +38,19 @@ public class PluginChannelListener implements PluginMessageListener {
         }
     }
 
-    public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String s, Callback<String> callback) {
-        if (!registeredListeners.contains(s)) {
-            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), s, TomeitoAPI.getPluginChannelListener());
-            Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoAPI.getInstance(), s);
-            registeredListeners.add(s);
+    public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String channel, Callback<String> callback) {
+        if (!registeredListeners.contains(channel)) {
+            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), channel, TomeitoAPI.getPluginChannelListener());
+            Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoAPI.getInstance(), channel);
+            registeredListeners.add(channel);
         }
-        if (!callbacks.containsKey(s)) {
-            callbacks.put(s, new CollectionStrictSync<>());
+        if (!callbacks.containsKey(channel)) {
+            callbacks.put(channel, new CollectionStrictSync<>());
         }
-        CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(s);
+        CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(channel);
         callbacks2.put(subchannel, callback);
-        callbacks.put(s, callbacks2);
-        sendToBungeeCord(p, subchannel, message, s);
+        callbacks.put(channel, callbacks2);
+        sendToBungeeCord(p, subchannel, message, channel);
     }
 
     private void sendToBungeeCord(org.bukkit.entity.Player p, String subchannel, String message, String s) {

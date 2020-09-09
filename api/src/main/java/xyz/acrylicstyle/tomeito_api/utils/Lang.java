@@ -1,19 +1,11 @@
 package xyz.acrylicstyle.tomeito_api.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import xyz.acrylicstyle.tomeito_api.providers.LanguageProvider;
 
-/**
- * Defines language.
- */
-@SuppressWarnings("unused")
+import java.util.HashMap;
+
 public class Lang {
     /**
      * Language Map
@@ -38,11 +30,8 @@ public class Lang {
      * Add language into HashMap.
      * @param language A language that you want to define
      * @return This instance
-     * @throws FileNotFoundException When file wasn't found
-     * @throws IOException When tried to load/create a file but failed for some reason
-     * @throws InvalidConfigurationException When loaded configuration but it has yaml error
      */
-    public Lang addLanguage(String language) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public Lang addLanguage(String language) {
         this.languages.put(language, LanguageProvider.init(this.plugin, language));
         return this;
     }

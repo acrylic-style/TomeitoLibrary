@@ -102,6 +102,10 @@ public class Title {
         }
     }
 
+    /**
+     * Create a title instance with no title.
+     * @return a newly created title instance
+     */
     @NotNull
     @Contract(value = "-> new", pure = true)
     public static Title createTitle() {

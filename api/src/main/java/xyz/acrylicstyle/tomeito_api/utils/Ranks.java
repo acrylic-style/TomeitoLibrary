@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
 
-@SuppressWarnings("unused")
+@Deprecated
 public enum Ranks {
     OWNER("[OWNER] ", "OWNER", ChatColor.RED, null, false, true, false),
     ADMIN("[ADMIN] ", "ADMIN", ChatColor.RED, null, false, true, false),
@@ -33,6 +33,7 @@ public enum Ranks {
     /**
      * @return + with color, null if there are no +
      */
+    @Deprecated
     public String getPlus() {
         switch (this) {
             case PIGP:
@@ -46,22 +47,27 @@ public enum Ranks {
         }
     }
 
+    @Deprecated
     public String replacePlus(String name) {
         return name.replaceFirst(Pattern.quote("+"), this.getPlus());
     }
 
+    @Deprecated
     public String getPrefix() {
         return this.defaultColor + replacePlus(this.prefix);
     }
 
+    @Deprecated
     public String getName() {
         return this.defaultColor + replacePlus(this.name);
     }
 
+    @Deprecated
     public String toString() {
         return this.name;
     }
 
+    @Deprecated
     Ranks(String prefix, String name, ChatColor defaultColor, ChatColor plusColor, boolean changeablePlusColor, boolean specialRank, boolean purchaseable) {
         this.prefix = prefix;
         this.name = name;
