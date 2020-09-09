@@ -268,7 +268,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
                 this.loaders1.add(p, loaders.size());
                 classes.get(p).clear();
-                loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(Class::getCanonicalName)));
+                loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(c -> c.getCanonicalName())));
             }
             return classes.get(p).concat(findPackages(packageName), findSystemClasses(packageName, recursive));
         } catch (SecurityException e) {
