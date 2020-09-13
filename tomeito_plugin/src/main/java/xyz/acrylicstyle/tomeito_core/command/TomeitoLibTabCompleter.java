@@ -80,16 +80,15 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return Refs.getAllMethods(clazz).map(a -> a.replaceAll("(.*)\\(.*\\)", "$1")).contains(r);
     }
 
-    @NotNull
+    @Nullable
     private RefClass<?> getMethodReturnValue(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
         String r = s == null ? null : s.replaceAll("(.*)\\(.*\\)", "$1");
-        return new RefClass<>(Objects.requireNonNull(
-                Refs.getAllMethodsM(clazz)
-                        .filter(m -> !isStatic || Modifier.isStatic(m.getModifiers()))
-                        .filter(m -> m.getName().equals(r))
-                        .map(m -> m.getMethod().getReturnType())
-                        .first()
-        ));
+        Class<?> claz = Refs.getAllMethodsM(clazz)
+                .filter(m -> !isStatic || Modifier.isStatic(m.getModifiers()))
+                .filter(m -> m.getName().equals(r))
+                .map(m -> m.getMethod().getReturnType())
+                .first();
+        return claz == null ? null : new RefClass<>(claz);
     }
 
     @NotNull
@@ -108,13 +107,14 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return Refs.getFields(clazz).map(RefField::getName).filter(m -> m.equals(s)).size() != 0;
     }
 
-    @NotNull
+    @Nullable
     private RefClass<?> getFieldReturnValue(@NotNull RefClass<?> clazz, String s, boolean isStatic) {
-        return Ref.getClass(Objects.requireNonNull(Refs.getFields(clazz)
+        Class<?> fz = Refs.getFields(clazz)
                 .filter(f -> Modifier.isStatic(f.getModifiers()) == isStatic)
                 .filter(f -> f.getName().equals(s))
                 .map(m -> m.getField().getType())
-                .first()));
+                .first();
+        return fz == null ? null : Ref.getClass(fz);
     }
 
     @NotNull
@@ -268,6 +268,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
                 this.loaders1.add(p, loaders.size());
                 classes.get(p).clear();
+                //noinspection Convert2MethodRef
                 loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(c -> c.getCanonicalName())));
             }
             return classes.get(p).concat(findPackages(packageName), findSystemClasses(packageName, recursive));
