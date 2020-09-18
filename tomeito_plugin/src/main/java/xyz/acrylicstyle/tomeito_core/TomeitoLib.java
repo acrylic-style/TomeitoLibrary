@@ -92,7 +92,6 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             Log.info("Preloading classes");
             long start = System.currentTimeMillis();
             tryPreloadClass("org.reflections.serializers.Serializer");
-            tryPreloadClass("org.reflections.serializers.XmlSerializer");
             tryPreloadClass("org.reflections.scanners.TypeAnnotationsScanner");
             tryPreloadClass("org.reflections.scanners.AbstractScanner");
             tryPreloadClass("org.reflections.scanners.ResourcesScanner");

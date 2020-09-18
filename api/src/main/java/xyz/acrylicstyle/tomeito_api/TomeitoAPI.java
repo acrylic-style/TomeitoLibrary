@@ -55,11 +55,11 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     }
 
     public static void tryPreloadClass(@NotNull String clazz) { tryPreloadClass(clazz, false); }
-    public static void tryPreloadClass(@NotNull String clazz, boolean required) {
+    public static void tryPreloadClass(@NotNull String clazz, boolean printError) {
         try {
             Class.forName(clazz);
         } catch (ClassNotFoundException e) {
-            if (required) SneakyThrow.sneaky(e);
+            if (printError) e.printStackTrace();
         }
     }
 
