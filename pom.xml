@@ -3,7 +3,7 @@
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>tomeito_lib</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.17a</version>
+    <version>0.5.17b</version>
     <modules>
         <module>api</module>
         <module>tomeito_plugin</module>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>java-util-all</artifactId>
-            <version>0.11.25</version>
+            <version>0.11.27</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
