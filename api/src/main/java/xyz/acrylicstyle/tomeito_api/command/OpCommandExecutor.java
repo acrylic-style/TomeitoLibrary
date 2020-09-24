@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class OpCommandExecutor implements CommandExecutor {
     @Override
@@ -16,5 +17,5 @@ public abstract class OpCommandExecutor implements CommandExecutor {
         return true;
     }
 
-    public abstract void onCommand(CommandSender sender, String[] args);
+    public abstract void onCommand(@NotNull CommandSender sender, @NotNull String[] args);
 }

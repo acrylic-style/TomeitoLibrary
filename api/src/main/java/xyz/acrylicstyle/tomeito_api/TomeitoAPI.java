@@ -111,9 +111,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
-    public static TomeitoScheduler getScheduler() {
-        return getInstance().getTomeitoScheduler();
-    }
+    public static TomeitoScheduler getScheduler() { return getInstance().getTomeitoScheduler(); }
 
     public static void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
         PluginCommand pluginCommand = Bukkit.getPluginCommand(command);

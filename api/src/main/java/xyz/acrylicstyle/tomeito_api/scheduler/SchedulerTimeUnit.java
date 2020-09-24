@@ -10,7 +10,5 @@ public enum SchedulerTimeUnit {
 
     public final long ticks;
 
-    SchedulerTimeUnit(long ticks) {
-        this.ticks = ticks;
-    }
+    SchedulerTimeUnit(long ticks) { this.ticks = ticks; }
 }

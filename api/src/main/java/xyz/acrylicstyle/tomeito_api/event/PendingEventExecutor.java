@@ -9,9 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PendingEventExecutor<T extends Event> implements EventExecutor {
     @SuppressWarnings("unchecked")
     @Override
-    public final void execute(Listener listener, Event event) throws EventException {
-        run((T) event);
-    }
+    public final void execute(Listener listener, Event event) throws EventException { run((T) event); }
 
     public abstract void run(@NotNull T event) throws EventException;
 }

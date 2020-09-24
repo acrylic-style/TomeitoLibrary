@@ -4,26 +4,21 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 
-public abstract class TomeitoRunnable implements Runnable {
+import java.util.Objects;
+
+public abstract class TomeitoRunnable extends ForwardingTomeitoTask implements Runnable {
     private int id = -1;
 
     /**
-     * Returns the task ID.
-     * Returns -1 if not scheduled yet.
-     * @return the task ID, -1 if not scheduled yet
+     * Get the task associated with this runnable.
+     * @throws IllegalStateException if the task isn't scheduled yet
+     * @return the task associated with this runnable.
      */
-    public final int getTaskId() {
-        return id;
-    }
-
-    /**
-     * Cancel the execution of the task.
-     * @throws IllegalArgumentException when couldn't find task by ID
-     * @throws IllegalArgumentException when task is not scheduled yet
-     */
-    public final void cancel() {
-        if (id == -1) throw new IllegalArgumentException("task isn't scheduled yet!");
-        TomeitoAPI.getScheduler().cancelTask(id);
+    @NotNull
+    @Override
+    public final TomeitoTask delegate() {
+        if (this.id == -1) throw new IllegalStateException("task isn't scheduled yet");
+        return Objects.requireNonNull(TomeitoAPI.getScheduler().getTask(this.id));
     }
 
     @NotNull

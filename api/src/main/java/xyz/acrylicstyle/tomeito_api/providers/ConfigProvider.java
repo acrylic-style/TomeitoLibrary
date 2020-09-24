@@ -29,16 +29,21 @@ public class ConfigProvider extends YamlConfiguration {
         this(path, false);
     }
 
+    /**
+     * @param path the path to the configuration file
+     * @param disableConstructor whether disable the constructor or not. mainly for classes that extends this class.
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public ConfigProvider(@NotNull String path, boolean disableConstructor) {
         if (disableConstructor) throw new UnsupportedOperationException();
         this.path = path;
         this.file = new File(this.path);
-        if (!this.file.exists()) { // for avoid some dangerous situation
+        // avoid some dangerous situation (e.g. there is a file or directory and accidentally deletes it)
+        if (!this.file.exists()) {
             this.file.mkdirs(); // creates directory(ies) including file name
-            this.file.delete(); // deletes file but not parent directory
+            this.file.delete(); // deletes file/directory but not parent directory
             try {
-                this.file.createNewFile();
+                this.file.createNewFile(); // then finally create a file
             } catch (IOException e) {
                 e.printStackTrace();
             }

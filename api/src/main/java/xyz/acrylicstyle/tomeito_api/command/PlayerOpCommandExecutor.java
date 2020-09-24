@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 
 public abstract class PlayerOpCommandExecutor implements CommandExecutor {
@@ -20,5 +21,5 @@ public abstract class PlayerOpCommandExecutor implements CommandExecutor {
         return true;
     }
 
-    public abstract void onCommand(Player player, String[] args);
+    public abstract void onCommand(@NotNull Player player, @NotNull String[] args);
 }

@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.acrylicstyle.tomeito_api.utils.ArrayUtil;
 import xyz.acrylicstyle.tomeito_api.utils.TypeUtil;
 
+// messed up class
 public class DebugLegacy {
     public static void run(CommandSender sender, String[] args) {
         if (!sender.hasPermission("*") || !sender.isOp()) {

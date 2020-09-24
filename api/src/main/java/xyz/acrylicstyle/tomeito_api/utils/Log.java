@@ -2,7 +2,6 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import sun.reflect.CallerSensitive;
 import util.Validate;
 
 public class Log {
@@ -18,7 +17,6 @@ public class Log {
     public static void finest(String name, String msg) { Bukkit.getLogger().finest("[" + name + "] " + msg); }
     public static void debug(String name, String msg) { Bukkit.getLogger().info("[" + name + "] [DEBUG] " + msg); }
 
-    @CallerSensitive
     public static void info(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -29,7 +27,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void warning(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -40,7 +37,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void warn(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -51,7 +47,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void severe(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -62,7 +57,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void error(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -73,7 +67,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void config(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -84,7 +77,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void fine(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -95,7 +87,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void finer(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -106,7 +97,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void finest(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -117,7 +107,6 @@ public class Log {
         }
     }
 
-    @CallerSensitive
     public static void debug(String msg) {
         try {
             String name = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName()).getSimpleName();
@@ -134,7 +123,6 @@ public class Log {
     @NotNull
     public static Logger getLogger(String title) { return new Logger(title); }
 
-    @CallerSensitive
     @NotNull
     public static Logger getLogger() {
         String name;

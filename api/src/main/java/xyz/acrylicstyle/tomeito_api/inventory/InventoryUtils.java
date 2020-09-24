@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import util.SneakyThrow;
 import xyz.acrylicstyle.tomeito_api.utils.ArrayUtil;
 
@@ -19,7 +20,7 @@ public class InventoryUtils implements Cloneable {
     public Inventory getInventory() { return this.inventory; }
 
     @NotNull
-    public InventoryUtils fillEmptySlots(ItemStack itemStack) {
+    public InventoryUtils fillEmptySlots(@Nullable ItemStack itemStack) {
         ItemStack[] contents = ArrayUtil.expand(this.inventory.getContents(), this.inventory.getSize());
         for (int i = 0; i < contents.length; i++)
             if (contents[i] == null || contents[i].getType() == Material.AIR)
@@ -29,7 +30,7 @@ public class InventoryUtils implements Cloneable {
     }
 
     @NotNull
-    public InventoryUtils fill(int start, int end, ItemStack itemStack) {
+    public InventoryUtils fill(int start, int end, @Nullable ItemStack itemStack) {
         ItemStack[] contents = ArrayUtil.expand(this.inventory.getContents(), this.inventory.getSize());
         for (int i = start; i < end; i++) contents[i] = itemStack;
         this.inventory.setContents(contents);

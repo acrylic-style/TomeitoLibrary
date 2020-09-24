@@ -2,10 +2,9 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import java.lang.reflect.Array;
 
-@SuppressWarnings("unused")
 public class ArrayUtil {
     /**
-     * Check if array contains needle but not case-sensitive.
+     * Check if array(haystack) contains needle but case-insensitive.
      * @param array Haystack
      * @param needle Needle
      * @return true if found, otherwise false
@@ -16,23 +15,6 @@ public class ArrayUtil {
             if (element.equalsIgnoreCase(needle)) {
                 found = true;
                 break;
-            }
-        }
-        return found;
-    }
-
-    /**
-     * Check if array contains needle and that element contains all of multiple needle but not case-sensitive.
-     * @param array Haystack
-     * @param needle Needle
-     * @return true if found, otherwise false
-     */
-    public static boolean contains(String[] array, String... needle) {
-        boolean found = false;
-        for (String element : array) {
-            found = true;
-            for (String e : needle) {
-                if (found) found = element.contains(e);
             }
         }
         return found;

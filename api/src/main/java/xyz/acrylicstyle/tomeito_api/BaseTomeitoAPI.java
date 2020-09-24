@@ -14,6 +14,11 @@ public interface BaseTomeitoAPI {
     @NotNull
     TomeitoScheduler getTomeitoScheduler();
 
+    /**
+     * Registers all commands that is located under {packageName} and registers all commands with classes that is
+     * annotated with {@link xyz.acrylicstyle.tomeito_api.command.Command Command} annotation.
+     * @param packageName the package where commands are located at.
+     */
     void registerCommands(@NotNull final String packageName);
 
     /**

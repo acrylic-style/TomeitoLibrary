@@ -8,9 +8,20 @@ import java.util.Map;
 
 public interface TomeitoTask {
     /**
+     * Get the task associated with this runnable.
+     * @return the task associated with this runnable.
+     */
+    @NotNull
+    default TomeitoTask getTask() { return this; }
+
+    /**
      * Cancel the execution of this task.
      */
     void cancel();
+
+    /**
+     * @return whether the task was canceled.
+     */
     boolean isCancelled();
 
     /**
@@ -47,7 +58,6 @@ public interface TomeitoTask {
      * @return the plugin
      */
     @NotNull
-    @SuppressWarnings("unused")
     Plugin getOwner();
 
     @NotNull

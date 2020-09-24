@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import xyz.acrylicstyle.tomeito_api.events.misc.PreDeathReason;
 
 /**
- * Fired when player is about to die.
- * <b>This event may produce unreliable, unpredictable results. Your event listener should handle them accordingly.</b>
+ * Fired when player is about to death. This event may be unreliable or inaccurate, so plugin should handle them correctly.
+ * (e.g. damage was modified by plugin, but the PlayerPreDeathEvent is still fired)
  */
 public class PlayerPreDeathEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();

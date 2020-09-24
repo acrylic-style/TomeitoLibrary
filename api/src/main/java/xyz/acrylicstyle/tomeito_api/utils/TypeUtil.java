@@ -1,6 +1,6 @@
 package xyz.acrylicstyle.tomeito_api.utils;
 
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({ "UnusedReturnValue" })
 public class TypeUtil {
     public static boolean isInt(String arg) {
         try {
