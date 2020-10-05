@@ -1,13 +1,19 @@
 package xyz.acrylicstyle.tomeito_api.messaging;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import util.CollectionList;
 import util.CollectionStrictSync;
+import util.promise.Promise;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class PluginChannelListener implements PluginMessageListener {
     public static final PluginChannelListener pcl = new PluginChannelListener();
@@ -38,6 +44,10 @@ public class PluginChannelListener implements PluginMessageListener {
         }
     }
 
+    /**
+     * @deprecated Use {@link #get(Player, String, String, String)} instead
+     */
+    @Deprecated
     public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String channel, Callback<String> callback) {
         if (!registeredListeners.contains(channel)) {
             Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), channel, TomeitoAPI.getPluginChannelListener());
@@ -51,6 +61,30 @@ public class PluginChannelListener implements PluginMessageListener {
         callbacks2.put(subchannel, callback);
         callbacks.put(channel, callbacks2);
         sendToBungeeCord(p, subchannel, message, channel);
+    }
+
+    /**
+     * Sends plugin message and waits for up to 10 seconds.
+     * @param p the player (sender)
+     * @param subchannel the subchannel
+     * @param message the message
+     * @param channel the channel, also known as "tag"
+     * @return the promise
+     */
+    public synchronized Promise<String> get(Player p, String subchannel, String message, String channel) {
+        return new Promise<String>() {
+            @Override
+            public String apply(Object o) {
+                PluginChannelListener.this.get(p, subchannel, message, channel, (s, throwable2) -> {
+                    if (throwable2 != null) {
+                        reject(throwable2);
+                        return;
+                    }
+                    resolve(s);
+                });
+                return waitUntilResolve(10000);
+            }
+        };
     }
 
     private void sendToBungeeCord(org.bukkit.entity.Player p, String subchannel, String message, String s) {

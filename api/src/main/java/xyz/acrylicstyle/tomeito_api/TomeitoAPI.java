@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
-import util.SneakyThrow;
+import util.MathUtils;
+import util.UUIDUtil;
 import util.Validate;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -29,7 +31,6 @@ import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 
-import java.security.SecureRandom;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -127,7 +128,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
 
     @NotNull
     public static UUID uuidFromStringWithoutDashes(@NotNull String s) {
-        return UUID.fromString(s.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
+        return UUIDUtil.uuidFromStringWithoutDashes(s);
     }
 
     /**
@@ -172,14 +173,22 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @param max Maximum random number.
      * @return Random number
      */
-    public static int randomNumber(int max) { return (int) (Math.random() * max + 1); }
+    public static int randomNumber(int max) { return MathUtils.randomNumber(max); }
+
+    /**
+     * Random number between 0 - max.
+     * @param seed seed that will be used to generate number
+     * @param max Maximum random number.
+     * @return Unique random number
+     */
+    public static int randomSecureNumber(int max, byte[] seed) { return MathUtils.randomSecureNumber(max, seed); }
 
     /**
      * Random number between 0 - max.
      * @param max Maximum random number.
      * @return Unique random number
      */
-    public static int randomSecureNumber(int max) { return new SecureRandom().nextInt() * max + 1; }
+    public static int randomSecureNumber(int max) { return MathUtils.randomSecureNumber(max); }
 
     /**
      * Checks if the target is inside the between location1 and location2.
@@ -198,16 +207,15 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         double x2 = location2.getX();
         double y2 = location2.getY();
         double z2 = location2.getZ();
-        if ((x > x1) && (x < x2)) {
-            if ((y > y1) && (y < y2)) {
-                return (z > z1) && (z < z2);
+        if ((x > x1 && x < x2) || (x > x2 && x < x1)) {
+            if ((y > y1 && y < y2) || (y > y2 && y < y1)) {
+                return (z > z1 && z < z2) || (z > z2 && z < z1);
             }
         }
         return false;
     }
 
     /**
-     * @param seconds seconds - it explains everything
      * @return A string. Examples:
      * <ul>
      *     <li>60 -> 1:00</li>
@@ -216,9 +224,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      */
     @NotNull
     public static String secondsToTime(int seconds) {
-        int minutes = (int) Math.floor((float) seconds / 60F);
-        String sec = Integer.toString(seconds % 60);
-        return minutes + ":" + (sec.length() == 1 ? "0" + sec : sec);
+        return MathUtils.secondsToTime(seconds);
     }
 
     /**
@@ -228,7 +234,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return Seconds in Integer
      * @throws IllegalArgumentException When the time isn't format in hh:mm
      */
-    public static int timeToSeconds0(String time) {
+    public static int timeToSeconds0(@NotNull String time) {
         if (!Pattern.compile("^\\d+:\\d+$").matcher(time).matches()) throw new IllegalArgumentException("Time must be format number:number.");
         String[] times = time.split(":");
         return Integer.parseInt(times[0])*60 + Integer.parseInt(times[1]);
@@ -240,11 +246,16 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return Seconds in integer
      * @throws IllegalArgumentException When couldn't parse time
      */
-    public static int timeToSeconds(String s) {
-        if (Pattern.compile("^\\d+$").matcher(s).matches()) {
-            return Integer.parseInt(s);
-        } else {
-            return timeToSeconds0(s);
-        }
+    public static int timeToSeconds(@NotNull String s) {
+        return MathUtils.timeToSeconds(s);
+    }
+
+    /**
+     * Broadcasts the sound to all players.
+     * @param sound the sound to be played
+     * @param pitch the pitch of the sound
+     */
+    public static void broadcastSound(@NotNull Sound sound, float pitch) {
+        Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), sound, 100000F, pitch));
     }
 }

@@ -118,6 +118,9 @@ public class Log {
     }
 
     @NotNull
+    public static Logger of(String title) { return new Logger(title); }
+
+    @NotNull
     public static Logger with(String title) { return new Logger(title); }
 
     @NotNull
