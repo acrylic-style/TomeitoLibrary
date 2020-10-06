@@ -18,7 +18,7 @@ public class DebugGroovy {
         }
         if (args.length <= 1) {
             sender.sendMessage(ChatColor.RED + "Usage:");
-            sender.sendMessage(ChatColor.RED + "/tomeitolib debug-groovy <Script>");
+            sender.sendMessage(ChatColor.RED + "/tomeitolib debug <Script>");
             return;
         }
         CollectionList<String> argsList = ICollectionList.asList(args);

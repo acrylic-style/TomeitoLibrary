@@ -1,11 +1,11 @@
 name: TomeitoLib
 main: xyz.acrylicstyle.tomeito_core.TomeitoLib
 load: STARTUP
-version: 0.5.19
+version: 0.5.19a
 
 commands:
   tlib:
     description: Root command of TomeitoLib.
     usage: /<command> [args]
     permission: tomeitolib.cmd
-    aliases: ["tl","tomeitolib","tomeitol"]
+    aliases: ["tl","tomeitolib","tlib"]
