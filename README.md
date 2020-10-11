@@ -1,7 +1,8 @@
-# TomeitoLib [![Build Status](https://ci.acrylicstyle.xyz/job/TomeitoLib/badge/icon)](https://ci.acrylicstyle.xyz/job/TomeitoLib/)
-Library of my some bukkit plugins.
+# TomeitoLib
 
-Currently, compatible with: 1.8 - 1.15.2
+Provides useful APIs to Bukkit!
+
+Currently, compatible with: 1.8 - 1.16.3
 
 Please note that this plugin itself does not modify game play. It just adds some useful commands and APIs.
 
@@ -13,7 +14,7 @@ With `/tl debug` command, you can debug anything, comes with tab completion. (it
 ```xml
 <repository>
     <id>acrylic-repo</id>
-    <url>https://repo.acrylicstyle.xyz</url>
+    <url>https://repo2.acrylicstyle.xyz</url>
 </repository>
 ```
 
@@ -26,7 +27,12 @@ With `/tl debug` command, you can debug anything, comes with tab completion. (it
 ```
 
 ## Using in Server
-[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/job/TomeitoLib/)
+[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/repository/download/TomeitoLibrary_Build/533:id/tomeito_plugin/target/tomeito_plugin-0.5.20.jar)
 
-## Donate
-[If you really want to donate me, do so on Patreon!](https://patreon.com/acrylicstyle) (well you don't have to do it but i'll glad if you actually donated me!)
+## BungeeCord
+
+Some feature (e.g. Retrieving Protocol Version without ViaVersion) requires you to install BungeeCord plugin.
+
+You can download it from [here](https://ci.acrylicstyle.xyz/repository/download/TomeitoLibrary_Build/533:id/tomeito_bungee/target/tomeito_bungee-0.5.20.jar).
+
+Then, put this plugin into your plugins folder. (Not spigot, it's BungeeCord plugin!)
