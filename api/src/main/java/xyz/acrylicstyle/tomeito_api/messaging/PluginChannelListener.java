@@ -3,8 +3,12 @@ package xyz.acrylicstyle.tomeito_api.messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.CollectionStrictSync;
+import util.SneakyThrow;
+import util.Validate;
 import util.promise.Promise;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
@@ -33,24 +37,20 @@ public class PluginChannelListener implements PluginMessageListener {
             Log.debug("Input: " + input);
             */
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
-            callbacks2.get(subchannel).done(input, null);
-            callbacks2.remove(subchannel);
+            if (callbacks2 != null && callbacks2.containsKey(subchannel)) callbacks2.remove(subchannel).done(input, null);
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
-            e.printStackTrace();
-            CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
-            callbacks2.remove(player.getUniqueId().toString());
-            callbacks.put(tag, callbacks2);
+            SneakyThrow.sneaky(e); // should not happen
         }
     }
 
     /**
-     * @deprecated Use {@link #get(Player, String, String, String)} instead
+     * @deprecated Use {@link #get(Player, String, String, String, int)} instead
      */
     @Deprecated
     public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String channel, Callback<String> callback) {
         if (!registeredListeners.contains(channel)) {
-            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), channel, TomeitoAPI.getPluginChannelListener());
+            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), channel, this);
             Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoAPI.getInstance(), channel);
             registeredListeners.add(channel);
         }
@@ -68,21 +68,36 @@ public class PluginChannelListener implements PluginMessageListener {
      * @param p the player (sender)
      * @param subchannel the subchannel
      * @param message the message
-     * @param channel the channel, also known as "tag"
+     * @param tag the tag, also known as "channel"
      * @return the promise
      */
-    public synchronized Promise<String> get(Player p, String subchannel, String message, String channel) {
+    public synchronized Promise<String> get(Player p, String subchannel, String message, String tag) {
+        return get(p, tag, subchannel, message, 10000);
+    }
+
+    /**
+     * Sends plugin message and waits for the timeout.
+     * @param player the player (sender)
+     * @param subchannel the subchannel, if null, the player's uuid will be used.
+     * @param message the message
+     * @param tag the tag, also known as "channel"
+     * @param timeout timeout in milliseconds
+     * @return the promise
+     */
+    public synchronized Promise<String> get(@NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
+        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(tag, "tag cannot be null");
         return new Promise<String>() {
             @Override
             public String apply(Object o) {
-                PluginChannelListener.this.get(p, subchannel, message, channel, (s, throwable2) -> {
+                PluginChannelListener.this.get(player, subchannel == null ? player.getUniqueId().toString() : subchannel, message == null ? "" : message, tag, (s, throwable2) -> {
                     if (throwable2 != null) {
                         reject(throwable2);
                         return;
                     }
                     resolve(s);
                 });
-                return waitUntilResolve(10000);
+                return waitUntilResolve(timeout);
             }
         };
     }

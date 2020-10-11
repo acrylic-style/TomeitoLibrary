@@ -25,11 +25,13 @@ import util.CollectionList;
 import util.MathUtils;
 import util.UUIDUtil;
 import util.Validate;
+import util.promise.Promise;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
+import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -257,5 +259,13 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      */
     public static void broadcastSound(@NotNull Sound sound, float pitch) {
         Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), sound, 100000F, pitch));
+    }
+
+    public static @NotNull Promise<@NotNull Integer> getProtocolVersion(@NotNull Player player) {
+        return ProtocolVersionRetriever.getProtocolVersion(player);
+    }
+
+    public static @NotNull Promise<@NotNull Integer> getProtocolVersion(@NotNull Player player, @NotNull ProtocolVersionRetriever.Type type) {
+        return ProtocolVersionRetriever.getProtocolVersion(player, type);
     }
 }
