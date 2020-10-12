@@ -3,7 +3,7 @@
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>tomeito_lib</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
+    <version>0.5.21a</version>
     <modules>
         <module>api</module>
         <module>tomeito_plugin</module>
@@ -12,7 +12,6 @@
     </modules>
     <name>TomeitoLib</name>
     <properties>
-        <revision>0.5.21</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>

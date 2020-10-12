@@ -5,12 +5,11 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>${revision}</version>
+        <version>0.5.21a</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tomeito_bungee</artifactId>
-    <version>${revision}</version>
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
@@ -29,7 +28,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>tomeito_shared</artifactId>
-            <version>${revision}</version>
+            <version>0.5.21a</version>
         </dependency>
     </dependencies>
 </project>
