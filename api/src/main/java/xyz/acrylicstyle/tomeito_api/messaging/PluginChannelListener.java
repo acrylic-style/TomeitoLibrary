@@ -108,7 +108,9 @@ public class PluginChannelListener implements PluginMessageListener {
         try {
             out.writeUTF(subchannel);
             out.writeUTF(message);
-        } catch (IOException e) { throw new RuntimeException(e); }
+        } catch (IOException e) {
+            // uh oh
+        }
         p.sendPluginMessage(TomeitoAPI.getInstance(), s, b.toByteArray());
     }
 }
