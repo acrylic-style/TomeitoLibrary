@@ -27,12 +27,12 @@ With `/tl debug` command, you can debug anything, comes with tab completion. (it
 ```
 
 ## Using in Server
-[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/repository/download/TomeitoLibrary_Build/533:id/tomeito_plugin/target/tomeito_plugin-0.5.20.jar)
+[Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/guestAuth/repository/download/TomeitoLibrary_Build/533:id/tomeito_plugin/target/tomeito_plugin-0.5.20.jar)
 
 ## BungeeCord
 
 Some feature (e.g. Retrieving Protocol Version without ViaVersion) requires you to install BungeeCord plugin.
 
-You can download it from [here](https://ci.acrylicstyle.xyz/repository/download/TomeitoLibrary_Build/533:id/tomeito_bungee/target/tomeito_bungee-0.5.20.jar).
+You can download it from [here](https://ci.acrylicstyle.xyz/guestAuth/repository/download/TomeitoLibrary_Build/533:id/tomeito_bungee/target/tomeito_bungee-0.5.20.jar).
 
 Then, put this plugin into your plugins folder. (Not spigot, it's BungeeCord plugin!)
