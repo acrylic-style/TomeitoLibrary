@@ -22,17 +22,20 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
+import util.ICollectionList;
 import util.MathUtils;
 import util.UUIDUtil;
 import util.Validate;
 import util.promise.Promise;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import xyz.acrylicstyle.mcutil.lang.MCVersion;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -248,9 +251,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return Seconds in integer
      * @throws IllegalArgumentException When couldn't parse time
      */
-    public static int timeToSeconds(@NotNull String s) {
-        return MathUtils.timeToSeconds(s);
-    }
+    public static int timeToSeconds(@NotNull String s) { return MathUtils.timeToSeconds(s); }
 
     /**
      * Broadcasts the sound to all players.
@@ -267,5 +268,20 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
 
     public static @NotNull Promise<@NotNull Integer> getProtocolVersion(@NotNull Player player, @NotNull ProtocolVersionRetriever.Type type) {
         return ProtocolVersionRetriever.getProtocolVersion(player, type);
+    }
+
+    public static @NotNull Promise<@NotNull MCVersion> getSingleProtocolVersion(@NotNull Player player) {
+        return getProtocolVersion(player).then(TomeitoAPI::getReleaseVersionIfPossible);
+    }
+
+    public static @NotNull Promise<@NotNull MCVersion> getSingleProtocolVersion(@NotNull Player player, @NotNull ProtocolVersionRetriever.Type type) {
+        return getProtocolVersion(player, type).then(TomeitoAPI::getReleaseVersionIfPossible);
+    }
+
+    public static MCVersion getReleaseVersionIfPossible(int protocolVersion) {
+        CollectionList<MCVersion> list = ICollectionList.asList(MCVersion.getByProtocolVersion(protocolVersion));
+        return list.filter(v -> !v.isSnapshot()).size() == 0 // if non-snapshot version wasn't found
+                ? Objects.requireNonNull(list.first()) // return the last version anyway
+                : Objects.requireNonNull(list.filter(v -> !v.isSnapshot()).first()); // or return non-snapshot version instead
     }
 }

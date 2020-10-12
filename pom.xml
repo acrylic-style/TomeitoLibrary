@@ -12,7 +12,7 @@
     </modules>
     <name>TomeitoLib</name>
     <properties>
-        <revision>0.5.20b</revision>
+        <revision>0.5.21</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
