@@ -12,7 +12,7 @@
     </modules>
     <name>TomeitoLib</name>
     <properties>
-        <revision>0.5.20a</revision>
+        <revision>0.5.20b</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -79,6 +79,11 @@
             <artifactId>junit</artifactId>
             <version>4.13</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
         </dependency>
     </dependencies>
 </project>

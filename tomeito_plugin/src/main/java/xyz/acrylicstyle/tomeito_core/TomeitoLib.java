@@ -115,7 +115,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             tryPreloadClass("org.reflections.vfs.UrlTypeVFS");
             tryPreloadClass("org.reflections.Reflections");
             tryPreloadClass("org.reflections.ReflectionUtils");
-            tryPreloadClass("org.reflections.Configuration");
+            tryPreloadClass("org.reflections.Configuration", true);
             tryPreloadClass("org.reflections.Store");
             tryPreloadClass("org.reflections.ReflectaionsException");
             tryPreloadClass("org.reflections.util.Utils");
