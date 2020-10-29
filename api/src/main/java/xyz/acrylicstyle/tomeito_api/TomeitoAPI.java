@@ -1,5 +1,6 @@
 package xyz.acrylicstyle.tomeito_api;
 
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -24,17 +25,25 @@ import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.ICollectionList;
 import util.MathUtils;
+import util.ReflectionHelper;
 import util.UUIDUtil;
 import util.Validate;
 import util.promise.Promise;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import xyz.acrylicstyle.craftbukkit.v1_8_R3.util.CraftUtils;
 import xyz.acrylicstyle.mcutil.lang.MCVersion;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
+import xyz.acrylicstyle.minecraft.v1_8_R1.PacketPlayOutChat;
+import xyz.acrylicstyle.minecraft.v1_8_R1.PlayerConnection;
+import xyz.acrylicstyle.nmsapi.abstracts.minecraft.EntityPlayer;
+import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
+import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 
+import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -283,5 +292,35 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         return list.filter(v -> !v.isSnapshot()).size() == 0 // if non-snapshot version wasn't found
                 ? Objects.requireNonNull(list.first()) // return the last version anyway
                 : Objects.requireNonNull(list.filter(v -> !v.isSnapshot()).first()); // or return non-snapshot version instead
+    }
+
+    /**
+     * Sends action bar message to specified player.
+     * @param player the player to send action bar. if the null was provided, it will just return without doing anything.
+     * @param message the action bar message to send. if the null was provided, it will just return without doing anything.
+     */
+    public static void sendActionbar(@Nullable Player player, @Nullable String message) {
+        if (player == null || message == null) return;
+        String nmsVersion = Bukkit.getServer().getClass().getPackage().getName();
+        nmsVersion = nmsVersion.substring(nmsVersion.lastIndexOf(".") + 1);
+        if (!nmsVersion.startsWith("v1_9_R") && !nmsVersion.startsWith("v1_8_R")) {
+            Ref.getClass(Player.Spigot.class)
+                    .getMethod("sendMessage", ChatMessageType.class, BaseComponent.class)
+                    .invoke(player.spigot(), ChatMessageType.ACTION_BAR, new TextComponent(message));
+            return;
+        }
+        try {
+            Class<?> ppoc = ReflectionUtil.getNMSClass("PacketPlayOutChat");
+            Class<?> chat = ReflectionUtil.getNMSClass((nmsVersion.equalsIgnoreCase("v1_8_R1") ? "ChatSerializer" : "ChatComponentText"));
+            Class<?> chatBaseComponent = ReflectionUtil.getNMSClass("IChatBaseComponent");
+            Method method = null;
+            if (nmsVersion.equalsIgnoreCase("v1_8_R1")) method = chat.getDeclaredMethod("a", String.class);
+            Object object = nmsVersion.equalsIgnoreCase("v1_8_R1") ? chatBaseComponent.cast(Objects.requireNonNull(method).invoke(chat, "{'text': '" + message + "'}")) : chat.getConstructor(String.class).newInstance(message);
+            Object packetPlayOutChat = ppoc.getConstructor(chatBaseComponent, Byte.TYPE).newInstance(object, (byte) 2);
+            Object playerConnection = ReflectionHelper.getFieldWithoutException(NMSAPI.getClassWithoutException("EntityPlayer"), CraftUtils.getHandle(player), "playerConnection");
+            ReflectionHelper.invokeMethodWithoutException(NMSAPI.getClassWithoutException("PlayerConnection"), playerConnection, "sendPacket", packetPlayOutChat);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
