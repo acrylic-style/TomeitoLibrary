@@ -15,8 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
@@ -44,6 +47,7 @@ import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -322,5 +326,30 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName) {
+        return createItemStack(material, displayName, false, (String[]) null);
+    }
+
+    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted) {
+        return createItemStack(material, displayName, enchanted, (String[]) null);
+    }
+
+    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, @Nullable String... lore) {
+        return createItemStack(material, displayName, false, lore);
+    }
+
+    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted, @Nullable String... lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (displayName != null) meta.setDisplayName(displayName);
+        if (lore != null) meta.setLore(Arrays.asList(lore));
+        if (enchanted) {
+            meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 0, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+        item.setItemMeta(meta);
+        return item;
     }
 }
