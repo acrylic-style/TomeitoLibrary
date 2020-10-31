@@ -45,6 +45,7 @@ import xyz.acrylicstyle.tomeito_api.events.player.PlayerJumpEvent;
 import xyz.acrylicstyle.tomeito_api.events.player.PlayerPreDeathEvent;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
+import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommand;
 import xyz.acrylicstyle.tomeito_api.subcommand.SubCommandExecutor;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
@@ -153,6 +154,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
         Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter());
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, ChannelConstants.PLAY_SOUND, PluginChannelListener.pcl);
         Log.info("Enabled TomeitoLib");
         new BukkitRunnable() {
             @Override

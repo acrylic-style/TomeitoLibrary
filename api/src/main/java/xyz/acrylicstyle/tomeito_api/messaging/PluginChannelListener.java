@@ -1,16 +1,19 @@
 package xyz.acrylicstyle.tomeito_api.messaging;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
 import util.CollectionStrictSync;
+import util.DataSerializer;
 import util.SneakyThrow;
 import util.Validate;
 import util.promise.Promise;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
+import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
 
 import java.io.ByteArrayInputStream;
@@ -18,18 +21,47 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 public class PluginChannelListener implements PluginMessageListener {
+    @NotNull
     public static final PluginChannelListener pcl = new PluginChannelListener();
+
+    @NotNull
     private final CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
+
+    @NotNull
     private final CollectionList<String> registeredListeners = new CollectionList<>();
 
+    /**
+     * An alias for {@link #pcl}.
+     */
+    @NotNull
+    public static PluginChannelListener getInstance() { return pcl; }
+
     @Override
-    public synchronized void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
+    public void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subchannel = in.readUTF();
             String input = in.readUTF(); // message
+            if (tag.equals(ChannelConstants.PLAY_SOUND)) {
+                UUID uuid;
+                try {
+                    uuid = UUID.fromString(subchannel);
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                Player p = Bukkit.getPlayer(uuid);
+                if (p != null) {
+                    DataSerializer serializer = DataSerializer.fromString(input);
+                    Sound sound = xyz.acrylicstyle.tomeito_api.sounds.Sound.tryResolveSound(serializer.get("sound").toString());
+                    float volume = Float.parseFloat(serializer.get("volume").toString());
+                    float pitch = Float.parseFloat(serializer.get("pitch").toString());
+                    if (sound != null) p.playSound(p.getLocation(), sound, volume, pitch);
+                }
+                return;
+            }
             /*
             Log.debug("Received plugin message!");
             Log.debug("Tag: " + tag);
@@ -48,30 +80,25 @@ public class PluginChannelListener implements PluginMessageListener {
      * @deprecated Use {@link #get(Player, String, String, String, int)} instead
      */
     @Deprecated
-    public synchronized void get(org.bukkit.entity.Player p, String subchannel, String message, String channel, Callback<String> callback) {
-        if (!registeredListeners.contains(channel)) {
-            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), channel, this);
-            Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoAPI.getInstance(), channel);
-            registeredListeners.add(channel);
-        }
+    public void get(@NotNull org.bukkit.entity.Player p, @NotNull String subchannel, @NotNull String message, @NotNull String channel, @NotNull Callback<String> callback) {
         if (!callbacks.containsKey(channel)) {
             callbacks.put(channel, new CollectionStrictSync<>());
         }
         CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(channel);
         callbacks2.put(subchannel, callback);
         callbacks.put(channel, callbacks2);
-        sendToBungeeCord(p, subchannel, message, channel);
+        sendToBungeeCord(p, channel, subchannel, message);
     }
 
     /**
      * Sends plugin message and waits for up to 10 seconds.
      * @param p the player (sender)
-     * @param subchannel the subchannel
-     * @param message the message
+     * @param subchannel the subchannel, if null, the player's uuid will be used.
+     * @param message the message, if null, an empty string will be used.
      * @param tag the tag, also known as "channel"
      * @return the promise
      */
-    public synchronized Promise<String> get(Player p, String subchannel, String message, String tag) {
+    public Promise<String> get(@NotNull Player p, @NotNull String tag, @Nullable String subchannel, @Nullable String message) {
         return get(p, tag, subchannel, message, 10000);
     }
 
@@ -79,12 +106,12 @@ public class PluginChannelListener implements PluginMessageListener {
      * Sends plugin message and waits for the timeout.
      * @param player the player (sender)
      * @param subchannel the subchannel, if null, the player's uuid will be used.
-     * @param message the message
+     * @param message the message, if null, an empty string will be used.
      * @param tag the tag, also known as "channel"
      * @param timeout timeout in milliseconds
-     * @return the promise
+     * @return the promise that contains result (expects server to return results)
      */
-    public synchronized Promise<String> get(@NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
+    public Promise<String> get(@NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
         Validate.notNull(player, "player cannot be null");
         Validate.notNull(tag, "tag cannot be null");
         return new Promise<String>() {
@@ -102,7 +129,16 @@ public class PluginChannelListener implements PluginMessageListener {
         };
     }
 
-    private void sendToBungeeCord(org.bukkit.entity.Player p, String subchannel, String message, String s) {
+    public void sendToBungeeCord(@NotNull org.bukkit.entity.Player p, @NotNull String tag, @NotNull String subchannel, @NotNull String message) {
+        Validate.notNull(p, "player must not be null");
+        Validate.notNull(subchannel, "subchannel cannot be null");
+        Validate.notNull(message, "message cannot be null");
+        Validate.notNull(tag, "tag cannot be null");
+        if (!registeredListeners.contains(tag)) {
+            Bukkit.getMessenger().registerIncomingPluginChannel(TomeitoAPI.getInstance(), tag, this);
+            Bukkit.getMessenger().registerOutgoingPluginChannel(TomeitoAPI.getInstance(), tag);
+            registeredListeners.add(tag);
+        }
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
         try {
@@ -111,6 +147,6 @@ public class PluginChannelListener implements PluginMessageListener {
         } catch (IOException e) {
             // uh oh
         }
-        p.sendPluginMessage(TomeitoAPI.getInstance(), s, b.toByteArray());
+        p.sendPluginMessage(TomeitoAPI.getInstance(), tag, b.toByteArray());
     }
 }
