@@ -37,12 +37,10 @@ import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.util.CraftUtils;
 import xyz.acrylicstyle.mcutil.lang.MCVersion;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
-import xyz.acrylicstyle.minecraft.v1_8_R1.PacketPlayOutChat;
-import xyz.acrylicstyle.minecraft.v1_8_R1.PlayerConnection;
-import xyz.acrylicstyle.nmsapi.abstracts.minecraft.EntityPlayer;
 import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
+import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 
@@ -351,5 +349,16 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         }
         item.setItemMeta(meta);
         return item;
+    }
+
+    /**
+     * Changes player's skin.
+     * Requires TomeitoBungee on BungeeCord to work.
+     * @param player the player who will be nicked
+     * @param nick the nick
+     */
+    @Contract(pure = true)
+    public static void changeSkin(Player player, String nick) {
+        PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
     }
 }

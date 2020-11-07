@@ -61,6 +61,16 @@ public class PluginChannelListener implements PluginMessageListener {
                     if (sound != null) p.playSound(p.getLocation(), sound, volume, pitch);
                 }
                 return;
+            } else if (tag.equals(ChannelConstants.REFRESH_PLAYER)) {
+                UUID uSubchannel = UUID.fromString(subchannel);
+                Player target = Bukkit.getPlayer(uSubchannel);
+                Bukkit.getOnlinePlayers().forEach(p -> {
+                    if (!p.getUniqueId().equals(uSubchannel)) {
+                        p.hidePlayer(target);
+                        p.showPlayer(target);
+                    }
+                });
+                return;
             }
             /*
             Log.debug("Received plugin message!");
@@ -80,7 +90,7 @@ public class PluginChannelListener implements PluginMessageListener {
      * @deprecated Use {@link #get(Player, String, String, String, int)} instead
      */
     @Deprecated
-    public void get(@NotNull org.bukkit.entity.Player p, @NotNull String subchannel, @NotNull String message, @NotNull String channel, @NotNull Callback<String> callback) {
+    public void get(@NotNull org.bukkit.entity.Player p, @NotNull String subchannel, @Nullable String message, @NotNull String channel, @NotNull Callback<String> callback) {
         if (!callbacks.containsKey(channel)) {
             callbacks.put(channel, new CollectionStrictSync<>());
         }
@@ -129,7 +139,7 @@ public class PluginChannelListener implements PluginMessageListener {
         };
     }
 
-    public void sendToBungeeCord(@NotNull org.bukkit.entity.Player p, @NotNull String tag, @NotNull String subchannel, @NotNull String message) {
+    public void sendToBungeeCord(@NotNull org.bukkit.entity.Player p, @NotNull String tag, @Nullable String subchannel, @Nullable String message) {
         Validate.notNull(p, "player must not be null");
         Validate.notNull(subchannel, "subchannel cannot be null");
         Validate.notNull(message, "message cannot be null");
@@ -142,8 +152,8 @@ public class PluginChannelListener implements PluginMessageListener {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
         try {
-            out.writeUTF(subchannel);
-            out.writeUTF(message);
+            if (subchannel != null) out.writeUTF(subchannel);
+            if (message != null) out.writeUTF(message);
         } catch (IOException e) {
             // uh oh
         }

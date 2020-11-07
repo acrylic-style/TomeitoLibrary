@@ -5,9 +5,16 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.5.25</version>
+        <version>0.5.26</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
+    <repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
     <artifactId>tomeito_bungee</artifactId>
     <dependencies>
@@ -28,7 +35,13 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>tomeito_shared</artifactId>
-            <version>0.5.25</version>
+            <version>0.5.26</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall-bootstrap</artifactId>
+            <version>1.16-R0.2-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
