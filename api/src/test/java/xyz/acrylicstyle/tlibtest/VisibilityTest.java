@@ -73,7 +73,7 @@ public class VisibilityTest {
     }
 
     static {
-        add(TomeitoAPI.class);
+        add(TomeitoAPI.class, Target.METHOD);
         add(BaseTomeitoAPI.class);
         add(TypeUtil.class);
         add(Title.class, Target.METHOD, Target.CONSTRUCTOR);
