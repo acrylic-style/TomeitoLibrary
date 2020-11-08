@@ -154,6 +154,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         Bukkit.getServicesManager().register(TomeitoAPI.class, this, this, ServicePriority.Normal);
         Bukkit.getPluginCommand("tlib").setExecutor(new TomeitoCommand());
         Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter());
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, ChannelConstants.REFRESH_PLAYER, PluginChannelListener.pcl);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, ChannelConstants.PLAY_SOUND, PluginChannelListener.pcl);
         Log.info("Enabled TomeitoLib");
         new BukkitRunnable() {

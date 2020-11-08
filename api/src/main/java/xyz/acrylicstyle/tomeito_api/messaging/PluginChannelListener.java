@@ -12,6 +12,13 @@ import util.DataSerializer;
 import util.SneakyThrow;
 import util.Validate;
 import util.promise.Promise;
+import util.reflect.Ref;
+import xyz.acrylicstyle.authlib.GameProfile;
+import xyz.acrylicstyle.authlib.properties.Property;
+import xyz.acrylicstyle.authlib.properties.PropertyMap;
+import xyz.acrylicstyle.minecraft.v1_8_R1.EntityPlayer;
+import xyz.acrylicstyle.nmsapi.abstracts.utils.CraftUtils;
+import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
@@ -39,12 +46,13 @@ public class PluginChannelListener implements PluginMessageListener {
     @NotNull
     public static PluginChannelListener getInstance() { return pcl; }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subchannel = in.readUTF();
-            String input = in.readUTF(); // message
+            String input = in.readUTF();
             if (tag.equals(ChannelConstants.PLAY_SOUND)) {
                 UUID uuid;
                 try {
@@ -62,8 +70,16 @@ public class PluginChannelListener implements PluginMessageListener {
                 }
                 return;
             } else if (tag.equals(ChannelConstants.REFRESH_PLAYER)) {
+                DataSerializer serializer = DataSerializer.fromString(input);
                 UUID uSubchannel = UUID.fromString(subchannel);
                 Player target = Bukkit.getPlayer(uSubchannel);
+                GameProfile profile = new GameProfile(Ref.getClass(NMSAPI.getClassWithoutException("EntityHuman")).getMethod("getProfile").invokeObj(CraftUtils.getHandle(target)));
+                System.out.println("Profile(Handle): " + profile.getHandle());
+                PropertyMap prop = profile.getProperties();
+                prop.removeAll("textures");
+                prop.put("textures", new Property((String) serializer.get("name"), (String) serializer.get("value"), (String) serializer.get("signature")));
+                profile.setProperties(prop);
+                new EntityPlayer(CraftUtils.getHandle(target)).setProfile(profile);
                 Bukkit.getOnlinePlayers().forEach(p -> {
                     if (!p.getUniqueId().equals(uSubchannel)) {
                         p.hidePlayer(target);

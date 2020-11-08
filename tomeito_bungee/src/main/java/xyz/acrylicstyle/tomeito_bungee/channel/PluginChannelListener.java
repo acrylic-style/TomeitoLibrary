@@ -7,6 +7,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.Nullable;
+import util.DataSerializer;
 import util.SneakyThrow;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_bungee.TomeitoBungee;
@@ -33,7 +34,14 @@ public class PluginChannelListener implements Listener {
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
                 if (player == null) return;
                 TomeitoBungee.setSkin(player, nick).then(result -> {
-                    if (result) sendToBukkit(ChannelConstants.REFRESH_PLAYER, uuid.toString(), null, player.getServer().getInfo());
+                    System.out.println("Nicked " + player.getName() + " to " + nick + ", and result was " + (result == null ? "fail" : "success") + ".");
+                    if (result != null) {
+                        DataSerializer serializer = new DataSerializer();
+                        serializer.set("name", result.getName());
+                        serializer.set("value", result.getValue());
+                        serializer.set("signature", result.getSignature());
+                        sendToBukkit(ChannelConstants.REFRESH_PLAYER, uuid.toString(), serializer.serialize(), player.getServer().getInfo());
+                    }
                     return null;
                 }).queue();
             }
