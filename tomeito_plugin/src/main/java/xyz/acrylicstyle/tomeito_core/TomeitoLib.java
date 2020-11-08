@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.ServicePriority;
@@ -33,6 +34,8 @@ import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
+import util.function.StringConverter;
+import util.promise.Promise;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
 import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
@@ -56,6 +59,7 @@ import xyz.acrylicstyle.tomeito_core.commands.PacketCommand;
 import xyz.acrylicstyle.tomeito_core.scheduler.CraftTomeitoScheduler;
 
 import java.util.AbstractMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -298,6 +302,16 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     private final Set<UUID> prevPlayersOnGround = Sets.newHashSet(); // PlayerJumpEvent
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
+        if (TomeitoAPI.prompts.containsKey(e.getPlayer().getUniqueId())) {
+            e.getRecipients().clear();
+            e.setCancelled(true);
+            Map.Entry<Promise<?>, StringConverter<?>> entry = TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId());
+            entry.getKey().resolveWithObject(entry.getValue().convert(e.getMessage()));
+        }
+    }
+
     // PlayerJumpEvent
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerMove(PlayerMoveEvent e) {
@@ -432,7 +446,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             public void $sendMessage(@NotNull CommandSender sender) {
                 sender.sendMessage(ChatColor.GOLD + "-----------------------------------");
                 List<Map.Entry<SubCommand, SubCommandExecutor>> commands = subCommands.get(rootCommandName);
-                ICollectionList.asList(commands).map(Map.Entry::getKey).forEach(s -> sender.sendMessage(getCommandHelp(s.usage(), s.description())));
+                ICollectionList.asList(commands).map(Map.Entry::getKey).sorted(Comparator.comparing(SubCommand::name)).forEach(s -> sender.sendMessage(getCommandHelp(s.usage(), s.description())));
                 sender.sendMessage(ChatColor.GOLD + "-----------------------------------");
             }
         });

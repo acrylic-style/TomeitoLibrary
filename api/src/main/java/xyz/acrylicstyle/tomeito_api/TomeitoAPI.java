@@ -25,12 +25,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Collection;
 import util.CollectionList;
 import util.ICollectionList;
 import util.MathUtils;
 import util.ReflectionHelper;
 import util.UUIDUtil;
 import util.Validate;
+import util.function.StringConverter;
 import util.promise.Promise;
 import util.reflect.Ref;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -45,7 +47,9 @@ import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 
 import java.lang.reflect.Method;
+import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -360,5 +364,26 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     @Contract(pure = true)
     public static void changeSkin(Player player, String nick) {
         PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
+    }
+
+    protected static final Collection<UUID, Map.Entry<Promise<?>, StringConverter<?>>> prompts = new Collection<>();
+
+    /**
+     * Prompts text to player.
+     * @param player the player to prompt
+     * @param converter the converter to use
+     * @param timeout the timeout until player enters something
+     * @return the result, null if player didn't send message in specified time
+     */
+    @NotNull
+    public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
+        Promise<T> promise = new Promise<T>() {
+            @Override
+            public T apply(Object o) {
+                return waitUntilResolve(timeout);
+            }
+        };
+        prompts.add(player.getUniqueId(), new AbstractMap.SimpleImmutableEntry<>(promise, converter));
+        return promise;
     }
 }
