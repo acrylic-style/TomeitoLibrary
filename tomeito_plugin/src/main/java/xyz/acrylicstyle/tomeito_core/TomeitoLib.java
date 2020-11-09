@@ -32,12 +32,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.ActionableResult;
+import util.Callback;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
 import util.function.StringConverter;
-import util.promise.Promise;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
 import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
@@ -246,7 +246,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).invoke().ifPresent(entry -> entry.getKey().resolve(null));
+        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).invoke().ifPresent(entry -> entry.getKey().done(null, null));
     }
 
     // (Player|Entity)PreDeathEvent
@@ -314,8 +314,8 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         if (TomeitoAPI.prompts.containsKey(e.getPlayer().getUniqueId())) {
             e.getRecipients().clear();
             e.setCancelled(true);
-            Map.Entry<Promise<?>, StringConverter<?>> entry = TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId());
-            entry.getKey().resolveWithObject(entry.getValue().convert(e.getMessage()));
+            Map.Entry<Callback<Object>, StringConverter<?>> entry = TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId());
+            entry.getKey().done(entry.getValue().convert(e.getMessage()), null);
         }
     }
 

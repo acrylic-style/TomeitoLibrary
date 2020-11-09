@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Callback;
 import util.Collection;
 import util.CollectionList;
 import util.ICollectionList;
@@ -371,7 +372,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
     }
 
-    protected static final Collection<UUID, Map.Entry<Promise<?>, StringConverter<?>>> prompts = new Collection<>();
+    protected static final Collection<UUID, Map.Entry<Callback<Object>, StringConverter<?>>> prompts = new Collection<>();
 
     /**
      * Prompts text to player. Prompt will be cancelled when player quits, and returns a null.
@@ -382,13 +383,20 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      */
     @NotNull
     public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
-        Promise<T> promise = new Promise<T>() {
+        return new Promise<T>() {
+            @SuppressWarnings("unchecked")
             @Override
             public T apply(Object o) {
+                Callback<Object> callback = (c, t) -> {
+                    if (t != null) {
+                        reject(t);
+                        return;
+                    }
+                    resolve((T) c);
+                };
+                prompts.add(player.getUniqueId(), new AbstractMap.SimpleImmutableEntry<>(callback, converter));
                 return waitUntilResolve(timeout);
             }
         };
-        prompts.add(player.getUniqueId(), new AbstractMap.SimpleImmutableEntry<>(promise, converter));
-        return promise;
     }
 }

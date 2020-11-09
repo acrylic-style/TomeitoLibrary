@@ -22,6 +22,7 @@ import java.util.UUID;
 public class TomeitoBungee extends Plugin implements Listener {
     @Override
     public void onEnable() {
+        getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, new PluginChannelListener());
         getProxy().registerChannel(ChannelConstants.PROTOCOL_VERSION);
         getProxy().registerChannel(ChannelConstants.SET_SKIN);
@@ -34,7 +35,7 @@ public class TomeitoBungee extends Plugin implements Listener {
     @EventHandler
     public void onPostLogin(PostLoginEvent e) {
         LoginResult profile = ((InitialHandler) e.getPlayer().getPendingConnection()).getLoginProfile();
-        profiles.add(e.getPlayer().getUniqueId(), profile);
+        profiles.add(e.getPlayer().getUniqueId(), new LoginResult(profile.getId(), profile.getName(), profile.getProperties().clone()));
     }
 
     @Contract(pure = true)
