@@ -330,6 +330,11 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         }
     }
 
+    public static void broadcastActionBar(@Nullable String message) {
+        if (message == null) return;
+        Bukkit.getOnlinePlayers().forEach(p -> sendActionbar(p, message));
+    }
+
     public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName) {
         return createItemStack(material, displayName, false, (String[]) null);
     }
