@@ -24,12 +24,14 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.ActionableResult;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
@@ -240,6 +242,11 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             if (!event.isCancelled()) e.setDamage(event.getDamage());
             if (event.isCancelled()) e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).invoke().ifPresent(entry -> entry.getKey().resolve(null));
     }
 
     // (Player|Entity)PreDeathEvent

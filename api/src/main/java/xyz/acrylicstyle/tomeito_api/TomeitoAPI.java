@@ -374,11 +374,11 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     protected static final Collection<UUID, Map.Entry<Promise<?>, StringConverter<?>>> prompts = new Collection<>();
 
     /**
-     * Prompts text to player.
+     * Prompts text to player. Prompt will be cancelled when player quits, and returns a null.
      * @param player the player to prompt
      * @param converter the converter to use
      * @param timeout the timeout until player enters something
-     * @return the result, null if player didn't send message in specified time
+     * @return the result, null if player didn't send message in specified time or the player quit
      */
     @NotNull
     public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
