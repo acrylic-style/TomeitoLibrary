@@ -364,10 +364,10 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * Changes player's skin.
      * Requires TomeitoBungee on BungeeCord to work.
      * @param player the player who will be nicked
-     * @param nick the nick
+     * @param nick the nick, if empty, it will revert the skin to the original.
      */
     @Contract(pure = true)
-    public static void changeSkin(Player player, String nick) {
+    public static void changeSkin(@NotNull Player player, @NotNull String nick) {
         PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
     }
 
