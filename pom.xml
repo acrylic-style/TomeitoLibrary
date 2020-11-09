@@ -71,7 +71,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>java-util-all</artifactId>
-            <version>0.11.37b</version>
+            <version>0.11.37c</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
