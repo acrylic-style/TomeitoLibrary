@@ -246,7 +246,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).invoke().ifPresent(entry -> entry.getKey().done(null, null));
+        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).ifPresent(entry -> entry.getKey().done(null, null));
     }
 
     // (Player|Entity)PreDeathEvent
