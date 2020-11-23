@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.6.4</version>
+        <version>0.6.4a</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tomeito_shared</artifactId>
