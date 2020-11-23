@@ -35,7 +35,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>tomeito_shared</artifactId>
-            <version>0.6.2a</version>
+            <version>0.6.2b</version>
         </dependency>
         <dependency>
             <groupId>io.github.waterfallmc</groupId>
