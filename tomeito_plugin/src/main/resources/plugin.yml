@@ -1,7 +1,7 @@
 name: TomeitoLib
 main: xyz.acrylicstyle.tomeito_core.TomeitoLib
 load: STARTUP
-version: 0.6.3
+version: 0.6.4
 
 commands:
   tlib:

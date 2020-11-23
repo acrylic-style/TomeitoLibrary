@@ -103,4 +103,14 @@ public final class NamespacedKey {
      */
     @NotNull
     public static NamespacedKey of(@NotNull Plugin plugin, @NotNull String key) { return new NamespacedKey(plugin, key); }
+
+    /**
+     * Return a new key in the specific namespace.
+     *
+     * @param namespace the namespace to use
+     * @param key the key to use
+     * @return new key
+     */
+    @NotNull
+    public static NamespacedKey of(@NotNull String namespace, @NotNull String key) { return new NamespacedKey(namespace, key); }
 }

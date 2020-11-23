@@ -399,4 +399,12 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
             }
         };
     }
+
+    public static void run(@NotNull Runnable runnable) {
+        Bukkit.getScheduler().runTask(getInstance(), runnable);
+    }
+
+    public static void runAsync(@NotNull Runnable runnable) {
+        Bukkit.getScheduler().runTaskAsynchronously(getInstance(), runnable);
+    }
 }
