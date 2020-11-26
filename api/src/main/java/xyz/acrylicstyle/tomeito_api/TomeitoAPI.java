@@ -228,9 +228,9 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         double x2 = location2.getX();
         double y2 = location2.getY();
         double z2 = location2.getZ();
-        if ((x > x1 && x < x2) || (x > x2 && x < x1)) {
-            if ((y > y1 && y < y2) || (y > y2 && y < y1)) {
-                return (z > z1 && z < z2) || (z > z2 && z < z1);
+        if ((x >= x1 && x <= x2) || (x >= x2 && x <= x1)) {
+            if ((y >= y1 && y <= y2) || (y >= y2 && y <= y1)) {
+                return (z >= z1 && z <= z2) || (z >= z2 && z <= z1);
             }
         }
         return false;
@@ -380,7 +380,9 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @param converter the converter to use
      * @param timeout the timeout until player enters something
      * @return the result, null if player didn't send message in specified time or the player quit
+     * @deprecated not working correctly
      */
+    @Deprecated
     @NotNull
     public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
         return new Promise<T>() {
