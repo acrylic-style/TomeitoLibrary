@@ -17,4 +17,9 @@ public class BukkitNBS4Tick extends NBS4Tick implements BukkitNBSTick {
     public @NotNull List<BukkitNBSNote> getBukkitLayers() {
         return ListUtil.upgrade(layers);
     }
+
+    @Override
+    public int getTick() {
+        return super.getStartingTick() * 2;
+    }
 }

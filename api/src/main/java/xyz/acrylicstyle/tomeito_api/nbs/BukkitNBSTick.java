@@ -8,4 +8,6 @@ import java.util.List;
 public interface BukkitNBSTick extends NBSTick {
     @NotNull
     List<BukkitNBSNote> getBukkitLayers();
+
+    int getTick();
 }

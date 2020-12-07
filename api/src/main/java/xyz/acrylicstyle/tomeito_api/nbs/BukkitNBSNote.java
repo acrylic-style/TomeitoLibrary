@@ -11,4 +11,6 @@ public interface BukkitNBSNote extends NBSNote {
      */
     @Nullable
     org.bukkit.Sound getSound();
+
+    float getSoundPitch();
 }

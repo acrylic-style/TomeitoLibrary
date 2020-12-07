@@ -7,6 +7,8 @@ import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSNote;
 import xyz.acrylicstyle.tomeito_api.sounds.Sound;
 
 public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
+    public static final int OFFSET = 33;
+
     public BukkitNBS4Note(byte instrument, byte key, byte volume, byte panning, short pitch) {
         super(instrument, key, volume, panning, pitch);
     }
@@ -18,8 +20,11 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
      */
     @Nullable
     @Override
-    public org.bukkit.Sound getSound() {
-        return readInstrument(instrument);
+    public org.bukkit.Sound getSound() { return readInstrument(instrument); }
+
+    @Override
+    public float getSoundPitch() {
+        return (super.getPitch() - OFFSET) / 10F;
     }
 
     /**
