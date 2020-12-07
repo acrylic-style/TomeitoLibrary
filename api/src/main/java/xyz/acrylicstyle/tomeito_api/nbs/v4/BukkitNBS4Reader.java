@@ -25,14 +25,14 @@ public class BukkitNBS4Reader extends NBS4Reader implements BukkitNBSReader {
 
     @Override
     public @NotNull BukkitNBS4File readBody(@NotNull NBSHeader header, @NotNull ByteBuffer buffer) {
-        List<BukkitNBSTick> ticks = readBukkitNotes(header.getLayers(), buffer);
+        List<BukkitNBSTick> ticks = readBukkitNotes(header, header.getLayers(), buffer);
         List<NBSLayerData> layers = Arrays.asList(readDetailedLayerDataEntries(header.getLayers(), buffer));
         List<NBSInstrument> customInstruments = Arrays.asList(readInstrumentDataEntries(buffer));
         return new BukkitNBS4File(header, ticks, layers, customInstruments);
     }
 
     @Override
-    public @NotNull ArrayList<BukkitNBSTick> readBukkitNotes(int layers, @NotNull ByteBuffer buffer) {
+    public @NotNull ArrayList<BukkitNBSTick> readBukkitNotes(@NotNull NBSHeader header, int layers, @NotNull ByteBuffer buffer) {
         int currentTick = -1;
         ArrayList<BukkitNBSTick> ticks = new ArrayList<>();
         while (true) {
@@ -40,7 +40,7 @@ public class BukkitNBS4Reader extends NBS4Reader implements BukkitNBSReader {
             if (tickJumps == 0) break;
             currentTick += tickJumps;
             List<BukkitNBSNote> notes = Arrays.asList(readTickNoteLayers(layers, buffer));
-            ticks.add(new BukkitNBS4Tick(currentTick, notes));
+            ticks.add(new BukkitNBS4Tick(header, currentTick, notes));
         }
         return ticks;
     }
