@@ -90,7 +90,7 @@ public class VisibilityTest {
         add(PlayerSubCommandExecutor.class);
         add(PlayerOpSubCommandExecutor.class);
         add(OpSubCommandExecutor.class);
-        add(Sound.class);
+        add(Sound.class, Target.FIELD);
         add(Refs.class);
         add(LanguageProvider.class);
         add(TomeitoRunnable.class, Target.CONSTRUCTOR);

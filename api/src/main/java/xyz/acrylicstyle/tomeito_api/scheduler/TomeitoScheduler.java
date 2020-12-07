@@ -17,6 +17,9 @@ public abstract class TomeitoScheduler {
     public abstract TomeitoTask runTask(@NotNull Plugin plugin, @NotNull Runnable runnable);
 
     @NotNull
+    public abstract TomeitoTask runTask(@NotNull Runnable runnable);
+
+    @NotNull
     public abstract TomeitoTask runTaskLater(@NotNull Plugin plugin, @NotNull Runnable runnable, @NotNull SchedulerTimeUnit unit, long time);
 
     @NotNull
@@ -24,6 +27,9 @@ public abstract class TomeitoScheduler {
 
     @NotNull
     public abstract TomeitoTask runTaskAsynchronously(@NotNull Plugin plugin, @NotNull Runnable runnable);
+
+    @NotNull
+    public abstract TomeitoTask runTaskAsynchronously(@NotNull Runnable runnable);
 
     @NotNull
     public abstract TomeitoTask runTaskLaterAsynchronously(@NotNull Plugin plugin, @NotNull Runnable runnable, @NotNull SchedulerTimeUnit unit, long time);

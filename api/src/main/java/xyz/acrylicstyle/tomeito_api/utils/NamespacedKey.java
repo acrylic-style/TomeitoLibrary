@@ -2,6 +2,7 @@ package xyz.acrylicstyle.tomeito_api.utils;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import util.Validate;
 import util.reflect.Ref;
@@ -69,9 +70,11 @@ public final class NamespacedKey {
         this.key = (String) Ref.forName("org.bukkit.NamespacedKey").getMethod("getKey").invoke(namespacedKey);
     }
 
+    @Contract(pure = true)
     @NotNull
     public String getNamespace() { return namespace; }
 
+    @Contract(pure = true)
     @NotNull
     public String getKey() { return key; }
 
@@ -91,8 +94,9 @@ public final class NamespacedKey {
         return this.namespace.equals(other.namespace) && this.key.equals(other.key);
     }
 
+    @Contract(pure = true)
     @Override
-    public String toString() { return this.namespace + ":" + this.key; }
+    public @NotNull String toString() { return this.namespace + ":" + this.key; }
 
     /**
      * Return a new key in the plugin namespace.
@@ -101,6 +105,7 @@ public final class NamespacedKey {
      * @param key the key to use
      * @return new key
      */
+    @Contract("_, _ -> new")
     @NotNull
     public static NamespacedKey of(@NotNull Plugin plugin, @NotNull String key) { return new NamespacedKey(plugin, key); }
 
@@ -111,6 +116,7 @@ public final class NamespacedKey {
      * @param key the key to use
      * @return new key
      */
+    @Contract("_, _ -> new")
     @NotNull
     public static NamespacedKey of(@NotNull String namespace, @NotNull String key) { return new NamespacedKey(namespace, key); }
 }

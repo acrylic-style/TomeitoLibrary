@@ -62,4 +62,6 @@ public interface TomeitoTask {
 
     @NotNull
     Runnable getRunnable();
+
+    long getCycle();
 }

@@ -372,7 +372,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
     }
 
-    protected static final Collection<UUID, Map.Entry<Callback<Object>, StringConverter<?>>> prompts = new Collection<>();
+    protected static final Collection<UUID, Map.Entry<Promise<Object>, StringConverter<?>>> prompts = new Collection<>();
 
     /**
      * Prompts text to player. Prompt will be cancelled when player quits, and returns a null.
@@ -382,21 +382,14 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return the result, null if player didn't send message in specified time or the player quit
      * @deprecated not working correctly
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Deprecated
     @NotNull
     public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
         return new Promise<T>() {
-            @SuppressWarnings("unchecked")
             @Override
             public T apply(Object o) {
-                Callback<Object> callback = (c, t) -> {
-                    if (t != null) {
-                        reject(t);
-                        return;
-                    }
-                    resolve((T) c);
-                };
-                prompts.add(player.getUniqueId(), new AbstractMap.SimpleImmutableEntry<>(callback, converter));
+                prompts.add(player.getUniqueId(), new AbstractMap.SimpleImmutableEntry<>((Promise) this, converter));
                 return waitUntilResolve(timeout);
             }
         };

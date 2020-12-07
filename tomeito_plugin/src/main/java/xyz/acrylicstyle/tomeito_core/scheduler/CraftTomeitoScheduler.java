@@ -4,6 +4,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.Collection;
+import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.scheduler.SchedulerTimeUnit;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoTask;
@@ -13,15 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("DuplicatedCode")
 public class CraftTomeitoScheduler extends TomeitoScheduler {
-    public static CraftTomeitoScheduler instance;
     public final AtomicInteger taskId = new AtomicInteger();
     public final Collection<Integer, TomeitoTask> tasks = new Collection<>();
     public long cycle = 0;
     public long asyncCycle = 0;
-
-    public CraftTomeitoScheduler() {
-        instance = this;
-    }
 
     @Override
     public @Nullable TomeitoTask getTask(int id) {
@@ -34,6 +30,11 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
         CraftTomeitoTask task = new CraftTomeitoTask(id, plugin, runnable, true, false, null, null);
         tasks.add(id, task);
         return task;
+    }
+
+    @Override
+    public @NotNull TomeitoTask runTask(@NotNull Runnable runnable) {
+        return runTask(TomeitoAPI.getInstance(), runnable);
     }
 
     @Override
@@ -72,6 +73,11 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     }
 
     @Override
+    public @NotNull TomeitoTask runTaskAsynchronously(@NotNull Runnable runnable) {
+        return runTaskAsynchronously(TomeitoAPI.getInstance(), runnable);
+    }
+
+    @Override
     public @NotNull TomeitoTask runTaskLaterAsynchronously(@NotNull Plugin plugin, @NotNull Runnable runnable, @NotNull SchedulerTimeUnit unit, long time) {
         if (time < 1) throw new IllegalArgumentException("Time cannot be lower than 1");
         int id = taskId.getAndIncrement();
@@ -106,12 +112,12 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     }
 
     public void tick() {
-        // removes cancelled tasks
+        // remove cancelled tasks
         tasks.clone()
                 .filter(TomeitoTask::isSync)
                 .filter(TomeitoTask::isCancelled)
                 .forEach((i, task) -> tasks.remove(i));
-        // increases tick count
+        // increase tick count
         tasks.clone()
                 .filter(TomeitoTask::isSync)
                 .forEach((i, task) -> ((CraftTomeitoTask) task).cycle.incrementAndGet());
@@ -136,10 +142,12 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     }
 
     public void tickAsync() {
+        // remove cancelled tasks
         tasks.clone()
                 .filter(TomeitoTask::isAsync)
                 .filter(TomeitoTask::isCancelled)
                 .forEach((i, task) -> tasks.remove(i));
+        // increase tick count
         tasks.clone()
                 .filter(TomeitoTask::isAsync)
                 .forEach((i, task) -> ((CraftTomeitoTask) task).cycle.incrementAndGet());

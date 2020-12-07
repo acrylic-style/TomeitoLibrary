@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.CollectionList;
+import util.CollectionSet;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
@@ -168,13 +169,12 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                                     //Log.info("> No");
                                 }
                             } else { // field
-                                //Log.info("< Is " + p + " Field?");
                                 if (isField(refClass.get(), p)) {
                                     refClass.set(getFieldReturnValue(refClass.get(), p));
-                                    //Log.info("> Yes");
+                                    //Log.info(p + " is field > Yes");
                                 } else {
                                     refClass.set(null);
-                                    //Log.info("> No");
+                                    //Log.info(p + " is field > No");
                                 }
                             }
                             stackChanged.set(true);
@@ -187,7 +187,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                             */
                         });
                         if (stackChanged.get()) {
-                            if (refClass.get() == null ){
+                            if (refClass.get() == null){
                                 list = new CollectionList<>();
                             } else {
                                 list = Refs.getAllMethodsM(refClass.get()).map(m -> {
@@ -250,26 +250,29 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return found.get();
     }
 
-    private CollectionList<String> findClasses(String packageName) {
-        CollectionList<String> list = findClasses(packageName, false);
+    private ICollectionList<String> findClasses(String packageName) {
+        ICollectionList<String> list = findClasses(packageName, false);
         return list.size() == 0 ? findClasses(packageName, true) : list;
     }
 
     private final StringCollection<Integer> loaders1 = new StringCollection<>();
     private final StringCollection<Integer> loaders2 = new StringCollection<>();
-    private final StringCollection<CollectionList<String>> classes = new StringCollection<>();
-    private final StringCollection<CollectionList<String>> packages = new StringCollection<>();
+    private final StringCollection<CollectionSet<String>> classes = new StringCollection<>();
+    private final StringCollection<CollectionSet<String>> packages = new StringCollection<>();
 
-    private CollectionList<String> findClasses(String packageName, boolean recursive) {
+    @SuppressWarnings("unchecked")
+    private ICollectionList<String> findClasses(String packageName, boolean recursive) {
         String p = trim(packageName);
-        if (!classes.containsKey(p)) classes.add(p, new CollectionList<>());
+        if (!classes.containsKey(p)) classes.add(p, new CollectionSet<>());
         try {
             CollectionList<ClassLoader> loaders = getClassLoaders();
             if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
                 this.loaders1.add(p, loaders.size());
                 classes.get(p).clear();
-                //noinspection Convert2MethodRef
-                loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(c -> c.getCanonicalName())));
+                TomeitoAPI.runAsync(() -> {
+                    //noinspection Convert2MethodRef
+                    loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(c -> c.getCanonicalName())));
+                });
             }
             return classes.get(p).concat(findPackages(packageName), findSystemClasses(packageName, recursive));
         } catch (SecurityException e) {
@@ -281,15 +284,15 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         }
     }
 
-    private CollectionList<String> findSystemClasses(String packageName, boolean recursive) {
+    private ICollectionList<String> findSystemClasses(String packageName, boolean recursive) {
         return ReflectionHelper
                 .findAllClasses(ClassLoader.getSystemClassLoader(), trim(packageName), recursive)
                 .map(Class::getCanonicalName)
                 .concat(findPackages(packageName));
     }
 
-    private CollectionList<String> findPackages(String packageName) {
-        CollectionList<String> list = findPackages(packageName, packageName.equalsIgnoreCase(""));
+    private ICollectionList<String> findPackages(String packageName) {
+        ICollectionList<String> list = findPackages(packageName, packageName.equalsIgnoreCase(""));
         if (list.size() == 0) list = findPackages(packageName, true);
         if (list.size() == 0) list = findPackages(trim(packageName + "."), true);
         if (list.size() == 0) list = findPackages(trim(trim(packageName + ".") + "."), true);
@@ -297,14 +300,14 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return list;
     }
 
-    private CollectionList<String> findPackages(String packageName, boolean recursive) {
+    private ICollectionList<String> findPackages(String packageName, boolean recursive) {
         String p = trim(packageName);
-        if (!packages.containsKey(p)) packages.add(p, new CollectionList<>());
+        if (!packages.containsKey(p)) packages.add(p, new CollectionSet<>());
         CollectionList<ClassLoader> loaders = getClassLoaders();
         if (loaders.size() != this.loaders2.getOrDefault(p, -1)) {
             this.loaders2.add(p, loaders.size());
             packages.get(p).clear();
-            loaders.forEach(cl -> packages.get(p).addAll(ReflectionHelper.findPackages(cl, p, recursive)));
+            TomeitoAPI.runAsync(() -> loaders.forEach(cl -> packages.get(p).addAll(ReflectionHelper.findPackages(cl, p, recursive))));
         }
         return packages.get(p);
     }

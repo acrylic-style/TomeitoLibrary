@@ -32,12 +32,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.ActionableResult;
-import util.Callback;
 import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
-import util.function.StringConverter;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
 import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
@@ -68,21 +66,24 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
- * Do not shade it if you plan to add TomeitoLib.jar in plugins folder, or it will fail to load. (or relocate them)<br />
- * Or, please define TomeitoLib at softdepend or depend at least!
+ * Do not shade this class, if you want to do so, please define
+ * TomeitoLib at softdepend or depend in plugin.yml to avoid any problems.
  */
 public class TomeitoLib extends TomeitoAPI implements Listener {
     public static final Logger LOGGER = Logger.getLogger("TomeitoLib");
     /**
      * It only exists for backward compatibility.
+     * @deprecated Use {@link TomeitoAPI#getPluginChannelListener()} or {@link PluginChannelListener#pcl}, this field will be removed on 0.7
+     * todo: 0.7
      */
+    @Deprecated
     public static PluginChannelListener pcl = PluginChannelListener.pcl;
     public static TomeitoLib instance = null;
 
@@ -122,7 +123,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             tryPreloadClass("org.reflections.vfs.UrlTypeVFS");
             tryPreloadClass("org.reflections.Reflections");
             tryPreloadClass("org.reflections.ReflectionUtils");
-            tryPreloadClass("org.reflections.Configuration", true);
+            tryPreloadClass("org.reflections.Configuration");
             tryPreloadClass("org.reflections.Store");
             tryPreloadClass("org.reflections.ReflectaionsException");
             tryPreloadClass("org.reflections.util.Utils");
@@ -150,7 +151,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         }).start();
     }
 
-    private static final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    private static final ExecutorService pool = Executors.newFixedThreadPool(2);
     private static final Timer timer = new Timer();
 
     @Override
@@ -162,22 +163,21 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         Bukkit.getPluginCommand("tlib").setTabCompleter(new TomeitoLibTabCompleter());
         Bukkit.getMessenger().registerIncomingPluginChannel(this, ChannelConstants.REFRESH_PLAYER, PluginChannelListener.pcl);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, ChannelConstants.PLAY_SOUND, PluginChannelListener.pcl);
-        Log.info("Enabled TomeitoLib");
+        Log.info("Starting timer");
         new BukkitRunnable() {
             @Override
             public void run() {
                 scheduler.tick();
             }
         }.runTaskTimer(this, 1, 1);
-        pool.execute(() -> {
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    pool.execute(scheduler::tickAsync);
-                }
-            };
-            timer.scheduleAtFixedRate(task, 50, 50);
-        });
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                pool.execute(scheduler::tickAsync);
+            }
+        };
+        timer.scheduleAtFixedRate(task, 50, 50);
+        Log.info("Enabled TomeitoLib");
     }
 
     @Override
@@ -246,7 +246,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).ifPresent(entry -> entry.getKey().done(null, null));
+        ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).invoke().ifPresent(entry -> entry.getKey().resolve(null));
     }
 
     // (Player|Entity)PreDeathEvent
@@ -314,8 +314,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         if (TomeitoAPI.prompts.containsKey(e.getPlayer().getUniqueId())) {
             e.getRecipients().clear();
             e.setCancelled(true);
-            Map.Entry<Callback<Object>, StringConverter<?>> entry = TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId());
-            entry.getKey().done(entry.getValue().convert(e.getMessage()), null);
+            ActionableResult.ofNullable(TomeitoAPI.prompts.remove(e.getPlayer().getUniqueId())).ifPresent(entry -> entry.getKey().resolve(entry.getValue().convert(e.getMessage())));
         }
     }
 

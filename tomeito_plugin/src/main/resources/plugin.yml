@@ -1,7 +1,8 @@
 name: TomeitoLib
 main: xyz.acrylicstyle.tomeito_core.TomeitoLib
 load: STARTUP
-version: 0.6.4c
+version: 0.6.5
+#api-version: "1.13" # todo: maybe specify api-version?
 
 commands:
   tlib:

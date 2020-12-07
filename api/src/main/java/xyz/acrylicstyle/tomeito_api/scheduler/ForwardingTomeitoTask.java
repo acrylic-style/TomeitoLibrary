@@ -40,6 +40,9 @@ public abstract class ForwardingTomeitoTask implements TomeitoTask {
     @Override
     public @NotNull Runnable getRunnable() { return delegate().getRunnable(); }
 
+    @Override
+    public long getCycle() { return delegate().getCycle(); }
+
     @NotNull
     public static ForwardingTomeitoTask getInstance(@NotNull TomeitoTask task) {
         Validate.notNull(task, "task cannot be null");

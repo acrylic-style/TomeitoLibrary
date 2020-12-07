@@ -2,7 +2,9 @@
 
 Provides useful APIs to Bukkit!
 
-Currently, compatible with: 1.8 - 1.16.3
+Currently, compatible with: 1.8 - 1.16.4
+
+There are no issues on 1.7.x so far.
 
 Please note that this plugin itself does not modify game play. It just adds some useful commands and APIs.
 

@@ -38,24 +38,16 @@ public class CraftTomeitoTask implements TomeitoTask {
     }
 
     @Override
-    public void cancel() {
-        cancelled = true;
-    }
+    public void cancel() { cancelled = true; }
 
     @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+    public boolean isCancelled() { return cancelled; }
 
     @Override
-    public int getTaskId() {
-        return taskId;
-    }
+    public int getTaskId() { return taskId; }
 
     @Override
-    public boolean isSync() {
-        return sync;
-    }
+    public boolean isSync() { return sync; }
 
     @Nullable
     @Override
@@ -66,20 +58,17 @@ public class CraftTomeitoTask implements TomeitoTask {
     public Map.Entry<SchedulerTimeUnit, Long> getRepeatTime() { return repeat; }
 
     @Override
-    public boolean isRepeatable() {
-        return repeatable;
-    }
+    public boolean isRepeatable() { return repeatable; }
 
     @Override
-    public @NotNull Plugin getOwner() {
-        return owner;
-    }
+    public @NotNull Plugin getOwner() { return owner; }
 
     @NotNull
     @Override
-    public Runnable getRunnable() {
-        return runnable;
-    }
+    public Runnable getRunnable() { return runnable; }
+
+    @Override
+    public long getCycle() { return cycle.get(); }
 
     @Override
     public String toString() {

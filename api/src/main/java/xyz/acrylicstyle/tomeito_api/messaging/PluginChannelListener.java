@@ -40,6 +40,8 @@ public class PluginChannelListener implements PluginMessageListener {
     @NotNull
     private final CollectionList<String> registeredListeners = new CollectionList<>();
 
+    // private PluginChannelListener() {} // todo: 0.7
+
     /**
      * An alias for {@link #pcl}.
      */
@@ -126,6 +128,31 @@ public class PluginChannelListener implements PluginMessageListener {
      */
     public Promise<String> get(@NotNull Player p, @NotNull String tag, @Nullable String subchannel, @Nullable String message) {
         return get(p, tag, subchannel, message, 10000);
+    }
+
+    /**
+     * Sends plugin message and waits for up to 10 seconds.
+     * @param player the player (sender)
+     * @param subchannel the subchannel, if null, the player's uuid will be used.
+     * @param message the message, if null, an empty string will be used.
+     * @param tag the tag, also known as "channel"
+     * @return the promise
+     */
+    public <T extends Enum<T>> Promise<T> get(@NotNull Class<T> clazz, @NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message) {
+        return get(clazz, player, tag, subchannel, message, 10000);
+    }
+
+    /**
+     * Sends plugin message and waits for the response within the timeout.
+     * @param player the player (sender)
+     * @param subchannel the subchannel, if null, the player's uuid will be used.
+     * @param message the message, if null, an empty string will be used.
+     * @param tag the tag, also known as "channel"
+     * @param timeout timeout in milliseconds
+     * @return the promise that contains result (expects server to return results)
+     */
+    public <T extends Enum<T>> Promise<T> get(@NotNull Class<T> clazz, @NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
+        return get(player, tag, subchannel, message, timeout).then(s -> Enum.valueOf(clazz, s));
     }
 
     /**
