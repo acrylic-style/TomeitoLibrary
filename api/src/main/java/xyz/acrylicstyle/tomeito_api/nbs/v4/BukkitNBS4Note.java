@@ -7,8 +7,6 @@ import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSNote;
 import xyz.acrylicstyle.tomeito_api.sounds.Sound;
 
 public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
-    public static final int OFFSET = 33;
-
     public BukkitNBS4Note(byte instrument, byte key, byte volume, byte panning, short pitch) {
         super(instrument, key, volume, panning, pitch);
     }
@@ -39,9 +37,9 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
         if (key == 44) return 0.95F;
         if (key == 45) return 1.0F;
         if (key == 46) return 1.05F;
-        if (key == 47) return 1.13F;
+        if (key == 47) return 1.15F;
         if (key == 48) return 1.2F;
-        if (key == 49) return 1.28F;
+        if (key == 49) return 1.3F;
         if (key == 50) return 1.35F;
         if (key == 51) return 1.4F;
         if (key == 52) return 1.5F;
