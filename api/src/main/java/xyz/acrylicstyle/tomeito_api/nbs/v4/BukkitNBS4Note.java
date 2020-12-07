@@ -24,7 +24,33 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
 
     @Override
     public float getSoundPitch() {
-        return (super.getKey() - OFFSET) / 10F;
+        byte key = super.getKey();
+        if (key == 33) return 0.0F;
+        if (key == 34) return 0.53F;
+        if (key == 35) return 0.57F;
+        if (key == 36) return 0.6F;
+        if (key == 37) return 0.65F;
+        if (key == 38) return 0.68F;
+        if (key == 39) return 0.7F;
+        if (key == 40) return 0.75F;
+        if (key == 41) return 0.8F;
+        if (key == 42) return 0.85F;
+        if (key == 43) return 0.9F;
+        if (key == 44) return 0.95F;
+        if (key == 45) return 1.0F;
+        if (key == 46) return 1.05F;
+        if (key == 47) return 1.13F;
+        if (key == 48) return 1.2F;
+        if (key == 49) return 1.28F;
+        if (key == 50) return 1.35F;
+        if (key == 51) return 1.4F;
+        if (key == 52) return 1.5F;
+        if (key == 53) return 1.6F;
+        if (key == 54) return 1.7F;
+        if (key == 55) return 1.8F;
+        if (key == 56) return 1.9F;
+        if (key == 57) return 2.0F;
+        return 0.0F;
     }
 
     /**
