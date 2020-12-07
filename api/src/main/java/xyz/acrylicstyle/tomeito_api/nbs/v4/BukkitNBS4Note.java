@@ -24,7 +24,7 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
 
     @Override
     public float getSoundPitch() {
-        return (super.getPitch() - OFFSET) / 10F;
+        return (super.getKey() - OFFSET) / 10F;
     }
 
     /**
