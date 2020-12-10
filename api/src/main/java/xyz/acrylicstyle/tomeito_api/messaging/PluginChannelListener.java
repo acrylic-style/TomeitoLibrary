@@ -11,6 +11,7 @@ import util.CollectionStrictSync;
 import util.DataSerializer;
 import util.SneakyThrow;
 import util.Validate;
+import util.promise.IPromise;
 import util.promise.Promise;
 import util.reflect.Ref;
 import xyz.acrylicstyle.authlib.GameProfile;
@@ -152,7 +153,7 @@ public class PluginChannelListener implements PluginMessageListener {
      * @return the promise that contains result (expects server to return results)
      */
     public <T extends Enum<T>> Promise<T> get(@NotNull Class<T> clazz, @NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
-        return get(player, tag, subchannel, message, timeout).then(s -> Enum.valueOf(clazz, s));
+        return get(player, tag, subchannel, message, timeout).then((IPromise<String, T>) s -> Enum.valueOf(clazz, s));
     }
 
     /**
