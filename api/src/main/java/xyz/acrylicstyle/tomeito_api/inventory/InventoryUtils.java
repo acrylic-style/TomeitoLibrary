@@ -3,9 +3,15 @@ package xyz.acrylicstyle.tomeito_api.inventory;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Collection;
+import util.CollectionSet;
+import util.ICollection;
+import util.ICollectionList;
 import util.SneakyThrow;
+import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.utils.ArrayUtil;
 
 /**
@@ -46,5 +52,30 @@ public class InventoryUtils implements Cloneable {
             SneakyThrow.sneaky(e);
             return null;
         }
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public Collection<Material, Integer> diff(@NotNull Inventory other) {
+        Collection<Material, Integer> mapA = new Collection<>();
+        Collection<Material, Integer> mapB = new Collection<>();
+        getMaterials().forEach(material -> mapA.add(material, getTotalAmount(material)));
+        TomeitoAPI.getMaterials(other).forEach(material -> mapB.add(material, TomeitoAPI.getTotalMaterialAmount(other, material)));
+        return mapA.mapValues((material, amount) -> mapB.getOrDefault(material, 0) - amount)
+                .addAll(mapB.filterKeys(material -> !mapA.containsKey(material)))
+                .filter(i -> i != 0);
+    }
+
+    @Contract(pure = true)
+    public int getTotalAmount(@NotNull Material material) {
+        return ICollection.asCollection(inventory.all(material)).valuesList().map(ItemStack::getAmount).reduce(ICollectionList.Reducer.SUM_INTEGER, 0);
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public CollectionSet<Material> getMaterials() {
+        CollectionSet<Material> set = new CollectionSet<>();
+        for (ItemStack item : inventory.getContents()) set.add(item.getType());
+        return set;
     }
 }

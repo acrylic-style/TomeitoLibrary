@@ -17,6 +17,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import util.Callback;
 import util.Collection;
 import util.CollectionList;
+import util.CollectionSet;
 import util.ICollectionList;
 import util.MathUtils;
 import util.ReflectionHelper;
@@ -41,6 +43,7 @@ import xyz.acrylicstyle.craftbukkit.v1_8_R3.util.CraftUtils;
 import xyz.acrylicstyle.mcutil.lang.MCVersion;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
 import xyz.acrylicstyle.shared.NMSAPI;
+import xyz.acrylicstyle.tomeito_api.inventory.InventoryUtils;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
@@ -401,5 +404,22 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
 
     public static void runAsync(@NotNull Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(getInstance(), runnable);
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    public static Collection<Material, Integer> diff(@NotNull Inventory a, @NotNull Inventory b) {
+        return new InventoryUtils(a).diff(b);
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static CollectionSet<Material> getMaterials(@NotNull Inventory inventory) {
+        return new InventoryUtils(inventory).getMaterials();
+    }
+
+    @Contract(pure = true)
+    public static int getTotalMaterialAmount(@NotNull Inventory inventory, @NotNull Material material) {
+        return new InventoryUtils(inventory).getTotalAmount(material);
     }
 }
