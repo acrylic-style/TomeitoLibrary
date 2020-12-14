@@ -82,13 +82,16 @@ public class PluginChannelListener implements PluginMessageListener {
                 prop.removeAll("textures");
                 prop.put("textures", new Property((String) serializer.get("name"), (String) serializer.get("value"), (String) serializer.get("signature")));
                 profile.setProperties(prop);
-                new EntityPlayer(CraftUtils.getHandle(target)).setProfile(profile);
-                Bukkit.getOnlinePlayers().forEach(p -> {
-                    if (!p.getUniqueId().equals(uSubchannel)) {
-                        p.hidePlayer(target);
-                        p.showPlayer(target);
-                    }
-                });
+                try {
+                    new EntityPlayer(CraftUtils.getHandle(target)).setProfile(profile);
+                } finally {
+                    Bukkit.getOnlinePlayers().forEach(p -> {
+                        if (!p.getUniqueId().equals(uSubchannel)) {
+                            p.hidePlayer(target);
+                            p.showPlayer(target);
+                        }
+                    });
+                }
                 return;
             }
             /*
