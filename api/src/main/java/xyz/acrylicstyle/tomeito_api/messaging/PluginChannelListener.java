@@ -101,7 +101,7 @@ public class PluginChannelListener implements PluginMessageListener {
             Log.debug("Input: " + input);
             */
             CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
-            if (callbacks2 != null && callbacks2.containsKey(subchannel)) callbacks2.remove(subchannel).done(input, null);
+            if (callbacks2 != null && callbacks2.containsKey(subchannel)) callbacks2.remove(subchannel).complete(input);
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
             SneakyThrow.sneaky(e); // should not happen

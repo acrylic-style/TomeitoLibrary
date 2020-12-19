@@ -1,5 +1,6 @@
 package xyz.acrylicstyle.tomeito_api;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -46,6 +47,7 @@ import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.inventory.InventoryUtils;
 import xyz.acrylicstyle.tomeito_api.messaging.PluginChannelListener;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoScheduler;
+import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoTask;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.utils.ProtocolVersionRetriever;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
@@ -398,12 +400,17 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         };
     }
 
-    public static void run(@NotNull Runnable runnable) {
-        Bukkit.getScheduler().runTask(getInstance(), runnable);
+    @CanIgnoreReturnValue
+    @Contract
+    @NotNull
+    public static TomeitoTask run(@NotNull Runnable runnable) {
+        return getScheduler().runTask(getInstance(), runnable);
     }
 
-    public static void runAsync(@NotNull Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(getInstance(), runnable);
+    @CanIgnoreReturnValue
+    @Contract
+    public static @NotNull TomeitoTask runAsync(@NotNull Runnable runnable) {
+        return getScheduler().runTaskAsynchronously(getInstance(), runnable);
     }
 
     @NotNull
@@ -421,5 +428,10 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     @Contract(pure = true)
     public static int getTotalMaterialAmount(@NotNull Inventory inventory, @NotNull Material material) {
         return new InventoryUtils(inventory).getTotalAmount(material);
+    }
+
+    public static void broadcastMessage(@NotNull String message) {
+        Validate.notNull(message, "message cannot be null");
+        run(() -> getOnlinePlayers().forEach(p -> p.sendMessage(message)));
     }
 }

@@ -20,6 +20,10 @@ public class TypeUtil {
         }
     }
 
+    /**
+     * @deprecated Use {@link Boolean#parseBoolean(String)}
+     */
+    @Deprecated
     public static boolean parseBoolean(String bool) throws Exception {
         if (bool.equalsIgnoreCase("true")) return true;
         else if (bool.equalsIgnoreCase("false")) return false;
@@ -27,12 +31,7 @@ public class TypeUtil {
     }
 
     public static boolean isBoolean(String arg) {
-        try {
-            TypeUtil.parseBoolean(arg);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return arg.equalsIgnoreCase("false") || arg.equalsIgnoreCase("true");
     }
 
     public static boolean isFloat(String arg) {

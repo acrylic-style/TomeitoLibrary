@@ -79,7 +79,7 @@ public class TargetSelectorParser {
                 if (team != null && !team.hasEntry(player.getName())) return false;
             }
         }
-        // tod0: add checks for other options?
+        // todo: add 'tag'
         return true;
     }
 

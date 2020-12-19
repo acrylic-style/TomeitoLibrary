@@ -63,7 +63,8 @@ public class InventoryUtils implements Cloneable {
         TomeitoAPI.getMaterials(other).forEach(material -> mapB.add(material, TomeitoAPI.getTotalMaterialAmount(other, material)));
         return mapA.mapValues((material, amount) -> mapB.getOrDefault(material, 0) - amount)
                 .addAll(mapB.filterKeys(material -> !mapA.containsKey(material)))
-                .filter(i -> i != 0);
+                .filter(i -> i != 0)
+                .filterKeys(material -> material != Material.AIR);
     }
 
     @Contract(pure = true)
@@ -75,7 +76,9 @@ public class InventoryUtils implements Cloneable {
     @NotNull
     public CollectionSet<Material> getMaterials() {
         CollectionSet<Material> set = new CollectionSet<>();
-        for (ItemStack item : inventory.getContents()) set.add(item.getType());
+        for (ItemStack item : inventory.getContents()) {
+            if (item != null) set.add(item.getType());
+        }
         return set;
     }
 }

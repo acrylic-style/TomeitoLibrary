@@ -19,6 +19,6 @@ public class SlimeUtils {
     }
 
     public static boolean isSlimeChunk(long seed, int chunkX, int chunkZ) {
-        return new Random(seed + (chunkX * chunkX * 0x4c1906) + (chunkX * 0x5ac0db) + (chunkZ * chunkZ) * 0x4307a7L + (chunkZ * 0x5f24f) ^ 0x3ad8025f).nextInt(10) == 0;
+        return new Random(seed + ((long) chunkX * chunkX * 0x4c1906) + (chunkX * 0x5ac0dbL) + ((long) chunkZ * chunkZ) * 0x4307a7L + (chunkZ * 0x5f24fL) ^ 0x3ad8025f).nextInt(10) == 0;
     }
 }

@@ -61,7 +61,7 @@ public class PacketCommand {
                 return Short.parseShort(s.replaceAll("(\\d+)[sS]", "$1"));
             } else if (s.matches("^\\d+$")) {
                 return Integer.parseInt(s.replaceAll("(\\d+)", "$1"));
-            } else if (s.matches("^\\(ChatMessage\\).*")) {
+            } else if (s.matches("^\\(ChatMessage\\).*")) { // classes
                 return new ChatMessage(s.replaceFirst("^\\(ChatMessage\\)(.*)", "$1"), (Object) null).getHandle();
             }
             return s;

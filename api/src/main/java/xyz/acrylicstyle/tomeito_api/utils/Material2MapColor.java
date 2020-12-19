@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A color mapping mapped with 1.8, 1.12, 1.15.2 Color table.<br />
- * It might throw an error if your server has incompatible version.<br />
- * Still in WIP. I might update this at anytime but I think I won't unless there are bugs.
+ * A color mapping mapped with 1.8, 1.12, 1.15.2 Color table.
+ * It might throw an error if your server has incompatible version.
+ * This color mapping is only responsible for materials, it does not see data value.
  */
 @SuppressWarnings("unused")
 public enum Material2MapColor {
