@@ -38,5 +38,5 @@ public interface BaseTomeitoAPI {
      * @param classes Class list that will load. All classes must implement CommandExecutor or it will fail to load.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @Nullable CommandExecutor postCommand);
+    void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<?, Class<?>> classes, @Nullable CommandExecutor postCommand);
 }

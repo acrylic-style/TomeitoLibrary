@@ -7,8 +7,9 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.Nullable;
-import util.DataSerializer;
 import util.SneakyThrow;
+import util.serialization.ClassSerializer;
+import xyz.acrylicstyle.mcutil.mojang.Property;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_bungee.TomeitoBungee;
 
@@ -24,26 +25,36 @@ public class PluginChannelListener implements Listener {
     public void onPluginMessage(PluginMessageEvent e) {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
-            if (e.getTag().equals(ChannelConstants.PROTOCOL_VERSION)) {
-                String subchannel = in.readUTF();
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(subchannel));
-                sendToBukkit(ChannelConstants.PROTOCOL_VERSION, subchannel, Integer.toString(player.getPendingConnection().getVersion()), player.getServer().getInfo());
-            } else if (e.getTag().equals(ChannelConstants.SET_SKIN)) {
-                UUID uuid = UUID.fromString(in.readUTF());
-                String nick = in.readUTF();
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-                if (player == null) return;
-                TomeitoBungee.setSkin(player, nick).then(result -> {
-                    System.out.println("Nicked " + player.getName() + " to " + nick + ", and result was " + (result == null ? "fail" : "success") + ".");
-                    if (result != null) {
-                        DataSerializer serializer = new DataSerializer();
-                        serializer.set("name", result.getName());
-                        serializer.set("value", result.getValue());
-                        serializer.set("signature", result.getSignature());
-                        sendToBukkit(ChannelConstants.REFRESH_PLAYER, uuid.toString(), serializer.serialize(), player.getServer().getInfo());
-                    }
-                    return null;
-                }).queue();
+            switch (e.getTag()) {
+                case ChannelConstants.PROTOCOL_VERSION: {
+                    String subchannel = in.readUTF();
+                    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(subchannel));
+                    sendToBukkit(ChannelConstants.PROTOCOL_VERSION, subchannel, Integer.toString(player.getPendingConnection().getVersion()), player.getServer().getInfo());
+                    break;
+                }
+                case ChannelConstants.SET_SKIN: {
+                    UUID uuid = UUID.fromString(in.readUTF());
+                    String nick = in.readUTF();
+                    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+                    if (player == null) return;
+                    TomeitoBungee.setSkin(player, nick).then(result -> {
+                        System.out.println("Nicked " + player.getName() + " to " + nick + ", and result was " + (result == null ? "fail" : "success") + ".");
+                        if (result != null) {
+                            Property property = new Property(result.getName(), result.getValue(), result.getSignature());
+                            sendToBukkit(ChannelConstants.REFRESH_PLAYER, uuid.toString(), new ClassSerializer<>(property).serialize(), player.getServer().getInfo());
+                        }
+                        return null;
+                    }).queue();
+                    break;
+                }
+                case ChannelConstants.SET_PROPERTY: {
+                    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(in.readUTF()));
+                    if (player == null) return;
+                    Property property = ClassSerializer.deserialize(Property.class, in.readUTF());
+                    TomeitoBungee.setProperty(player, property);
+                    sendToBukkit(ChannelConstants.REFRESH_PLAYER, player.getUniqueId().toString(), new ClassSerializer<>(property).serialize(), player.getServer().getInfo());
+                    break;
+                }
             }
         } catch (IOException ex) {
             SneakyThrow.sneaky(ex);

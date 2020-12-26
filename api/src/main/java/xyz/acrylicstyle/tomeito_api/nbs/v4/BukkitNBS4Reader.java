@@ -2,10 +2,10 @@ package xyz.acrylicstyle.tomeito_api.nbs.v4;
 
 import org.jetbrains.annotations.NotNull;
 import util.nbs.NBSHeader;
-import util.nbs.NBSInstrument;
 import util.nbs.NBSLayerData;
 import util.nbs.v4.NBS4Reader;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSFile;
+import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSInstrument;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSNote;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSReader;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSTick;
@@ -27,7 +27,8 @@ public class BukkitNBS4Reader extends NBS4Reader implements BukkitNBSReader {
     public @NotNull BukkitNBS4File readBody(@NotNull NBSHeader header, @NotNull ByteBuffer buffer) {
         List<BukkitNBSTick> ticks = readBukkitNotes(header, header.getLayers(), buffer);
         List<NBSLayerData> layers = Arrays.asList(readDetailedLayerDataEntries(header.getLayers(), buffer));
-        List<NBSInstrument> customInstruments = Arrays.asList(readInstrumentDataEntries(buffer));
+        List<BukkitNBSInstrument> customInstruments = Arrays.asList(readInstrumentDataEntries(buffer));
+        ticks.forEach(tick -> tick.setCustomInstruments(customInstruments));
         return new BukkitNBS4File(header, ticks, layers, customInstruments);
     }
 
@@ -67,5 +68,24 @@ public class BukkitNBS4Reader extends NBS4Reader implements BukkitNBSReader {
         byte panning = buffer.get();
         short pitch = buffer.getShort();
         return new BukkitNBS4Note(instrument, key, volume, panning, pitch);
+    }
+
+    @Override
+    protected BukkitNBSInstrument[] readInstrumentDataEntries(ByteBuffer buffer) {
+        byte instrumentCount = buffer.get();
+        BukkitNBSInstrument[] data = new BukkitNBSInstrument[instrumentCount];
+        for (int i = 0; i < data.length; i++){
+            data[i] = readInstrumentData(buffer);
+        }
+        return data;
+    }
+
+    @Override
+    protected BukkitNBSInstrument readInstrumentData(ByteBuffer buffer) {
+        String name = readNBSString(buffer);
+        String sound = readNBSString(buffer);
+        byte key = buffer.get();
+        byte showKeyPress = buffer.get();
+        return new BukkitNBS4Instrument(name, sound, key, showKeyPress);
     }
 }

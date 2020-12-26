@@ -19,6 +19,9 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     public long cycle = 0;
     public long asyncCycle = 0;
 
+    @Nullable
+    public TomeitoTask removeTask(int id) { return this.tasks.remove(id); }
+
     @Override
     public @Nullable TomeitoTask getTask(int id) {
         return tasks.get(id);
@@ -112,11 +115,6 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     }
 
     public void tick() {
-        // remove cancelled tasks
-        tasks.clone()
-                .filter(TomeitoTask::isSync)
-                .filter(TomeitoTask::isCancelled)
-                .forEach((i, task) -> tasks.remove(i));
         // increase tick count
         tasks.clone()
                 .filter(TomeitoTask::isSync)
@@ -142,11 +140,6 @@ public class CraftTomeitoScheduler extends TomeitoScheduler {
     }
 
     public void tickAsync() {
-        // remove cancelled tasks
-        tasks.clone()
-                .filter(TomeitoTask::isAsync)
-                .filter(TomeitoTask::isCancelled)
-                .forEach((i, task) -> tasks.remove(i));
         // increase tick count
         tasks.clone()
                 .filter(TomeitoTask::isAsync)

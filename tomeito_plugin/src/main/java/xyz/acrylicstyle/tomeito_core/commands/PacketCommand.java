@@ -25,12 +25,12 @@ public class PacketCommand {
             player.sendMessage(ChatColor.RED + "You don't have permission to do this.");
             return;
         }
-        CollectionList<String> arguments = new ArgumentParser(ICollectionList.asList(args).join(" ")).arguments.clone();
+        CollectionList<?, String> arguments = new ArgumentParser(ICollectionList.asList(args).join(" ")).arguments.clone();
         if (arguments.size() < 2) {
             player.sendMessage(ChatColor.RED + "/tl packet <Player> <Packet> [args...]");
             return;
         }
-        CollectionList<Player> players = TargetSelectorParser.parse(player, arguments.get(0)).filter(sender -> sender instanceof Player).map(s -> (Player) s);
+        CollectionList<?, Player> players = TargetSelectorParser.parse(player, arguments.get(0)).filter(sender -> sender instanceof Player).map(s -> (Player) s);
         if (players.size() == 0) {
             player.sendMessage(ChatColor.RED + "Couldn't find any player with: " + arguments.get(0));
             return;
@@ -39,10 +39,10 @@ public class PacketCommand {
             player.sendMessage(ChatColor.RED + "Invalid packet: " + arguments.get(1));
             return;
         }
-        CollectionList<String> a = arguments.clone();
+        CollectionList<?, String> a = arguments.clone();
         a.shift();
         a.shift();
-        CollectionList<Object> unknownArguments = a.map(s -> {
+        CollectionList<?, Object> unknownArguments = a.map(s -> {
             // Boolean
             if (s.equals("true")) {
                 return true;
@@ -66,7 +66,7 @@ public class PacketCommand {
             }
             return s;
         });
-        CollectionList<Class<?>> classes = unknownArguments
+        CollectionList<?, Class<?>> classes = unknownArguments
                 .clone()
                 .map(o -> {
                     if (o.getClass().getCanonicalName().endsWith(".ChatMessage")) return IChatBaseComponent.CLASS;

@@ -21,9 +21,7 @@ public class DebugGroovy {
             sender.sendMessage(ChatColor.RED + "/tomeitolib debug <Script>");
             return;
         }
-        CollectionList<String> argsList = ICollectionList.asList(args);
-        argsList.shift();
-        String argsString = argsList.join(" ");
+        String argsString = ICollectionList.asList(args).thenShift().join(" ");
         try {
             Object result = eval(sender, args, argsString);
             sender.sendMessage(ChatColor.GREEN + "Result[" + (result != null ? Modifier.toString(result.getClass().getModifiers()) : "<?>") + "](" + (result != null ? result.getClass().getCanonicalName() : "null") + "):");

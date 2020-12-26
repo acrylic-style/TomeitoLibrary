@@ -16,7 +16,7 @@ public abstract class TomeitoRunnable extends ForwardingTomeitoTask implements R
      */
     @NotNull
     @Override
-    public final TomeitoTask delegate() {
+    public final TomeitoTask getTask() {
         if (this.id == -1) throw new IllegalStateException("task isn't scheduled yet");
         return Objects.requireNonNull(TomeitoAPI.getScheduler().getTask(this.id));
     }

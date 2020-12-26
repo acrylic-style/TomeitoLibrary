@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Collection;
 import util.CollectionList;
-import util.CollectionStrictSync;
 import util.DataSerializer;
 import util.SneakyThrow;
 import util.Validate;
-import util.promise.IPromise;
 import util.promise.Promise;
 import util.reflect.Ref;
+import util.serialization.ClassSerializer;
 import xyz.acrylicstyle.authlib.GameProfile;
 import xyz.acrylicstyle.authlib.properties.Property;
 import xyz.acrylicstyle.authlib.properties.PropertyMap;
@@ -23,6 +23,7 @@ import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
+import xyz.acrylicstyle.tomeito_api.utils.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,12 +37,12 @@ public class PluginChannelListener implements PluginMessageListener {
     public static final PluginChannelListener pcl = new PluginChannelListener();
 
     @NotNull
-    private final CollectionStrictSync<String, CollectionStrictSync<String, Callback<String>>> callbacks = new CollectionStrictSync<>();
+    private final Collection<String, Collection<String, Callback<String>>> callbacks = new Collection<>();
 
     @NotNull
-    private final CollectionList<String> registeredListeners = new CollectionList<>();
+    private final CollectionList<?, String> registeredListeners = new CollectionList<>();
 
-    // private PluginChannelListener() {} // todo: 0.7
+    private PluginChannelListener() {}
 
     /**
      * An alias for {@link #pcl}.
@@ -49,7 +50,7 @@ public class PluginChannelListener implements PluginMessageListener {
     @NotNull
     public static PluginChannelListener getInstance() { return pcl; }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onPluginMessageReceived(String tag, org.bukkit.entity.Player player, byte[] message) {
         try {
@@ -73,15 +74,16 @@ public class PluginChannelListener implements PluginMessageListener {
                 }
                 return;
             } else if (tag.equals(ChannelConstants.REFRESH_PLAYER)) {
-                DataSerializer serializer = DataSerializer.fromString(input);
+                xyz.acrylicstyle.mcutil.mojang.Property property = ClassSerializer.deserialize(xyz.acrylicstyle.mcutil.mojang.Property.class, input);
                 UUID uSubchannel = UUID.fromString(subchannel);
                 Player target = Bukkit.getPlayer(uSubchannel);
-                GameProfile profile = new GameProfile(Ref.getClass(NMSAPI.getClassWithoutException("EntityHuman")).getMethod("getProfile").invokeObj(CraftUtils.getHandle(target)));
-                System.out.println("Profile(Handle): " + profile.getHandle());
+                GameProfile profile = new GameProfile(Ref.getClass((Class) NMSAPI.getClassWithoutException("EntityHuman")).getMethod("getProfile").invoke(CraftUtils.getHandle(target)));
+                System.out.println("Profile before edit: " + profile.getHandle());
                 PropertyMap prop = profile.getProperties();
                 prop.removeAll("textures");
-                prop.put("textures", new Property((String) serializer.get("name"), (String) serializer.get("value"), (String) serializer.get("signature")));
+                prop.put("textures", new Property(property.name, property.value, property.signature));
                 profile.setProperties(prop);
+                Log.with("TomeitoLib").debug("Profile after edit: " + profile.getHandle() + " (Property name: " + property + ")");
                 try {
                     new EntityPlayer(CraftUtils.getHandle(target)).setProfile(profile);
                 } finally {
@@ -100,7 +102,7 @@ public class PluginChannelListener implements PluginMessageListener {
             Log.debug("Subchannel: " + subchannel);
             Log.debug("Input: " + input);
             */
-            CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(tag);
+            Collection<String, Callback<String>> callbacks2 = callbacks.get(tag);
             if (callbacks2 != null && callbacks2.containsKey(subchannel)) callbacks2.remove(subchannel).complete(input);
             callbacks.put(tag, callbacks2);
         } catch (IOException e) {
@@ -114,9 +116,9 @@ public class PluginChannelListener implements PluginMessageListener {
     @Deprecated
     public void get(@NotNull org.bukkit.entity.Player p, @NotNull String subchannel, @Nullable String message, @NotNull String channel, @NotNull Callback<String> callback) {
         if (!callbacks.containsKey(channel)) {
-            callbacks.put(channel, new CollectionStrictSync<>());
+            callbacks.put(channel, new Collection<>());
         }
-        CollectionStrictSync<String, Callback<String>> callbacks2 = callbacks.get(channel);
+        Collection<String, Callback<String>> callbacks2 = callbacks.get(channel);
         callbacks2.put(subchannel, callback);
         callbacks.put(channel, callbacks2);
         sendToBungeeCord(p, channel, subchannel, message);
@@ -156,7 +158,7 @@ public class PluginChannelListener implements PluginMessageListener {
      * @return the promise that contains result (expects server to return results)
      */
     public <T extends Enum<T>> Promise<T> get(@NotNull Class<T> clazz, @NotNull Player player, @NotNull String tag, @Nullable String subchannel, @Nullable String message, int timeout) {
-        return get(player, tag, subchannel, message, timeout).then((IPromise<String, T>) s -> Enum.valueOf(clazz, s));
+        return get(player, tag, subchannel, message, timeout).then(s -> Enum.valueOf(clazz, s));
     }
 
     /**

@@ -11,6 +11,11 @@ public interface BukkitNBSTick extends NBSTick {
     @NotNull
     NBSHeader getHeader();
 
+    void setCustomInstruments(@NotNull List<BukkitNBSInstrument> customInstruments);
+
+    @NotNull
+    List<BukkitNBSInstrument> getCustomInstruments();
+
     @NotNull
     List<@Nullable BukkitNBSNote> getBukkitLayers();
 

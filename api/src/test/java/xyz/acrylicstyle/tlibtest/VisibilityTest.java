@@ -43,7 +43,6 @@ import xyz.acrylicstyle.tomeito_api.utils.ArrayUtil;
 import xyz.acrylicstyle.tomeito_api.utils.Callback;
 import xyz.acrylicstyle.tomeito_api.utils.Lang;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
-import xyz.acrylicstyle.tomeito_api.utils.PluginMessageUtils;
 import xyz.acrylicstyle.tomeito_api.utils.ReflectionUtil;
 import xyz.acrylicstyle.tomeito_api.utils.SlimeUtils;
 import xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper;
@@ -80,7 +79,6 @@ public class VisibilityTest {
         add(TabCompleterHelper.class);
         add(SlimeUtils.class);
         add(ReflectionUtil.class);
-        add(PluginMessageUtils.class);
         add(Log.class);
         add(Log.Logger.class, Target.METHOD);
         add(Lang.class);

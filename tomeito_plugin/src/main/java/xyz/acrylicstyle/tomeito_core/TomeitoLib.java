@@ -4,6 +4,9 @@ import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -36,6 +39,8 @@ import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
+import util.serialization.CustomClassSerializer;
+import util.serialization.CustomClassSerializers;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.command.Command;
 import xyz.acrylicstyle.tomeito_api.events.block.DispenserTNTPrimeEvent;
@@ -69,7 +74,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 /**
  * The Plugin implementation of TomeitoLib.<br />
@@ -77,14 +81,7 @@ import java.util.logging.Logger;
  * TomeitoLib at softdepend or depend in plugin.yml to avoid any problems.
  */
 public class TomeitoLib extends TomeitoAPI implements Listener {
-    public static final Logger LOGGER = Logger.getLogger("TomeitoLib");
-    /**
-     * It only exists for backward compatibility.
-     * @deprecated Use {@link TomeitoAPI#getPluginChannelListener()} or {@link PluginChannelListener#pcl}, this field will be removed on 0.7
-     * todo: 0.7
-     */
-    @Deprecated
-    public static PluginChannelListener pcl = PluginChannelListener.pcl;
+    public static final Log.Logger LOGGER = Log.getLogger("TomeitoLib");
     public static TomeitoLib instance = null;
 
     private final CraftTomeitoScheduler scheduler = new CraftTomeitoScheduler();
@@ -93,6 +90,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         instance = this;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onLoad() {
         instance = this;
@@ -149,6 +147,20 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             long end = System.currentTimeMillis();
             Log.info("Done loading classes (took " + (end-start) + "ms)");
         }).start();
+        CustomClassSerializers.register(World.class, CustomClassSerializer.of(
+                (object, inst) -> object
+                        .thenSet("worldUID", inst.getUID().toString())
+                        .thenSet("worldName", inst.getName()),
+                object -> {
+                    World world = Bukkit.getWorld(UUID.fromString(object.getString("worldUID")));
+                    if (world != null) return world;
+                    return Bukkit.getWorld(object.getString("worldName"));
+                }
+        ));
+        CustomClassSerializers.register(Note.class,
+                CustomClassSerializer.of((object, note) -> object.set("noteId", (int) note.getId()), object -> new Note(object.getInt("noteId"))));
+        CustomClassSerializers.register(Server.class,
+                CustomClassSerializer.of((object, server) -> {}, object -> Bukkit.getServer()));
     }
 
     private static final ExecutorService pool = Executors.newFixedThreadPool(2);
@@ -192,7 +204,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     @Override
     public void registerCommands(@NotNull String packageName) {
-        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(this.getClassLoader(), packageName, Command.class);
+        CollectionList<?, Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(this.getClassLoader(), packageName, Command.class);
         classes.forEach(clazz -> {
             Command command = clazz.getAnnotation(Command.class);
             try {
@@ -208,7 +220,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         });
     }
 
-    private void a(Cancellable cancellableEvent, double dmg, Entity e, Entity killer, PreDeathReason reason) {
+    private void firePreDeathEvent(Cancellable cancellableEvent, double dmg, Entity e, Entity killer, PreDeathReason reason) {
         if (e instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) e;
             if ((entity.getHealth() - dmg) <= 0) {
@@ -226,16 +238,16 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
     }
 
     // (Player|Entity)PreDeathEvent
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent e) {
-        a(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.UNKNOWN);
+        firePreDeathEvent(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.UNKNOWN);
     }
 
     // (Player|Entity)PreDeathEvent
     // EntityDamageByPlayerEvent
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-        a(e, e.getFinalDamage(), e.getEntity(), e.getDamager(), PreDeathReason.KILLED_BY_ENTITY);
+        firePreDeathEvent(e, e.getFinalDamage(), e.getEntity(), e.getDamager(), PreDeathReason.KILLED_BY_ENTITY);
         if (e.getDamager() instanceof Player) {
             EntityDamageByPlayerEvent event = new EntityDamageByPlayerEvent((Player) e.getDamager(), e.getEntity(), e.getDamage(), e.getFinalDamage());
             Bukkit.getPluginManager().callEvent(event);
@@ -250,9 +262,9 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
     }
 
     // (Player|Entity)PreDeathEvent
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-        a(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.KILLED_BY_BLOCK);
+        firePreDeathEvent(e, e.getFinalDamage(), e.getEntity(), null, PreDeathReason.KILLED_BY_BLOCK);
     }
 
     // DispenserTNTPrimeEvent
@@ -350,7 +362,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         @Override
         public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
             if (args.length != 0) {
-                CollectionList<String> list = ICollectionList.asList(args);
+                CollectionList<?, String> list = ICollectionList.asList(args);
                 list.shift();
                 String[] trimmedArgs = list.toArray(new String[0]);
                 if (args[0].equalsIgnoreCase("debug")) {
@@ -386,25 +398,27 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
      * Registers command with sub commands.
      * @param classLoader Class loader that will be used to load classes. System class loader will be used if left null. (which will be unable to load classes under plugin)
      * @param rootCommandName A root command name. Must be defined at plugin.yml.
-     * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated by SubCommand and must extend SubCommandExecutor.
+     * @param subCommandsPackage Package name that contains sub commands classes. Must be annotated with SubCommand and must extend SubCommandExecutor.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
     public void registerCommands(@Nullable ClassLoader classLoader, @NotNull final String rootCommandName, @NotNull final String subCommandsPackage, @Nullable CommandExecutor postCommand) {
-        if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
-        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
+        if (classLoader == null) {
+            classLoader = this.getClassLoader();
+            Log.info("Using default class loader to register sub commands on " + subCommandsPackage);
+        }
+        CollectionList<?, Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
         Log.info("Found " + classes.size() + " classes under " + subCommandsPackage + "(/" + rootCommandName + ")");
-        Log.info("If this was unexpected(it says 0 classes), try specifying ClassLoader of plugin.");
         registerCommands(rootCommandName, classes, postCommand);
     }
 
     /**
      * Registers command with sub commands.
      * @param rootCommandName A root command name. Must be defined at plugin.yml.
-     * @param classes Class list that will load. All classes must implement CommandExecutor or it will fail to load.
+     * @param classes Class list that will load. All classes must implement SubCommandExecutor or it will fail to load.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @Nullable CommandExecutor postCommand) {
-        final CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
+    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<?, Class<?>> classes, @Nullable CommandExecutor postCommand) {
+        final CollectionList<?, Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
             try {
@@ -437,7 +451,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
                     $sendMessage(sender);
                     return true;
                 }
-                CollectionList<String> argsList = ICollectionList.asList(args);
+                CollectionList<?, String> argsList = ICollectionList.asList(args);
                 argsList.shift();
                 ICollectionList.asList(entries).map(Map.Entry::getValue).forEach(s -> s.onCommand(sender, argsList.toArray(new String[0])));
                 return true;

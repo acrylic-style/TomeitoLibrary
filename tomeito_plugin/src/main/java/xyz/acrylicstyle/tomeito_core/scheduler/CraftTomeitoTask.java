@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_core.scheduler;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 import xyz.acrylicstyle.tomeito_api.scheduler.SchedulerTimeUnit;
 import xyz.acrylicstyle.tomeito_api.scheduler.TomeitoTask;
 
@@ -18,7 +19,7 @@ public class CraftTomeitoTask implements TomeitoTask {
     private final Map.Entry<SchedulerTimeUnit, Long> delay;
     private final Map.Entry<SchedulerTimeUnit, Long> repeat;
     private boolean cancelled = false;
-    public boolean hasRunDelayed = false;
+    public boolean hasRunDelayed = false; // todo: rename poorly named field
     public final AtomicLong cycle = new AtomicLong();
 
     public CraftTomeitoTask(int taskId,
@@ -38,7 +39,10 @@ public class CraftTomeitoTask implements TomeitoTask {
     }
 
     @Override
-    public void cancel() { cancelled = true; }
+    public void cancel() {
+        cancelled = true;
+        ((CraftTomeitoScheduler) TomeitoAPI.getScheduler()).removeTask(taskId);
+    }
 
     @Override
     public boolean isCancelled() { return cancelled; }
@@ -80,7 +84,6 @@ public class CraftTomeitoTask implements TomeitoTask {
                 ", delay=" + delay +
                 ", repeat=" + repeat +
                 ", cancelled=" + cancelled +
-                ", hasRunDelayed=" + hasRunDelayed +
                 ", cycle=" + cycle +
                 '}';
     }

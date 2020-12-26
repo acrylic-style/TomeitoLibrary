@@ -13,8 +13,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import util.Collection;
 import util.CollectionList;
+import util.ICollection;
 import util.ICollectionList;
 import util.StringCollection;
 import util.reflect.Ref;
@@ -58,7 +60,7 @@ public class TargetSelectorParser {
     }
 
     @SuppressWarnings("RedundantIfStatement")
-    private static boolean check(Location _origin, Entity entity, Collection<String, Object> options) {
+    private static boolean check(Location _origin, Entity entity, ICollection<String, Object> options) {
         Location loc = _origin.clone();
         if (options.containsKey("type") && entity.getType() != options.get("type")) return false;
         if (options.containsKey("x")) loc.setX((int) options.get("x"));
@@ -93,7 +95,7 @@ public class TargetSelectorParser {
 
     // <editor-fold desc="Private Value Parsers">
 
-    private static EntityType parseEntityType(String s) {
+    private static @Nullable EntityType parseEntityType(String s) {
         if (!ENTITY_TYPES.containsKey(s.toLowerCase())) {
             //Log.warn("Invalid entity type: " + s);
             return null;
@@ -127,8 +129,8 @@ public class TargetSelectorParser {
 
     // </editor-fold>
 
-    public static @NotNull CollectionList<? extends CommandSender> parse(@NotNull CommandSender sender, @NotNull String selector) {
-        CollectionList<CommandSender> players = new CollectionList<>();
+    public static @NotNull CollectionList<?, ? extends CommandSender> parse(@NotNull CommandSender sender, @NotNull String selector) {
+        CollectionList<?, CommandSender> players = new CollectionList<>();
         if (!selector.contains("[") && !selector.contains("]") && selector.contains(",")) {
             return ICollectionList.asList(selector.split(",")).map(Bukkit::getPlayerExact).nonNull();
         }
@@ -142,7 +144,7 @@ public class TargetSelectorParser {
                 //Log.info("Ignoring unparsable selector option: '" + s + "'");
             }
         }
-        Collection<String, Object> options = rawArgs.mapValues(TargetSelectorParser::parseOption);
+        ICollection<String, Object> options = rawArgs.mapValues(TargetSelectorParser::parseOption);
         if (selector.startsWith("@s")) return new CollectionList<>(sender);
         if (sender instanceof BlockCommandSender) {
             BlockCommandSender commandBlock = (BlockCommandSender) sender;
@@ -175,7 +177,7 @@ public class TargetSelectorParser {
         return Objects.requireNonNull(Bukkit.getWorld("world"));
     }
 
-    private static CommandSender getNearestEntity(@NotNull Location location, Collection<String, Object> options, EntityType type) {
+    private static CommandSender getNearestEntity(@NotNull Location location, ICollection<String, Object> options, EntityType type) {
         AtomicDouble distance = new AtomicDouble(Double.MAX_VALUE);
         AtomicReference<Entity> entity = new AtomicReference<>();
         location.getWorld().getEntities().forEach(e -> {
@@ -196,8 +198,8 @@ public class TargetSelectorParser {
     }
 
     @NotNull
-    private static CollectionList<CommandSender> getEntities(@NotNull List<? extends Entity> entities, Location base, @NotNull Collection<String, Object> options, EntityType type) {
-        CollectionList<Entity> list = new CollectionList<>();
+    private static CollectionList<?, CommandSender> getEntities(@NotNull List<? extends Entity> entities, Location base, @NotNull ICollection<String, Object> options, EntityType type) {
+        CollectionList<?, Entity> list = new CollectionList<>();
         entities.forEach(e -> {
             if (type != null && e.getType() == type) {
                 if (check(base, e, options)) {
@@ -210,7 +212,7 @@ public class TargetSelectorParser {
             }
         });
         int count = options.containsKey("c") ? (int) options.get("c") : Integer.MAX_VALUE;
-        CollectionList<CommandSender> anotherList = new CollectionList<>();
+        CollectionList<?, CommandSender> anotherList = new CollectionList<>();
         list.foreach((e, i) -> {
             if (i < count) anotherList.add(e);
         });

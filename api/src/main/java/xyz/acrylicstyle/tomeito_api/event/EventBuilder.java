@@ -68,8 +68,10 @@ public class EventBuilder<T extends Event> {
     }
 
     public PendingEvent<T> build() {
-        assert executor != null : "executor cannot be null";
-        assert plugin != null : "plugin cannot be null";
+        Validate.notNull(executor, "executor cannot be null");
+        Validate.notNull(plugin, "plugin cannot be null");
+        assert executor != null;
+        assert plugin != null;
         return new PendingEvent<>(event, listener, executor, priority, plugin, ignoreCancelled);
     }
 }

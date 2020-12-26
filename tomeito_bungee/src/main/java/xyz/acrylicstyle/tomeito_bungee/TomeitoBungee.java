@@ -14,6 +14,7 @@ import util.Collection;
 import util.ReflectionHelper;
 import util.promise.Promise;
 import xyz.acrylicstyle.mcutil.mojang.MojangAPI;
+import xyz.acrylicstyle.mcutil.mojang.Property;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
 import xyz.acrylicstyle.tomeito_bungee.channel.PluginChannelListener;
 
@@ -54,5 +55,16 @@ public class TomeitoBungee extends Plugin implements Listener {
                 return prop;
             }).complete();
         });
+    }
+
+    @Contract
+    public static void setProperty(@NotNull ProxiedPlayer player, @Nullable Property property) {
+        InitialHandler handler = (InitialHandler) player.getPendingConnection();
+        if (property == null) {
+            ReflectionHelper.setFieldWithoutException(InitialHandler.class, handler, "loginProfile", profiles.get(player.getUniqueId()));
+            return;
+        }
+        LoginResult.Property prop = new LoginResult.Property(property.name, property.value, property.signature);
+        ReflectionHelper.setFieldWithoutException(InitialHandler.class, handler, "loginProfile", new LoginResult(player.getUniqueId().toString().replaceAll("-", ""), player.getName(), new LoginResult.Property[]{ prop }));
     }
 }

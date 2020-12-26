@@ -26,33 +26,21 @@ public class PlayerPreDeathEvent extends PlayerEvent implements Cancellable {
     }
 
     @NotNull
-    public PreDeathReason getReason() {
-        return reason;
-    }
+    public PreDeathReason getReason() { return reason; }
 
     @NotNull
     @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+    public HandlerList getHandlers() { return HANDLERS; }
 
     @NotNull
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+    public static HandlerList getHandlerList() { return HANDLERS; }
 
     @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+    public boolean isCancelled() { return cancelled; }
 
     @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
-    }
+    public void setCancelled(boolean cancel) { this.cancelled = cancel; }
 
     @Nullable
-    public Entity getKiller() {
-        return killer;
-    }
+    public Entity getKiller() { return killer; }
 }

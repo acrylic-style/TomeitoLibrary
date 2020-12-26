@@ -56,7 +56,7 @@ public class InventoryUtils implements Cloneable {
 
     @Contract(pure = true)
     @NotNull
-    public Collection<Material, Integer> diff(@NotNull Inventory other) {
+    public ICollection<Material, Integer> diff(@NotNull Inventory other) {
         Collection<Material, Integer> mapA = new Collection<>();
         Collection<Material, Integer> mapB = new Collection<>();
         getMaterials().forEach(material -> mapA.add(material, getTotalAmount(material)));
@@ -74,8 +74,8 @@ public class InventoryUtils implements Cloneable {
 
     @Contract(pure = true)
     @NotNull
-    public CollectionSet<Material> getMaterials() {
-        CollectionSet<Material> set = new CollectionSet<>();
+    public CollectionSet<?, Material> getMaterials() {
+        CollectionSet<?, Material> set = new CollectionSet<>();
         for (ItemStack item : inventory.getContents()) {
             if (item != null) set.add(item.getType());
         }

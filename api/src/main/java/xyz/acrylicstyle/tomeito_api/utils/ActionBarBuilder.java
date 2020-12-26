@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ActionBarBuilder {
-    private final CollectionList<String> list = new CollectionList<>();
+    private final CollectionList<?, String> list = new CollectionList<>();
     private final String separator;
 
     public ActionBarBuilder() { this(" / "); }

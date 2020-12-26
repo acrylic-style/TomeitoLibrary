@@ -1,6 +1,5 @@
 package xyz.acrylicstyle.tomeito_api;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -27,10 +26,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.Callback;
 import util.Collection;
 import util.CollectionList;
 import util.CollectionSet;
+import util.ICollection;
 import util.ICollectionList;
 import util.MathUtils;
 import util.ReflectionHelper;
@@ -39,9 +38,11 @@ import util.Validate;
 import util.function.StringConverter;
 import util.promise.Promise;
 import util.reflect.Ref;
+import util.serialization.ClassSerializer;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import xyz.acrylicstyle.craftbukkit.v1_8_R3.util.CraftUtils;
 import xyz.acrylicstyle.mcutil.lang.MCVersion;
+import xyz.acrylicstyle.mcutil.mojang.Property;
 import xyz.acrylicstyle.minecraft.v1_8_R1.NBTTagCompound;
 import xyz.acrylicstyle.shared.NMSAPI;
 import xyz.acrylicstyle.tomeito_api.inventory.InventoryUtils;
@@ -138,7 +139,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
-    public static TomeitoScheduler getScheduler() { return getInstance().getTomeitoScheduler(); }
+    public static @NotNull TomeitoScheduler getScheduler() { return getInstance().getTomeitoScheduler(); }
 
     public static void registerCommand(@NotNull String command, @NotNull CommandExecutor executor) {
         PluginCommand pluginCommand = Bukkit.getPluginCommand(command);
@@ -180,8 +181,8 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return All online players as list.
      */
     @NotNull
-    public static CollectionList<Player> getOnlinePlayers() {
-        CollectionList<Player> players = new CollectionList<>();
+    public static CollectionList<?, Player> getOnlinePlayers() {
+        CollectionList<?, Player> players = new CollectionList<>();
         players.addAll(Bukkit.getOnlinePlayers());
         return players;
     }
@@ -191,7 +192,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return All online operators as list.
      */
     @NotNull
-    public static CollectionList<Player> getOnlineOperators() { return getOnlinePlayers().filter(Player::isOp); }
+    public static CollectionList<?, Player> getOnlineOperators() { return getOnlinePlayers().filter(Player::isOp); }
 
     /**
      * Random number between 0 - max.<br />
@@ -300,7 +301,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     }
 
     public static MCVersion getReleaseVersionIfPossible(int protocolVersion) {
-        CollectionList<MCVersion> list = ICollectionList.asList(MCVersion.getByProtocolVersion(protocolVersion));
+        CollectionList<?, MCVersion> list = ICollectionList.asList(MCVersion.getByProtocolVersion(protocolVersion));
         return list.filter(v -> !v.isSnapshot()).size() == 0 // if non-snapshot version wasn't found
                 ? Objects.requireNonNull(list.first()) // return the last version anyway
                 : Objects.requireNonNull(list.filter(v -> !v.isSnapshot()).first()); // or return non-snapshot version instead
@@ -308,11 +309,12 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
 
     /**
      * Sends action bar message to specified player.
-     * @param player the player to send action bar. if the null was provided, it will just return without doing anything.
-     * @param message the action bar message to send. if the null was provided, it will just return without doing anything.
+     * @param player the player
+     * @param message the action bar message
      */
     public static void sendActionbar(@Nullable Player player, @Nullable String message) {
-        if (player == null || message == null) return;
+        if (player == null) return;
+        if (message == null) message = " ";
         String nmsVersion = Bukkit.getServer().getClass().getPackage().getName();
         nmsVersion = nmsVersion.substring(nmsVersion.lastIndexOf(".") + 1);
         if (!nmsVersion.startsWith("v1_9_R") && !nmsVersion.startsWith("v1_8_R")) {
@@ -341,19 +343,19 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         Bukkit.getOnlinePlayers().forEach(p -> sendActionbar(p, message));
     }
 
-    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName) {
+    public static @NotNull ItemStack createItemStack(@NotNull Material material, @Nullable String displayName) {
         return createItemStack(material, displayName, false, (String[]) null);
     }
 
-    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted) {
+    public static @NotNull ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted) {
         return createItemStack(material, displayName, enchanted, (String[]) null);
     }
 
-    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, @Nullable String... lore) {
+    public static @NotNull ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, @Nullable String... lore) {
         return createItemStack(material, displayName, false, lore);
     }
 
-    public static ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted, @Nullable String... lore) {
+    public static @NotNull ItemStack createItemStack(@NotNull Material material, @Nullable String displayName, boolean enchanted, @Nullable String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (displayName != null) meta.setDisplayName(displayName);
@@ -377,6 +379,17 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_SKIN, player.getUniqueId().toString(), nick);
     }
 
+    /**
+     * Changes player's property.
+     * Requires TomeitoBungee on BungeeCord to work.
+     * @param player the player
+     * @param property the property, if null, it will revert the skin to the original.
+     */
+    @Contract(pure = true)
+    public static void setPlayerProperty(@NotNull Player player, @NotNull Property property) {
+        PluginChannelListener.pcl.sendToBungeeCord(player, ChannelConstants.SET_PROPERTY, player.getUniqueId().toString(), new ClassSerializer<>(property).serialize());
+    }
+
     protected static final Collection<UUID, Map.Entry<Promise<Object>, StringConverter<?>>> prompts = new Collection<>();
 
     /**
@@ -388,6 +401,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @deprecated not working correctly
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Contract(value = "_, _, _ -> new", pure = true)
     @Deprecated
     @NotNull
     public static <T> Promise<@Nullable T> prompt(@NotNull Player player, @NotNull StringConverter<T> converter, int timeout) {
@@ -400,28 +414,27 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
         };
     }
 
-    @CanIgnoreReturnValue
     @Contract
     @NotNull
     public static TomeitoTask run(@NotNull Runnable runnable) {
         return getScheduler().runTask(getInstance(), runnable);
     }
 
-    @CanIgnoreReturnValue
     @Contract
-    public static @NotNull TomeitoTask runAsync(@NotNull Runnable runnable) {
+    @NotNull
+    public static TomeitoTask runAsync(@NotNull Runnable runnable) {
         return getScheduler().runTaskAsynchronously(getInstance(), runnable);
     }
 
-    @NotNull
     @Contract(pure = true)
-    public static Collection<Material, Integer> diff(@NotNull Inventory a, @NotNull Inventory b) {
+    @NotNull
+    public static ICollection<Material, Integer> diff(@NotNull Inventory a, @NotNull Inventory b) {
         return new InventoryUtils(a).diff(b);
     }
 
     @Contract(pure = true)
     @NotNull
-    public static CollectionSet<Material> getMaterials(@NotNull Inventory inventory) {
+    public static CollectionSet<?, Material> getMaterials(@NotNull Inventory inventory) {
         return new InventoryUtils(inventory).getMaterials();
     }
 

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 //import xyz.acrylicstyle.tomeito_api.utils.Log;
 
 public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCompleter {
-    public static CollectionList<String> COMMONS = new CollectionList<>();
+    public static CollectionList<?, String> COMMONS = new CollectionList<>();
 
     static {
         COMMONS.add("int");
@@ -133,7 +133,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     }
 
     @SuppressWarnings({"StringConcatenationInLoop", "unchecked"})
-    private @NotNull ICollectionList<String> getAllThings(String prev, String s) {
+    private @NotNull ICollectionList<?, String> getAllThings(String prev, String s) {
         String a = "";
         String[] c = s.split("\\.");
         for (int i = 0; i < c.length; i++) {
@@ -143,7 +143,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                 final RefClass<?> r = refClass.get();
                 boolean isStatic = prev == null || !prev.equals("new");
                 this.a = 0;
-                ICollectionList<String> list = isStatic ? Refs.getStatics(refClass.get()).addChain("class") : Refs.getInstances(refClass.get());
+                ICollectionList<?, String> list = isStatic ? Refs.getStatics(refClass.get()).thenAdd("class") : Refs.getInstances(refClass.get());
                 while (hasNext(c, i)) {
                     synchronized (refClass) {
                         refClass.set(r);
@@ -227,7 +227,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return new CollectionList<>();
     }
 
-    public CollectionList<ClassLoader> getClassLoaders() {
+    public CollectionList<?, ClassLoader> getClassLoaders() {
         Object loadrs = Ref.getDeclaredField(JavaPluginLoader.class, "loaders")
                 .accessible(true)
                 .get((JavaPluginLoader) TomeitoLib.instance.getPluginLoader());
@@ -250,28 +250,28 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return found.get();
     }
 
-    private ICollectionList<String> findClasses(String packageName) {
-        ICollectionList<String> list = findClasses(packageName, false);
+    private ICollectionList<?, String> findClasses(String packageName) {
+        ICollectionList<?, String> list = findClasses(packageName, false);
         return list.size() == 0 ? findClasses(packageName, true) : list;
     }
 
     private final StringCollection<Integer> loaders1 = new StringCollection<>();
     private final StringCollection<Integer> loaders2 = new StringCollection<>();
-    private final StringCollection<CollectionSet<String>> classes = new StringCollection<>();
-    private final StringCollection<CollectionSet<String>> packages = new StringCollection<>();
+    private final StringCollection<CollectionSet<?, String>> classes = new StringCollection<>();
+    private final StringCollection<CollectionSet<?, String>> packages = new StringCollection<>();
 
     @SuppressWarnings("unchecked")
-    private ICollectionList<String> findClasses(String packageName, boolean recursive) {
+    private ICollectionList<?, String> findClasses(String packageName, boolean recursive) {
         String p = trim(packageName);
         if (!classes.containsKey(p)) classes.add(p, new CollectionSet<>());
         try {
-            CollectionList<ClassLoader> loaders = getClassLoaders();
+            CollectionList<?, ClassLoader> loaders = getClassLoaders();
             if (loaders.size() != this.loaders1.getOrDefault(p, -1)) {
                 this.loaders1.add(p, loaders.size());
                 classes.get(p).clear();
                 TomeitoAPI.runAsync(() -> {
                     //noinspection Convert2MethodRef
-                    loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).map(c -> c.getCanonicalName())));
+                    loaders.forEach(cl -> classes.get(p).addAll(ReflectionHelper.findAllClasses(cl, p, recursive).<String>map(c -> c.getCanonicalName())));
                 });
             }
             return classes.get(p).concat(findPackages(packageName), findSystemClasses(packageName, recursive));
@@ -284,15 +284,15 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         }
     }
 
-    private ICollectionList<String> findSystemClasses(String packageName, boolean recursive) {
+    private ICollectionList<?, String> findSystemClasses(String packageName, boolean recursive) {
         return ReflectionHelper
                 .findAllClasses(ClassLoader.getSystemClassLoader(), trim(packageName), recursive)
                 .map(Class::getCanonicalName)
-                .concat(findPackages(packageName));
+                .thenAddAll(findPackages(packageName));
     }
 
-    private ICollectionList<String> findPackages(String packageName) {
-        ICollectionList<String> list = findPackages(packageName, packageName.equalsIgnoreCase(""));
+    private ICollectionList<?, String> findPackages(String packageName) {
+        ICollectionList<?, String> list = findPackages(packageName, packageName.equalsIgnoreCase(""));
         if (list.size() == 0) list = findPackages(packageName, true);
         if (list.size() == 0) list = findPackages(trim(packageName + "."), true);
         if (list.size() == 0) list = findPackages(trim(trim(packageName + ".") + "."), true);
@@ -300,10 +300,10 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return list;
     }
 
-    private ICollectionList<String> findPackages(String packageName, boolean recursive) {
+    private ICollectionList<?, String> findPackages(String packageName, boolean recursive) {
         String p = trim(packageName);
         if (!packages.containsKey(p)) packages.add(p, new CollectionSet<>());
-        CollectionList<ClassLoader> loaders = getClassLoaders();
+        CollectionList<?, ClassLoader> loaders = getClassLoaders();
         if (loaders.size() != this.loaders2.getOrDefault(p, -1)) {
             this.loaders2.add(p, loaders.size());
             packages.get(p).clear();
@@ -342,7 +342,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                     return filterArgsList(findPackages(args[1]), args[1]).unique();
                 }
             } else if (args[0].equalsIgnoreCase("packet")) {
-                return filterArgsList(TomeitoAPI.getOnlinePlayers().map(Player::getName).concat(CollectionList.of("@p", "@a", "@s", "@r")), args[1]);
+                return filterArgsList(TomeitoAPI.getOnlinePlayers().map(Player::getName).thenAddAll((List<String>) CollectionList.of("@p", "@a", "@s", "@r")), args[1]);
             }
         }
         if (args.length == 3) {
@@ -366,19 +366,19 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                 list.add(s + "s");
             }
             list.add(s);
-            return filterArgsList(list, s).concat(CollectionList.of("(ChatMessage)" + s));
+            return filterArgsList(list, s).thenAddAll((List<String>) CollectionList.of("(ChatMessage)" + s));
         } else if (args[0].equalsIgnoreCase("debug")) {
             String s0 = args.length-2 <= 0 ? null : args[args.length-2];
             String s = args[args.length-1];
             String[] g = s.split("\\.");
-            CollectionList<String> k = ICollectionList.asList(g);
+            CollectionList<?, String> k = ICollectionList.asList(g);
             if (k.size() > 0 && !s.endsWith(".")) k.remove(k.size()-1);
             if (s.endsWith(".")) k.add("");
-            ICollectionList<String> things = getAllThings(s0, s).unique();
+            ICollectionList<?, String> things = getAllThings(s0, s).unique();
             //Log.info("T: " + things.join(", "));
-            ICollectionList<String> list = filterArgsList(things, k.join("."));
+            ICollectionList<?, String> list = filterArgsList(things, k.join("."));
             if (list.size() != 0) return filterArgsList(list, s); // usually a package.class
-            ICollectionList<String> lst = filterArgsList(things, s);
+            ICollectionList<?, String> lst = filterArgsList(things, s);
             if (lst.size() == 0) {
                 lst = filterArgsList(things, s.endsWith(".") ? "" : g[g.length-1]);
                 lst.removeAll(COMMONS);
@@ -389,7 +389,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
         return Collections.emptyList();
     }
 
-    public static final CollectionList<String> packets = new CollectionList<>();
+    public static final CollectionList<?, String> packets = new CollectionList<>();
 
     static {
         packets.add("PacketPlayOutAbilities");

@@ -13,11 +13,15 @@ import java.util.Locale;
  * Represents sounds (but compatibilities are kept across versions).
  * Sounds annotated with {@link NotNull} is guaranteed to work, on all supported versions (1.8+).
  * Sounds annotated with {@link Nullable} may not work on some specific versions.
- * Be aware: Note block sounds are appears to missing in 1.9-1.11.2; these are annotated with {@link Nullable}.
+ * Be aware: Some note block sounds are appears to missing in 1.9 - 1.11.2; these are annotated with {@link Nullable}.
  */
 public class Sound {
-    @NotNull public static final ICollectionList<String> sounds = ICollectionList.asList(org.bukkit.Sound.values()).map(Enum::name);
+    @NotNull public static final ICollectionList<?, String> sounds = ICollectionList.asList(org.bukkit.Sound.values()).map(Enum::name);
     @NotNull public static final StringCollection<org.bukkit.Sound> knownSounds = new StringCollection<>();
+
+    // =============== Blocks =============== //
+
+    // ----- Note Blocks ----- //
 
     /**
      * Wood + Note Block
@@ -124,11 +128,23 @@ public class Sound {
      */
     @AvailableVersion(AvailableVersion.MinecraftVersion.SINCE_v1_12)
     @Nullable public static final org.bukkit.Sound BLOCK_NOTE_FLUTE;
+    
+    // =============== Entities =============== //
+
+    // ----- TNT ----- //
 
     @AvailableVersion(AvailableVersion.MinecraftVersion.ALL)
     @NotNull public static final org.bukkit.Sound ENTITY_TNT_PRIMED;
 
-    // aliases
+    // ----- Experience Orb ----- //
+
+    @AvailableVersion(AvailableVersion.MinecraftVersion.ALL)
+    @NotNull public static final org.bukkit.Sound ENTITY_EXPERIENCE_ORB_PICKUP;
+
+    // =============== Aliases =============== //
+
+    // ----- Note Block ----- //
+
     /**
      * Glass Block + Note Block
      */
@@ -173,6 +189,7 @@ public class Sound {
         BLOCK_NOTE_FLUTE = getSoundNullable("NOTE_FLUTE", "BLOCK_NOTE_BLOCK_FLUTE", "BLOCK_NOTE_FLUTE");
 
         ENTITY_TNT_PRIMED = getSound("FUSE", "ENTITY_TNT_PRIMED");
+        ENTITY_EXPERIENCE_ORB_PICKUP = getSound("ENTITY_EXPERIENCE_ORB_PICKUP", "ORB_PICKUP");
 
         // aliases
         BLOCK_NOTE_BASS_DRUM = registerMapping(BLOCK_NOTE_BASEDRUM, "BLOCK_NOTE_BASS_DRUM", "BLOCK_NOTE_BLOCK_BASS_DRUM");
@@ -262,7 +279,7 @@ public class Sound {
 
     /**
      * Try to find sound with specified name.
-     * This method may return if:
+     * This method may return null if:
      * <ul>
      *     <li>There is no sound with that name</li>
      *     <li>That sound is not known in this class, and you have incompatible version with server and sound key.</li>

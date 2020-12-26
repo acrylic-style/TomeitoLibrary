@@ -8,4 +8,7 @@ import java.util.List;
 public interface BukkitNBSFile extends NBSFile {
     @NotNull
     List<BukkitNBSTick> getBukkitTicks();
+
+    @NotNull
+    List<BukkitNBSInstrument> getBukkitCustomInstruments();
 }

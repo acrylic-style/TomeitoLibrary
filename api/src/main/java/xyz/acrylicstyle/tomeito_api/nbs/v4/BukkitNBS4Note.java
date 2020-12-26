@@ -1,14 +1,30 @@
 package xyz.acrylicstyle.tomeito_api.nbs.v4;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.nbs.v4.NBS4Note;
+import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSInstrument;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSNote;
 import xyz.acrylicstyle.tomeito_api.sounds.Sound;
 
+import java.util.List;
+
 public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
+    protected List<BukkitNBSInstrument> customInstruments = null;
+
     public BukkitNBS4Note(byte instrument, byte key, byte volume, byte panning, short pitch) {
         super(instrument, key, volume, panning, pitch);
+    }
+
+    @NotNull
+    @Override
+    public List<BukkitNBSInstrument> getCustomInstruments() { return customInstruments; }
+
+    @Override
+    public void setCustomInstruments(@NotNull List<BukkitNBSInstrument> customInstruments) {
+        this.customInstruments = customInstruments;
     }
 
     /**
@@ -18,7 +34,7 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
      */
     @Nullable
     @Override
-    public org.bukkit.Sound getSound() { return readInstrument(instrument); }
+    public org.bukkit.Sound getSound() { return readInstrument(customInstruments, instrument); }
 
     @Override
     public float getSoundPitch() {
@@ -51,6 +67,13 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
         return 0.0F;                     // out of range
     }
 
+    @Override
+    public void play(@NotNull Player player) {
+        if (volume > 0 && getSound() != null) {
+            player.playSound(player.getLocation(), getSound(), volume / 100F, pitch);
+        }
+    }
+
     /**
      * Returns the sound for the instrument.
      * This method may return null if the sound is not supported for this version of minecraft.
@@ -58,7 +81,7 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
      */
     @Nullable
     @Contract(pure = true)
-    public static org.bukkit.Sound readInstrument(int instrument) {
+    public static org.bukkit.Sound readInstrument(List<BukkitNBSInstrument> customInstruments, int instrument) {
         if (instrument == 0) return Sound.BLOCK_NOTE_HARP;
         if (instrument == 1) return Sound.BLOCK_NOTE_BASS;
         if (instrument == 2) return Sound.BLOCK_NOTE_BASS_DRUM;
@@ -75,7 +98,10 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
         if (instrument == 13) return Sound.BLOCK_NOTE_BIT;
         if (instrument == 14) return Sound.BLOCK_NOTE_BANJO;
         if (instrument == 15) return Sound.BLOCK_NOTE_PLING;
-        // TODO: Support custom instruments (begin from 16)
-        throw new IndexOutOfBoundsException("Instrument is out of range, unsupported version?");
+        try {
+            return customInstruments.get(instrument - 16).getBukkitSound();
+        } catch (IndexOutOfBoundsException | NullPointerException ex) {
+            throw new IndexOutOfBoundsException("Instrument is out of range, unsupported version?");
+        }
     }
 }

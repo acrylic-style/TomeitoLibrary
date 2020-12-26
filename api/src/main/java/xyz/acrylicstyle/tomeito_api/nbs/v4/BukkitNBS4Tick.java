@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import util.ICollectionList;
 import util.nbs.NBSHeader;
 import util.nbs.v4.NBS4Tick;
+import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSInstrument;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSNote;
 import xyz.acrylicstyle.tomeito_api.nbs.BukkitNBSTick;
 import xyz.acrylicstyle.tomeito_api.utils.ListUtil;
@@ -13,10 +14,20 @@ import java.util.List;
 
 public class BukkitNBS4Tick extends NBS4Tick implements BukkitNBSTick {
     protected final NBSHeader header;
+    protected List<BukkitNBSInstrument> instruments = null;
 
     public BukkitNBS4Tick(NBSHeader file, int startingTick, @NotNull List<BukkitNBSNote> layers) {
         super(startingTick, ListUtil.downgrade(layers));
         this.header = file;
+    }
+
+    @Override
+    public @NotNull List<BukkitNBSInstrument> getCustomInstruments() { return instruments; }
+
+    @Override
+    public void setCustomInstruments(@NotNull List<BukkitNBSInstrument> customInstruments) {
+        this.instruments = customInstruments;
+        this.getPlayableBukkitLayers().forEach(note -> note.setCustomInstruments(customInstruments));
     }
 
     @Override
