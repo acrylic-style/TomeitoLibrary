@@ -204,7 +204,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     @Override
     public void registerCommands(@NotNull String packageName) {
-        CollectionList<?, Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(this.getClassLoader(), packageName, Command.class);
+        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(this.getClassLoader(), packageName, Command.class);
         classes.forEach(clazz -> {
             Command command = clazz.getAnnotation(Command.class);
             try {
@@ -362,7 +362,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         @Override
         public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
             if (args.length != 0) {
-                CollectionList<?, String> list = ICollectionList.asList(args);
+                ICollectionList<String> list = ICollectionList.asList(args);
                 list.shift();
                 String[] trimmedArgs = list.toArray(new String[0]);
                 if (args[0].equalsIgnoreCase("debug")) {
@@ -406,7 +406,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             classLoader = this.getClassLoader();
             Log.info("Using default class loader to register sub commands on " + subCommandsPackage);
         }
-        CollectionList<?, Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
+        CollectionList<Class<?>> classes = ReflectionHelper.findAllAnnotatedClasses(classLoader, subCommandsPackage, SubCommand.class);
         Log.info("Found " + classes.size() + " classes under " + subCommandsPackage + "(/" + rootCommandName + ")");
         registerCommands(rootCommandName, classes, postCommand);
     }
@@ -417,8 +417,8 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
      * @param classes Class list that will load. All classes must implement SubCommandExecutor or it will fail to load.
      * @param postCommand A CommandExecutor that runs very first. Return false to interrupt command execution.
      */
-    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<?, Class<?>> classes, @Nullable CommandExecutor postCommand) {
-        final CollectionList<?, Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
+    public void registerCommands(@NotNull final String rootCommandName, @NotNull final CollectionList<Class<?>> classes, @Nullable CommandExecutor postCommand) {
+        final CollectionList<Map.Entry<SubCommand, SubCommandExecutor>> commands = new CollectionList<>();
         classes.forEach(clazz -> {
             SubCommand command = clazz.getAnnotation(SubCommand.class);
             try {
@@ -451,7 +451,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
                     $sendMessage(sender);
                     return true;
                 }
-                CollectionList<?, String> argsList = ICollectionList.asList(args);
+                ICollectionList<String> argsList = ICollectionList.asList(args);
                 argsList.shift();
                 ICollectionList.asList(entries).map(Map.Entry::getValue).forEach(s -> s.onCommand(sender, argsList.toArray(new String[0])));
                 return true;

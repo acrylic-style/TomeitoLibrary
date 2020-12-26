@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.7.1</version>
+        <version>0.7.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tomeito_shared</artifactId>
@@ -13,12 +13,12 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>minecraft-util</artifactId>
-            <version>0.2.6</version>
+            <version>0.2.7</version>
         </dependency>
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>sequelize4j</artifactId>
-            <version>0.3.8</version>
+            <version>0.3.9</version>
         </dependency>
     </dependencies>
 </project>

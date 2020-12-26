@@ -4,7 +4,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import util.CollectionList;
 import util.ICollectionList;
 import xyz.acrylicstyle.tomeito_api.utils.Log;
 

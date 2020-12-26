@@ -129,10 +129,10 @@ public class TargetSelectorParser {
 
     // </editor-fold>
 
-    public static @NotNull CollectionList<?, ? extends CommandSender> parse(@NotNull CommandSender sender, @NotNull String selector) {
-        CollectionList<?, CommandSender> players = new CollectionList<>();
+    public static @NotNull CollectionList<? extends CommandSender> parse(@NotNull CommandSender sender, @NotNull String selector) {
+        CollectionList<CommandSender> players = new CollectionList<>();
         if (!selector.contains("[") && !selector.contains("]") && selector.contains(",")) {
-            return ICollectionList.asList(selector.split(",")).map(Bukkit::getPlayerExact).nonNull();
+            return (CollectionList<? extends CommandSender>) ICollectionList.asList(selector.split(",")).map(Bukkit::getPlayerExact).nonNull();
         }
         String optsString = new String(selector.toCharArray()).replaceAll(".*\\[(.*)]", "$1");
         Collection<String, String> rawArgs = new Collection<>();
@@ -198,8 +198,8 @@ public class TargetSelectorParser {
     }
 
     @NotNull
-    private static CollectionList<?, CommandSender> getEntities(@NotNull List<? extends Entity> entities, Location base, @NotNull ICollection<String, Object> options, EntityType type) {
-        CollectionList<?, Entity> list = new CollectionList<>();
+    private static CollectionList<CommandSender> getEntities(@NotNull List<? extends Entity> entities, Location base, @NotNull ICollection<String, Object> options, EntityType type) {
+        CollectionList<Entity> list = new CollectionList<>();
         entities.forEach(e -> {
             if (type != null && e.getType() == type) {
                 if (check(base, e, options)) {
@@ -212,7 +212,7 @@ public class TargetSelectorParser {
             }
         });
         int count = options.containsKey("c") ? (int) options.get("c") : Integer.MAX_VALUE;
-        CollectionList<?, CommandSender> anotherList = new CollectionList<>();
+        CollectionList<CommandSender> anotherList = new CollectionList<>();
         list.foreach((e, i) -> {
             if (i < count) anotherList.add(e);
         });

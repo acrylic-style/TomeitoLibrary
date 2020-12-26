@@ -40,7 +40,7 @@ public class PluginChannelListener implements PluginMessageListener {
     private final Collection<String, Collection<String, Callback<String>>> callbacks = new Collection<>();
 
     @NotNull
-    private final CollectionList<?, String> registeredListeners = new CollectionList<>();
+    private final CollectionList<String> registeredListeners = new CollectionList<>();
 
     private PluginChannelListener() {}
 

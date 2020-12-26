@@ -181,8 +181,8 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return All online players as list.
      */
     @NotNull
-    public static CollectionList<?, Player> getOnlinePlayers() {
-        CollectionList<?, Player> players = new CollectionList<>();
+    public static CollectionList<Player> getOnlinePlayers() {
+        CollectionList<Player> players = new CollectionList<>();
         players.addAll(Bukkit.getOnlinePlayers());
         return players;
     }
@@ -192,7 +192,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
      * @return All online operators as list.
      */
     @NotNull
-    public static CollectionList<?, Player> getOnlineOperators() { return getOnlinePlayers().filter(Player::isOp); }
+    public static CollectionList<Player> getOnlineOperators() { return (CollectionList<Player>) getOnlinePlayers().filter(Player::isOp); }
 
     /**
      * Random number between 0 - max.<br />
@@ -301,7 +301,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
     }
 
     public static MCVersion getReleaseVersionIfPossible(int protocolVersion) {
-        CollectionList<?, MCVersion> list = ICollectionList.asList(MCVersion.getByProtocolVersion(protocolVersion));
+        ICollectionList<MCVersion> list = ICollectionList.asList(MCVersion.getByProtocolVersion(protocolVersion));
         return list.filter(v -> !v.isSnapshot()).size() == 0 // if non-snapshot version wasn't found
                 ? Objects.requireNonNull(list.first()) // return the last version anyway
                 : Objects.requireNonNull(list.filter(v -> !v.isSnapshot()).first()); // or return non-snapshot version instead
@@ -434,7 +434,7 @@ public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, P
 
     @Contract(pure = true)
     @NotNull
-    public static CollectionSet<?, Material> getMaterials(@NotNull Inventory inventory) {
+    public static CollectionSet<Material> getMaterials(@NotNull Inventory inventory) {
         return new InventoryUtils(inventory).getMaterials();
     }
 

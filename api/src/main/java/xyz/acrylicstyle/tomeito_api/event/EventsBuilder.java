@@ -9,8 +9,13 @@ import util.CollectionList;
  * Not to be confused with {@link EventBuilder}, which will build ONE event.
  * This class will build many events with {@link EventBuilder}.
  */
-public class EventsBuilder extends CollectionList<EventsBuilder, PendingEvent<?>> {
+public class EventsBuilder extends CollectionList<PendingEvent<?>> {
     public static EventsBuilder create() { return new EventsBuilder(); }
+
+    @Override
+    public @NotNull EventsBuilder thenAdd(@NotNull PendingEvent<?> pendingEvent) {
+        return (EventsBuilder) super.thenAdd(pendingEvent);
+    }
 
     public void registerAll() {
         this.forEach(PendingEvent::register);

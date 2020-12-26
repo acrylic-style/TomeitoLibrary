@@ -74,8 +74,8 @@ public class InventoryUtils implements Cloneable {
 
     @Contract(pure = true)
     @NotNull
-    public CollectionSet<?, Material> getMaterials() {
-        CollectionSet<?, Material> set = new CollectionSet<>();
+    public CollectionSet<Material> getMaterials() {
+        CollectionSet<Material> set = new CollectionSet<>();
         for (ItemStack item : inventory.getContents()) {
             if (item != null) set.add(item.getType());
         }
