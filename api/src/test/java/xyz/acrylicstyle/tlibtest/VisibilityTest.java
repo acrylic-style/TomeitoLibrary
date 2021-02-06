@@ -55,12 +55,15 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.runners.Parameterized.Parameter;
 
 @RunWith(Parameterized.class)
 public class VisibilityTest {
+    private static final Set<String> bypass = new HashSet<>();
     private static final Collection<Class<?>, List<Target>> target = new Collection<>();
 
     private static void add(Class<?> clazz, Target... targets) {
@@ -72,7 +75,14 @@ public class VisibilityTest {
     }
 
     static {
-        add(TomeitoAPI.class, Target.METHOD);
+        bypass.add("field private static xyz.acrylicstyle.tomeito_api.TomeitoAPI xyz.acrylicstyle.tomeito_api.TomeitoAPI.api");
+        bypass.add("method protected static void xyz.acrylicstyle.tomeito_api.TomeitoAPI.setInstance(xyz.acrylicstyle.tomeito_api.TomeitoAPI)");
+        bypass.add("field protected static final util.Collection<java.util.UUID, java.util.Map$Entry<util.promise.Promise<java.lang.Object>, util.function.StringConverter<?>>> xyz.acrylicstyle.tomeito_api.TomeitoAPI.prompts");
+        bypass.add("method private static org.bukkit.Sound xyz.acrylicstyle.tomeito_api.sounds.Sound.registerMapping(org.bukkit.Sound,java.lang.String...)");
+        bypass.add("method private xyz.acrylicstyle.tomeito_api.scheduler.TomeitoTask xyz.acrylicstyle.tomeito_api.scheduler.TomeitoRunnable.setupId(xyz.acrylicstyle.tomeito_api.scheduler.TomeitoTask)");
+        bypass.add("field protected static final java.util.List<java.lang.String> xyz.acrylicstyle.tomeito_api.utils.TabCompleterHelper.emptyList");
+
+        add(TomeitoAPI.class);
         add(BaseTomeitoAPI.class);
         add(TypeUtil.class);
         add(Title.class, Target.METHOD, Target.CONSTRUCTOR);
@@ -88,10 +98,10 @@ public class VisibilityTest {
         add(PlayerSubCommandExecutor.class);
         add(PlayerOpSubCommandExecutor.class);
         add(OpSubCommandExecutor.class);
-        add(Sound.class, Target.FIELD);
+        add(Sound.class, Target.FIELD, Target.METHOD);
         add(Refs.class);
         add(LanguageProvider.class);
-        add(TomeitoRunnable.class, Target.CONSTRUCTOR);
+        add(TomeitoRunnable.class, Target.CONSTRUCTOR, Target.METHOD);
         add(TomeitoScheduler.class);
         add(TomeitoTask.class);
         add(ConfigProvider.class);
@@ -162,6 +172,7 @@ public class VisibilityTest {
             name = ((Constructor<?>) member).toGenericString();
             type = "constructor";
         }
+        if (bypass.contains(type + " " + name)) return;
         assert Modifier.isPublic(member.getModifiers()) : type + " " + name + " in " + member.getDeclaringClass().getCanonicalName() + " was " + getVisibility(member);
     }
 }

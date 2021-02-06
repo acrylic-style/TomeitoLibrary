@@ -21,10 +21,12 @@ import util.ICollectionList;
 import util.StringCollection;
 import util.reflect.Ref;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
+import xyz.acrylicstyle.tomeito_api.reflector.BukkitEntity;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -45,21 +47,20 @@ public class TargetSelectorParser {
         OPTION_PARSERS.add("x", TargetSelectorParser::parseInt);
         OPTION_PARSERS.add("y", TargetSelectorParser::parseInt);
         OPTION_PARSERS.add("z", TargetSelectorParser::parseInt);
-        // OPTION_PARSERS.add("tag", s -> s);
+        OPTION_PARSERS.add("tag", s -> s);
         OPTION_PARSERS.add("l", TargetSelectorParser::parseInt);
         OPTION_PARSERS.add("lm", TargetSelectorParser::parseInt);
         OPTION_PARSERS.add("m", TargetSelectorParser::parseGameMode);
         OPTION_PARSERS.add("name", s -> s);
-        // OPTION_PARSERS.add("rx", PlayerSelectorParser::parseInt);
-        // OPTION_PARSERS.add("rxm", PlayerSelectorParser::parseInt);
-        // OPTION_PARSERS.add("ry", PlayerSelectorParser::parseInt);
-        // OPTION_PARSERS.add("rym", PlayerSelectorParser::parseInt);
+        // OPTION_PARSERS.add("dx", PlayerSelectorParser::parseInt);
+        // OPTION_PARSERS.add("dy", PlayerSelectorParser::parseInt);
+        // OPTION_PARSERS.add("dz", PlayerSelectorParser::parseInt);
         OPTION_PARSERS.add("type", TargetSelectorParser::parseEntityType);
 
         // </editor-fold>
     }
 
-    @SuppressWarnings("RedundantIfStatement")
+    @SuppressWarnings({ "deprecation" })
     private static boolean check(Location _origin, Entity entity, ICollection<String, Object> options) {
         Location loc = _origin.clone();
         if (options.containsKey("type") && entity.getType() != options.get("type")) return false;
@@ -81,7 +82,16 @@ public class TargetSelectorParser {
                 if (team != null && !team.hasEntry(player.getName())) return false;
             }
         }
-        // todo: add 'tag'
+        if (options.containsKey("tag")) { // can be multiple tags, like: @a[tag=a,b,c,d,e,f]
+            String tag = (String) options.get("tag");
+            BukkitEntity bukkitEntity = BukkitEntity.getInstance(entity);
+            Set<String> tags = bukkitEntity.getScoreboardTags();
+            if (tags != null) {
+                for (String s : tag.split(",")) {
+                    if (!tags.contains(s)) return false;
+                }
+            }
+        }
         return true;
     }
 

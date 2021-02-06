@@ -16,6 +16,8 @@ import java.util.Locale;
  * Be aware: Some note block sounds are appears to missing in 1.9 - 1.11.2; these are annotated with {@link Nullable}.
  */
 public class Sound {
+    private Sound() {} // don't let anyone create instance of this
+
     @NotNull public static final ICollectionList<String> sounds = ICollectionList.asList(org.bukkit.Sound.values()).map(Enum::name);
     @NotNull public static final StringCollection<org.bukkit.Sound> knownSounds = new StringCollection<>();
 

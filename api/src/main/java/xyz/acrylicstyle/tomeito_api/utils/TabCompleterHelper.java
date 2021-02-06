@@ -5,9 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import util.CollectionList;
 import util.ICollectionList;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TabCompleterHelper {
+    protected static final List<String> emptyList = Collections.emptyList();
+
     @Contract(value = "_, _ -> new", pure = true)
     public static @NotNull ICollectionList<String> filterArgsList(CollectionList<String> list, String s) {
         return list.filter(s2 -> s2.toLowerCase().startsWith(s.toLowerCase()));

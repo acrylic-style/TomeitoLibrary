@@ -65,12 +65,22 @@ import java.util.regex.Pattern;
  * This interface defines static methods. For instance methods, see {@link BaseTomeitoAPI}.
  */
 public abstract class TomeitoAPI extends JavaPlugin implements BaseTomeitoAPI, Plugin {
+    private static TomeitoAPI api = null;
+
+    protected static void setInstance(@NotNull TomeitoAPI api) {
+        Validate.isTrue(TomeitoAPI.api == null, "API is already defined");
+        TomeitoAPI.api = api;
+    }
+
     /**
      * Obtain the instance of TomeitoAPI. Requires TomeitoLib (Plugin) to work.
      * @return Instance of TomeitoAPI
      * @throws RuntimeException When couldn't find plugin
      */
     public static TomeitoAPI getInstance() {
+        if (api != null) return api;
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("TomeitoLib");
+        if (plugin instanceof TomeitoAPI) return (TomeitoAPI) plugin;
         return (TomeitoAPI) Ref.forName("xyz.acrylicstyle.tomeito_core.TomeitoLib").getDeclaredField("instance").accessible(true).get(null);
     }
 

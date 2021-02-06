@@ -88,6 +88,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
 
     public TomeitoLib() {
         instance = this;
+        setInstance(this);
     }
 
     @SuppressWarnings("deprecation")

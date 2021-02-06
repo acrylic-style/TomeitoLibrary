@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -330,7 +329,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
     @SuppressWarnings("ConstantConditions")
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (!sender.hasPermission("tomeitolib.cmd")) return Collections.emptyList();
+        if (!sender.hasPermission("tomeitolib.cmd")) return emptyList;
         if (args.length == 0) return Arrays.asList("debug", "debug-legacy", "packet");
         if (args.length == 1) return filterArgsList(Arrays.asList("debug", "debug-legacy", "packet"), args[0]);
         if (args.length == 2) {
@@ -386,7 +385,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
             }
             return lst;
         }
-        return Collections.emptyList();
+        return emptyList;
     }
 
     public static final CollectionList<String> packets = new CollectionList<>();

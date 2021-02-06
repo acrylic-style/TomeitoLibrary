@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.7.4a</version>
+        <version>0.7.4b</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>
             <artifactId>tomeito_shared</artifactId>
-            <version>0.7.4a</version>
+            <version>0.7.4b</version>
         </dependency>
         <dependency>
             <groupId>io.github.waterfallmc</groupId>

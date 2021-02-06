@@ -3,6 +3,7 @@ package xyz.acrylicstyle.tomeito_api.utils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import util.Chain;
 import util.CollectionList;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
 
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class ActionBarBuilder {
+public class ActionBarBuilder implements Chain<ActionBarBuilder> {
     private final CollectionList<String> list = new CollectionList<>();
     private final String separator;
 
