@@ -39,6 +39,7 @@ import util.CollectionList;
 import util.ICollectionList;
 import util.ReflectionHelper;
 import util.StringCollection;
+import util.reflector.Reflector;
 import util.serialization.CustomClassSerializer;
 import util.serialization.CustomClassSerializers;
 import xyz.acrylicstyle.tomeito_api.TomeitoAPI;
@@ -190,6 +191,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
             }
         };
         timer.scheduleAtFixedRate(task, 50, 50);
+        Reflector.classLoader = this.getClassLoader();
         Log.info("Enabled TomeitoLib");
     }
 
