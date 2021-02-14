@@ -113,14 +113,21 @@ public class TargetSelectorParser {
         return ENTITY_TYPES.get(s.toLowerCase());
     }
 
+    private static boolean equalsIgnoreCaseAny(String target, Object... objects) {
+        for (Object o : objects) {
+            if (target.equalsIgnoreCase(o.toString())) return true;
+        }
+        return false;
+    }
+
     private static GameMode parseGameMode(String s) {
-        if (s.equals("0") || s.equalsIgnoreCase("survival") || s.equalsIgnoreCase("s")) {
+        if (equalsIgnoreCaseAny(s, 0, "survival", "s")) {
             return GameMode.SURVIVAL;
-        } else if (s.equalsIgnoreCase("1") || s.equalsIgnoreCase("creative") || s.equalsIgnoreCase("c")) {
+        } else if (equalsIgnoreCaseAny(s, 1, "creative", "s")) {
             return GameMode.CREATIVE;
-        } else if (s.equalsIgnoreCase("2") || s.equalsIgnoreCase("adventure") || s.equalsIgnoreCase("a")) {
+        } else if (equalsIgnoreCaseAny(s, 2, "adventure", "a")) {
             return GameMode.ADVENTURE;
-        } else if (s.equalsIgnoreCase("3") || s.equalsIgnoreCase("spectator") || s.equalsIgnoreCase("sp")) {
+        } else if (equalsIgnoreCaseAny(s, 3, "spectator", "sp")) {
             return GameMode.SPECTATOR;
         } else {
             //Log.warn("Ignoring unparsable gamemode: " + s);

@@ -23,7 +23,7 @@ public class Refs {
         }));
     }
 
-    public static ICollectionList<String> getStatics(RefClass<?> refClass) {
+    public static ICollectionList<String> getStaticFieldAndMethods(RefClass<?> refClass) {
         if (refClass == null) return new CollectionList<>();
         return getStaticMethods(refClass).thenAddAll(getStaticFields(refClass));
     }
@@ -48,7 +48,7 @@ public class Refs {
     public static ICollectionList<String> getSuperMethodsAsString(RefClass<?> refClass, boolean isStatic) {
         return getSuperMethods(refClass)
                 .filter(r -> Modifier.isStatic(r.getModifiers()) == isStatic)
-                .filter(s -> !s.getName().startsWith("lambda$"))
+                .filter(m -> !m.getMethod().isSynthetic())
                 .map(m -> {
                     String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
                     return m.getName() + "(" + signature + ")";
@@ -98,7 +98,7 @@ public class Refs {
         return new CollectionSet<>(ICollectionList
                 .asList(refClass.getDeclaredMethods())
                 .filter(r -> !Modifier.isStatic(r.getModifiers()))
-                .filter(s -> !s.getName().startsWith("lambda$"))
+                .filter(s -> !s.getMethod().isSynthetic())
                 .map(m -> {
                     String signature = ICollectionList.asList(m.getParameterTypes()).map(Class::getCanonicalName).join(", ");
                     return m.getName() + "(" + signature + ")";

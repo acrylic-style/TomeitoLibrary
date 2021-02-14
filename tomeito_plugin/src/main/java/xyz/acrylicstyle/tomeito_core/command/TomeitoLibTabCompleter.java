@@ -142,7 +142,7 @@ public class TomeitoLibTabCompleter extends TabCompleterHelper implements TabCom
                 final RefClass<?> r = refClass.get();
                 boolean isStatic = prev == null || !prev.equals("new");
                 this.a = 0;
-                ICollectionList<String> list = isStatic ? Refs.getStatics(refClass.get()).thenAdd("class") : Refs.getInstances(refClass.get());
+                ICollectionList<String> list = isStatic ? Refs.getStaticFieldAndMethods(refClass.get()).thenAdd("class") : Refs.getInstances(refClass.get());
                 while (hasNext(c, i)) {
                     synchronized (refClass) {
                         refClass.set(r);

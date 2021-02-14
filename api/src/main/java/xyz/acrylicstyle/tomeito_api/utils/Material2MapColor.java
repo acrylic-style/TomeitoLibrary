@@ -701,16 +701,22 @@ public enum Material2MapColor {
         public Map<Material, Byte> getColorMap() {
             return COLOR;
         }
-    }
+    },
     ;
 
     static {
-        MINECRAFT_1_8.init();
-        MINECRAFT_1_12.init();
-        MINECRAFT_1_15_2.init();
+        MINECRAFT_1_8.initSafe();
+        MINECRAFT_1_12.initSafe();
+        MINECRAFT_1_15_2.initSafe();
     }
 
-    protected abstract void init();
+    protected abstract void init() throws Throwable;
+
+    private void initSafe() {
+        try {
+            this.init();
+        } catch (Throwable ignore) {}
+    }
 
     @NotNull
     public static final List<Material> INVISIBLE_BLOCKS = new ArrayList<>();
@@ -724,7 +730,7 @@ public enum Material2MapColor {
         INVISIBLE_BLOCKS.add(Material.TORCH);
         INVISIBLE_BLOCKS.add(Material.LADDER);
         INVISIBLE_BLOCKS.add(Material.LEVER);
-        INVISIBLE_BLOCKS.add(Material.IRON_BARDING);
+        INVISIBLE_BLOCKS.add(Material.IRON_FENCE);
         INVISIBLE_BLOCKS.add(Material.PORTAL);
         INVISIBLE_BLOCKS.add(Material.ACTIVATOR_RAIL);
         INVISIBLE_BLOCKS.add(Material.SKULL);

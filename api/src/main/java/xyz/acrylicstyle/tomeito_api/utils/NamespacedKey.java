@@ -65,7 +65,7 @@ public final class NamespacedKey {
      * Create a key from existing bukkit NamespacedKey.
      * @param namespacedKey the key that will be imported to this key
      */
-    public NamespacedKey(Object namespacedKey) {
+    public NamespacedKey(@NotNull Object namespacedKey) {
         this.namespace = (String) Ref.forName("org.bukkit.NamespacedKey").getMethod("getNamespace").invoke(namespacedKey);
         this.key = (String) Ref.forName("org.bukkit.NamespacedKey").getMethod("getKey").invoke(namespacedKey);
     }

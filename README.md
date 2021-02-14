@@ -12,7 +12,7 @@ Also, you may use this for other purposes if you want. See licence for more info
 
 With `/tl debug` command, you can debug anything, comes with tab completion. (it's like eval in Java)
 
-## Using maven
+## Use with maven
 ```xml
 <repository>
     <id>acrylic-repo</id>
@@ -27,6 +27,19 @@ With `/tl debug` command, you can debug anything, comes with tab completion. (it
     <version>version</version>
 </dependency>
 ```
+
+## Use with build.gradle.kts
+```kotlin
+repositories {
+    maven { url = uri("https://repo2.acrylicstyle.xyz/") }
+}
+
+dependencies {
+    compileOnly("xyz.acrylicstyle:apiKt:version")
+}
+```
+
+Replace api with apiKt if you use kotlin.
 
 ## Using in Server
 [Download TomeitoLib and install it on your spigot server.](https://ci.acrylicstyle.xyz/guestAuth/repository/download/TomeitoLibrary_Build/533:id/tomeito_plugin/target/tomeito_plugin-0.5.20.jar)
