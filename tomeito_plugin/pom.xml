@@ -5,11 +5,14 @@
     <parent>
         <artifactId>tomeito_lib</artifactId>
         <groupId>xyz.acrylicstyle</groupId>
-        <version>0.7.5</version>
+        <version>0.7.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>tomeito_plugin</artifactId>
+    <build>
+        <finalName>TomeitoLib</finalName>
+    </build>
     <dependencies>
         <dependency>
             <groupId>xyz.acrylicstyle</groupId>

@@ -5,7 +5,7 @@
 
     <groupId>xyz.acrylicstyle</groupId>
     <artifactId>apiKt</artifactId>
-    <version>0.7.5</version>
+    <version>0.7.6</version>
     <packaging>jar</packaging>
 
     <name>apiKt</name>
