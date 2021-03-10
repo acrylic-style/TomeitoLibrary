@@ -192,6 +192,7 @@ public class TomeitoLib extends TomeitoAPI implements Listener {
         };
         timer.scheduleAtFixedRate(task, 50, 50);
         Reflector.classLoader = this.getClassLoader();
+        DebugGroovy.enabled = getConfig().getBoolean("enableDebugCommand", false);
         Log.info("Enabled TomeitoLib");
     }
 

@@ -46,7 +46,9 @@ Replace api with apiKt if you use kotlin.
 
 ## BungeeCord
 
-Some feature (e.g. Retrieving Protocol Version without ViaVersion) requires you to install BungeeCord plugin.
+Some features require you to install BungeeCord plugin.
+- Retrieving Protocol Version without ViaVersion
+- Change player skin
 
 You can download it from [here](https://ci.acrylicstyle.xyz/guestAuth/repository/download/TomeitoLibrary_Build/916:id/tomeito_bungee/target/tomeito_bungee-0.7.7.jar).
 

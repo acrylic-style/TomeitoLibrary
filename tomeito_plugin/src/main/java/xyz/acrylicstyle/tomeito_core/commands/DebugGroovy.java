@@ -10,7 +10,13 @@ import xyz.acrylicstyle.tomeito_api.utils.Log;
 import java.lang.reflect.Modifier;
 
 public class DebugGroovy {
+    public static boolean enabled = false;
+
     public static void run(CommandSender sender, String[] args) {
+        if (!enabled) {
+            sender.sendMessage(ChatColor.RED + "This command is disabled.");
+            return;
+        }
         if (!sender.hasPermission("*") || !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "Sorry but you don't have enough permission.");
             return;
