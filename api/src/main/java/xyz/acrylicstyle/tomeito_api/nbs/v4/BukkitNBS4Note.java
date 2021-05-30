@@ -70,7 +70,7 @@ public class BukkitNBS4Note extends NBS4Note implements BukkitNBSNote {
     @Override
     public void play(@NotNull Player player) {
         if (volume > 0 && getSound() != null) {
-            player.playSound(player.getLocation(), getSound(), volume / 100F, pitch);
+            player.playSound(player.getLocation(), getSound(), volume / 100F, getSoundPitch());
         }
     }
 
