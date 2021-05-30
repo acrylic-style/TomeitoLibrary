@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.Collection;
 import util.ReflectionHelper;
-import util.promise.Promise;
+import util.promise.rewrite.Promise;
 import xyz.acrylicstyle.mcutil.mojang.MojangAPI;
 import xyz.acrylicstyle.mcutil.mojang.Property;
 import xyz.acrylicstyle.tomeito_api.shared.ChannelConstants;
@@ -45,16 +45,15 @@ public class TomeitoBungee extends Plugin implements Listener {
         InitialHandler handler = (InitialHandler) player.getPendingConnection();
         if (nick.length() == 0) {
             ReflectionHelper.setFieldWithoutException(InitialHandler.class, handler, "loginProfile", profiles.get(player.getUniqueId()));
-            return Promise.of(profiles.get(player.getUniqueId()).getProperties()[0]);
+            return Promise.resolve(profiles.get(player.getUniqueId()).getProperties()[0]);
         }
-        return MojangAPI.getUniqueId(nick).then(uuid -> {
-            if (uuid == null) return null;
-            return MojangAPI.getGameProfile(uuid).then(profile -> {
-                LoginResult.Property prop = new LoginResult.Property(profile.properties[0].name, profile.properties[0].value, profile.properties[0].signature);
-                ReflectionHelper.setFieldWithoutException(InitialHandler.class, handler, "loginProfile", new LoginResult(profile.id.toString(), profile.name, new LoginResult.Property[]{ prop }));
-                return prop;
-            }).complete();
-        });
+        return MojangAPI.getUniqueId(nick).then(uuid ->
+                MojangAPI.getGameProfile(uuid).then(profile -> {
+                    LoginResult.Property prop = new LoginResult.Property(profile.properties[0].name, profile.properties[0].value, profile.properties[0].signature);
+                    ReflectionHelper.setFieldWithoutException(InitialHandler.class, handler, "loginProfile", new LoginResult(profile.id.toString(), profile.name, new LoginResult.Property[]{ prop }));
+                    return prop;
+                }).complete()
+        );
     }
 
     @Contract

@@ -44,7 +44,7 @@ public class PluginChannelListener implements Listener {
                             sendToBukkit(ChannelConstants.REFRESH_PLAYER, uuid.toString(), new ClassSerializer<>(property).serialize(), player.getServer().getInfo());
                         }
                         return null;
-                    }).queue();
+                    });
                     break;
                 }
                 case ChannelConstants.SET_PROPERTY: {
